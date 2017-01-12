@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' type="text/css" href='/css/bootstrap.min.css' />
+    <link rel='stylesheet' type="text/css" href='/css/mystyle.css' />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    
+    <script>
+
+     function toggleTextSearchShowCode() {
+          event.preventDefault();
+          if(document.getElementById('TextSearchCodeSample').style.display == 'block')
+          {
+                document.getElementById('TextSearchCodeSample').style.display = 'none';
+                } else {
+                document.getElementById('lblTextSearchSampleSource').innerHTML=document.getElementById('inputSearchCriteria').value;
+                document.getElementById('TextSearchCodeSample').style.display = 'block';
+                }
+     }
+     function handleTextSearch() {
+        //Prevent the form from trying to post itself again
+        event.preventDefault();
+                
+        var SearchCriteria = $('#inputSearchCriteria').val();
+        
+        //Use AJAX and submit the form data to the server
+        $.ajax({
+            url: "/TextSearch",
+           // headers: headers,  use this for special header info like security auth
+            method: 'POST',
+             data: JSON.stringify({ criteria: SearchCriteria}),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            // This prevents JQuery from trying to append the form as a querystring
+            processData: false,
+        
+         }).done(function(data)
+            {
+                document.getElementById('lblTextResults').innerHTML = "Returned " + data.length + " results";
+
+                var table = document.getElementById("TextSearchResults");
+
+                //Define the header of the results table
+                var ArrayHeader = ["Business Name","City","State","Category"];
+                var thead = document.createElement('thead');
+
+                table.appendChild(thead);
+
+                for(var i=0;i<ArrayHeader.length;i++){
+                    thead.appendChild(document.createElement("th")).
+                    appendChild(document.createTextNode(ArrayHeader[i]));
+                }
+
+                //push the result into rows
+                for (i=0;i<data.length;i++)
+                {
+                     
+                    var row = table.insertRow(0);
+                    row.insertCell(0).innerHTML=data[i].name;
+                    row.insertCell(1).innerHTML=data[i].city;
+                    row.insertCell(2).innerHTML=data[i].state;
+                    var attributes="";
+                    for (j=0; j<data[i].categories.length;j++)
+                    {
+                        attributes+=data[i].categories[j];
+                        if (j!=data[i].categories.length-1) { attributes+= ", "; }
+                    }
+                    row.insertCell(3).innerHTML=attributes;
+                }
+            
+            }).fail(function(data)
+            {
+                document.getElementById('lblTextResults').innerHTML = 'Failed !';
+            }); 
+
+    };
+    </script>
+  </head>
+  <body>
+  <div class="container" style="margin-top:10px">      
+                <image src='/images/mongodb_logo2.png' class='MongoImage'/>
+                
+                    <div style="margin: 5px;padding: 15px;font-family: helvetica;font-size: 28px;color:#CCCCCC">
+                    <span >Explore the power of MongoDB with live data!</span>
+                    </div>
+                    <div class="navbar">
+                      <div class="navbar-inner">
+                        <ul class="nav">
+                            <li class="active"><a href="/">Advanced Search</a></li>
+                            <li><a href="/analytics">Data Analytics</a></li>
+                            <li><a href="/relational">Relational Workloads</a></li>
+                        </ul>
+                      </div>
+                      </div>
+                      <div class="rcorners">
+                      <p><b>Text Searching</b> - MongoDB provides text indexes enabling fast search</p>
+                      <p>Enter a search term (i.e. coffee) to find a name of a business:</p>
+                      <p id="TextSearchCodeSample" class="CodeSample" style="display:none">db.business.find( { $text: <br>{ $search: "<label style="display:inline-block" id="lblTextSearchSampleSource"></label>" } ,<br>{ name: 1, city: 1, state: 1, categories: 1}) </p>
+                      <div class="control-group">
+                        <label class="control-label" for="inputSearch">Search: </label>
+                        <div class="controls">
+                          <input type="text" id="inputSearchCriteria" placeholder="Enter search term (i.e. coffee)..." >
+                        </div>
+                      </div>
+                        <button type="submit" class="btn" id="TextSearchButton" onclick="handleTextSearch()" style="border:solid;" >Search Names</button>&nbsp;&nbsp;  <button type="submit" class="btn" id="TextSearchShowCodeButton" onclick="toggleTextSearchShowCode()" >Show Query</button><br>
+                        <br>
+                        <label class="label" id="lblTextSearchCode"></label>
+                        <label class="label" id="lblTextResults"></label>
+                       <div style="height: 200px; overflow: auto;background-color:white;">
+                       <table id="TextSearchResults" class="TextSearchResultsCSS"/>
+                       </div>
+                        
+                        <br>                     
+                        <br>           
+                   
+                      </div>
+  </div> 
+  </body>
+</html>

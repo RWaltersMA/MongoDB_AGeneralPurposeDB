@@ -1,0 +1,102 @@
+    .bs-callout
+    {
+        padding:20px;
+        margin:20px 0;
+        border:1px solid #eee;
+        border-left-width:5px;
+        border-radius:3px
+    }
+    .bs-callout h4
+    {
+        margin-top:0;
+        margin-bottom:5px
+    }
+    .bs-callout p:last-child
+    {
+        margin-bottom:0
+    }
+    .bs-callout code
+    {
+        border-radius:3px
+    }
+    .bs-callout+.bs-callout
+    {
+        margin-top:-5px
+    }
+    .bs-callout-danger
+    {
+        border-left-color:#ce4844
+    }
+    .bs-callout-danger h4
+    {
+        color:#ce4844
+    }
+    .bs-callout-warning
+    {
+        border-left-color:#aa6708
+    }
+    .bs-callout-warning h4
+    {
+        color:#aa6708
+    }
+    .bs-callout-info
+    {
+        border-left-color:#1b809e
+    }
+    .bs-callout-info h4
+    {
+        color:#1b809e
+    }
+   .bs-callout-summary
+    {
+        border-left-color:#444444;
+        background-color: #dddddd;
+    }
+    .bs-callout-summary h4
+    {
+        color:#1b809e
+    }   
+    .MongoImage
+    {
+    background-color:#535456;
+
+    position:relative;width:auto;height:60px;margin:12.5px 0 12.5px 12.5px;padding:0;
+   
+    }
+    body {
+   background-color:#535456;
+    }
+    .rcorners {
+    border-radius: 5px;
+    background: #73AD21;
+    padding: 20px; 
+    width: 100%;
+    height: auto; 
+}
+.TextSearchResultsCSS table
+{
+    font-family: arial, sans-serif;
+   position:relative;
+    width: 100%;
+     border: 10px solid black;
+}
+
+.TextSearchResultsCSS td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+
+.TextSearchResultsCSS tr:nth-child(even) {
+    background-color: #dddddd;
+}
+.CodeSample {
+   
+			width: 20em;
+			float: right;
+			
+			color: white;
+			background: #006;
+			padding: 1em;
+			margin: 0;
+}
