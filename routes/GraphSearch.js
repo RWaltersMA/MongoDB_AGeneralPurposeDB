@@ -97,7 +97,7 @@ MongoClient.connect(connectionString, function(err, database) {
             items.forEach((item, idx, array) => 
             {       
                 ResultSet.push({
-                        name: item['name'],
+                       // name: item['name'],
                         depth: item['Depth'],
                         network: item['Network']});
 
