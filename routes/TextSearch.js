@@ -19,6 +19,10 @@ var connectionString = url.format({
     pathname: settings.database
 });
 
+router.get('/', function (req,res,next) {
+       res.render('text', { title: 'MongoDB - General purpose database for GIANT IDEAS' });
+  
+})
 
 router.post('/', function (req,res, next){
 

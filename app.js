@@ -10,6 +10,7 @@ var router = express.Router();
 
 var index = require('./routes/index');
 var textsearch = require('./routes/TextSearch');
+var graphsearch = require('./routes/GraphSearch');
 
 
 //var parsesearch = multer(); // for parsing multipart/form-data
@@ -35,6 +36,7 @@ var connectionString = url.format({
 
 app.use('/', index);
 app.use('/TextSearch', textsearch);
+app.use('/GraphSearch', graphsearch);
 /*
 //Render home page 
 app.get('/', function(request, response) {

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    
+    <title>MongoDB - General purpose database for GIANT IDEAS</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/mystyle.css">
+  </head>
+  <body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+ <script>
+
+     function handleGraphSearch() {
+        //Prevent the form from trying to post itself again
+        event.preventDefault();
+        if ($( "#UserToQuery" ).val()=="0")
+        {
+           $('#MissingUserMessage').show();
+           return;
+        }
+        $('#MissingUserMessage').hide();
+
+        var UserIDToQuery = $('#UserToQuery').val();
+        var LevelsToQuery = $('#LevelsToQuery').val();
+
+       // $('#GraphSearchButton').disabled();
+           $("#GraphSearchButton").attr("disabled", "disabled");
+        
+        //Use AJAX and submit the form data to the server
+        $.ajax({
+            url: "/GraphSearch",
+           // headers: headers,  use this for special header info like security auth
+            method: 'POST',
+             data: JSON.stringify({ UserID: UserIDToQuery, Levels: LevelsToQuery}),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            // This prevents JQuery from trying to append the form as a querystring
+            processData: false,
+        
+         }).done(function(data)
+            {
+                 $("#GraphSearchButton").attr("disabled", "enabled");
+                console.log(data);
+                
+                var TotalNumberOfFriends=Number(data[0].network.length);
+
+                document.getElementById('lblTextResults').innerHTML = "Returned " + TotalNumberOfFriends+ " friends";
+
+                var table = document.getElementById("TableGraphResults");
+                console.log(table);
+                
+                var ArrayHeader = ["Business Name","City","State","Category"];
+                var thead = document.createElement('thead');
+
+                table.appendChild(thead);
+
+                for(var i=0;i<ArrayHeader.length;i++){
+                    thead.appendChild(document.createElement("th")).
+                    appendChild(document.createTextNode(ArrayHeader[i]));
+                }
+
+               
+                for (i=0;i<TotalNumberOfFriends;i++)
+                {
+                   var row = table.insertRow(0);
+                    if (typeof data[0].network[i] != 'undefined' || data[0].network[i])
+                    { row.insertCell(0).innerHTML=data[0].name;
+                      row.insertCell(1).innerHTML=data[0].network[i];
+                      row.insertCell(2).innerHTML=data[0].depth[i]; }
+                 //   row.insertCell(2).innerHTML=data[i].network;
+                    
+                }
+
+/*
+                //Define the header of the results table
+                var ArrayHeader = ["Business Name","City","State","Category"];
+                var thead = document.createElement('thead');
+
+                table.appendChild(thead);
+
+                for(var i=0;i<ArrayHeader.length;i++){
+                    thead.appendChild(document.createElement("th")).
+                    appendChild(document.createTextNode(ArrayHeader[i]));
+                }
+
+                //push the result into rows
+                for (i=0;i<data.length;i++)
+                {
+                     
+                    var row = table.insertRow(0);
+                    row.insertCell(0).innerHTML=data[i].name;
+                    row.insertCell(1).innerHTML=data[i].city;
+                    row.insertCell(2).innerHTML=data[i].state;
+                    var attributes="";
+                    for (j=0; j<data[i].categories.length;j++)
+                    {
+                        attributes+=data[i].categories[j];
+                        if (j!=data[i].categories.length-1) { attributes+= ", "; }
+                    }
+                    row.insertCell(3).innerHTML=attributes;
+                }
+
+                 var Query="db.business.find(<br>&nbsp;&nbsp;&nbsp;{ $text:<br>&nbsp;&nbsp;&nbsp;{ $search: \"" + document.getElementById('inputSearchCriteria').value + "\" } ,<br>&nbsp;&nbsp;&nbsp;{ name: 1, city: 1, state: 1, categories: 1} )";
+                 document.getElementById('lblTextSearchSampleSource').innerHTML=Query;*/
+            
+            }).fail(function(data)
+            {
+                document.getElementById('lblTextResults').innerHTML = 'Failed !';
+            }); 
+
+    };
+     
+</script>
+
+
+<nav class="navbar navbar-inverse">
+  <div class="container">
+    <div class="navbar-header">
+        <a class="navbar-brand" href="#"><img class="MongoImage" src="images/mongodb_logo3.png"></a>
+    </div>
+  </div>
+</nav>
+
+  <div class="container">  
+  <div class="row">
+    <div class="col-sm-3 col-md-3 col-lg-3">
+
+    <div class="sidebar">
+      <div class="well">   
+       <div class="list-group">
+          <a href="/" class="list-group-item list-group-item-info">MongoDB<br/><I>A General Purpose Database</I></a>
+       
+       </div>
+        <div class="list-group">
+           <a href="#" class="list-group-item list-group-item-success">Advanced Search</a>
+           <a href="#" class="list-group-item">Faceted Search</a>
+            <a href="/TextSearch" class="list-group-item">Text Search</a>
+            <a href="/GraphSearch" class="list-group-item active">Graph Queries</a>
+            <a href="#" class="list-group-item">Geo-spaital Search</a>
+          </div>
+
+          <div class="list-group">
+          <a href="#" class="list-group-item list-group-item-success">Data Analytics</a>
+            <a href="#" class="list-group-item">Spark Integration</a>
+            <a href="#" class="list-group-item">Reporting Tools</a>
+          </div>
+          <div class="list-group">
+          <a href="#" class="list-group-item list-group-item-success">Relational-like</a>
+            <a href="#" class="list-group-item">Constraints</a>
+            <a href="#" class="list-group-item">Views</a>
+             <a href="#" class="list-group-item">Joins</a>
+          </div>
+       
+       
+       </div>
+      </div> 
+      </div> <!--col-sm-6-->
+      
+      <div class="col-sm-9 col-md-9 col-lg-9">
+      <div class="content">
+        <div class="hero-unit">
+            <h1>Graph Queries Overview</h1>
+            <p>--TODO--..Text describing graph queries, there place in MongoDB, etc...</p>
+            <p><a class="btn primary large">Learn more &raquo;</a></p>
+        </div>
+        <label for="UserToQuery">Select a user to query their friends:</label>
+        <select class="form-control" id="UserToQuery" required>
+          <option value="0">--Choose a user--</option>
+            <% ResultSet.forEach(function (item) { %>
+            <option value='<%= item.user_id %>'> <%= item.name %> (<%= item.friends.length %> friends)</option>
+            <% }) %>
+       
+          </select>
+          <div class="alert alert-danger fade in" id="MissingUserMessage" style="display:none;">
+            <strong>Opps!</strong> Please choose a user to query.
+          </div>
+    
+          <label for="LevelsDeep">How many levels deep (i.e. friends of friends..) to query?</label>
+           <select class="form-control" id="LevelsToQuery" required>
+            <option value="1">1</option>
+            <option value="2" selected="true">2</option>
+            <option value="3">3</option>
+           </select>
+
+           <br>
+           <button type="submit" class="btn btn-default" id="GraphSearchButton" onclick="handleGraphSearch()" style="border:solid;" >Query Names</button>&nbsp;&nbsp; 
+        
+           <label id="lblTextResults" class="bg-info"></label>
+
+            <div class="content-fluid">
+                <div class="col-sm-12 col-md-12 col-lg-12">
+                    <table id="TableGraphResults" class="TextSearchResultsCSS"/>
+                </div>
+            </div>
+
+      </div> <!-- content -->
+      </div> <!-- col-sm-6 -->
+      </div> <!-- row -->
+      </div> <!-- container-->
+    
+  </body>
+</html>

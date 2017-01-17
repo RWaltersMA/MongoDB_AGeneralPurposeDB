@@ -58,14 +58,23 @@
     }   
     .MongoImage
     {
-    background-color:#535456;
+        position: absolute;
+        top: -3px;
+        height: inherit;
+        
 
-    position:relative;width:auto;height:60px;margin:12.5px 0 12.5px 12.5px;padding:0;
-   
     }
-    body {
-   background-color:#535456;
+    .MongoTitleGiantIdeas
+    {
+        border-left: 1px solid #fff;
+        margin: 0;
+      
+        padding: 0 15px;
+        font-weight: 300;
+        font-size: 12px;
+        line-height: 1;
     }
+
     .rcorners {
     border-radius: 5px;
     background: #73AD21;

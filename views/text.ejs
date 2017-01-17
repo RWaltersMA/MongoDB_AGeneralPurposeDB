@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    
+    <title><%= title %></title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/mystyle.css">
+  </head>
+  <body>
+ 
+
+    <script>
+
+     function handleTextSearch() {
+        //Prevent the form from trying to post itself again
+        event.preventDefault();
+                
+        var SearchCriteria = $('#inputSearchCriteria').val();
+        
+        //Use AJAX and submit the form data to the server
+        $.ajax({
+            url: "/TextSearch",
+           // headers: headers,  use this for special header info like security auth
+            method: 'POST',
+             data: JSON.stringify({ criteria: SearchCriteria}),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            // This prevents JQuery from trying to append the form as a querystring
+            processData: false,
+        
+         }).done(function(data)
+            {
+                document.getElementById('lblTextResults').innerHTML = "Returned " + data.length + " results";
+
+                var table = document.getElementById("TextSearchResults");
+
+                //Define the header of the results table
+                var ArrayHeader = ["Business Name","City","State","Category"];
+                var thead = document.createElement('thead');
+
+                table.appendChild(thead);
+
+                for(var i=0;i<ArrayHeader.length;i++){
+                    thead.appendChild(document.createElement("th")).
+                    appendChild(document.createTextNode(ArrayHeader[i]));
+                }
+
+                //push the result into rows
+                for (i=0;i<data.length;i++)
+                {
+                     
+                    var row = table.insertRow(0);
+                    row.insertCell(0).innerHTML=data[i].name;
+                    row.insertCell(1).innerHTML=data[i].city;
+                    row.insertCell(2).innerHTML=data[i].state;
+                    var attributes="";
+                    for (j=0; j<data[i].categories.length;j++)
+                    {
+                        attributes+=data[i].categories[j];
+                        if (j!=data[i].categories.length-1) { attributes+= ", "; }
+                    }
+                    row.insertCell(3).innerHTML=attributes;
+                }
+
+                 var Query="db.business.find(<br>&nbsp;&nbsp;&nbsp;{ $text:<br>&nbsp;&nbsp;&nbsp;{ $search: \"" + document.getElementById('inputSearchCriteria').value + "\" } ,<br>&nbsp;&nbsp;&nbsp;{ name: 1, city: 1, state: 1, categories: 1} )";
+                 document.getElementById('lblTextSearchSampleSource').innerHTML=Query;
+            
+            }).fail(function(data)
+            {
+                document.getElementById('lblTextResults').innerHTML = 'Failed !';
+            }); 
+
+    };
+    </script>
+     
+  </head>
+  <body>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+
+<nav class="navbar navbar-inverse">
+  <div class="container">
+    <div class="navbar-header">
+        <a class="navbar-brand" href="#"><img class="MongoImage" src="images/mongodb_logo3.png"></a>
+    </div>
+  </div>
+</nav>
+
+  <div class="container">  
+  <div class="row">
+    <div class="col-sm-3 col-md-3 col-lg-3">
+
+    <div class="sidebar">
+      <div class="well">   
+       <div class="list-group">
+          <a href="/" class="list-group-item list-group-item-info">MongoDB<br/><I>A General Purpose Database</I></a>
+       
+       </div>
+        <div class="list-group">
+           <a href="#" class="list-group-item list-group-item-success">Advanced Search</a>
+           <a href="#" class="list-group-item">Faceted Search</a>
+            <a href="/TextSearch" class="list-group-item active"><b>Text Search</b></a>
+            <a href="/GraphSearch" class="list-group-item">Graph Queries</a>
+            <a href="#" class="list-group-item">Geo-spaital Search</a>
+          </div>
+
+          <div class="list-group">
+          <a href="#" class="list-group-item list-group-item-success">Data Analytics</a>
+            <a href="#" class="list-group-item">Spark Integration</a>
+            <a href="#" class="list-group-item">Reporting Tools</a>
+          </div>
+          <div class="list-group">
+          <a href="#" class="list-group-item list-group-item-success">Relational-like</a>
+            <a href="#" class="list-group-item">Constraints</a>
+            <a href="#" class="list-group-item">Views</a>
+             <a href="#" class="list-group-item">Joins</a>
+          </div>
+       
+       
+       </div>
+      </div> 
+      </div> <!--col-sm-6-->
+
+      <div class="col-sm-9 col-md-9 col-lg-9">
+      <div class="content">
+        <div class="hero-group">
+            <h2>Text Search</h2>
+            <p>-MongoDB provides text indexes enabling fast searching across a collection, support for collation, etc.. --TODO--</p>
+            
+            <div class="form-group">
+                   <p><b>Text Searching</b> - h</p>
+                      <p>Enter a search term (i.e. coffee) to find a name of a business:</p>
+                  <!--    <p id="TextSearchCodeSample" class="CodeSample" style="display:none">db.business.find( { $text: <br>{ $search: "<label style="display:inline-block" id="lblTextSearchSampleSource"></label>" } ,<br>{ name: 1, city: 1, state: 1, categories: 1}) </p>-->
+                  <label for="inputSearch">Search: </label>
+                  <input type="text" class="form-control" id="inputSearchCriteria" placeholder="Enter search term (i.e. coffee)..." >
+            </div>
+            <button type="submit" class="btn btn-default" id="TextSearchButton" onclick="handleTextSearch()" style="border:solid;" >Search Names</button>&nbsp;&nbsp; 
+           
+            <button type="buttpn" class="btn btn-default" id="TextSearchShowCodeButton" data-toggle="modal" data-target="#ShowQuery">Show Query</button><br>
+            <!--Show Query Dialog-->
+                <div class="modal fade" id="ShowQuery" role="dialog">
+                <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Show Query</h4>
+                    </div>
+                    <div class="modal-body">
+                    <p>This is some sample code that shows the query executed against MongoDB.</p>
+                    <label id="lblTextSearchSampleSource" class="text-danger"></label>
+                    </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+                </div>
+                </div>      
+            <br>
+            <label class="label" id="lblTextSearchCode"></label>
+            <label class="label" id="lblTextResults"></label>
+         
+            <div class="content-fluid">
+                <div class="col-sm-12 col-md-12 col-lg-12">
+                    <table id="TextSearchResults" class="TextSearchResultsCSS"/>
+                </div>
+            </div>
+                  
+        </div> <!--hero-->
+    </div> <!--content-->
+    </div> <!-- col-sm -->
+
+    </div> <!--row-->
+    </div> <!--container-->
+    
+  </body>
+</html>
