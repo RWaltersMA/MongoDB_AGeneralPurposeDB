@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    
+    <title>MongoDB - General purpose database for GIANT IDEAS</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/mystyle.css">
+  </head>
+  <body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+ <script>
+    document.getElementById('lblTextSampleSource').innerHTML="Run the query to see the sample MongoDB command text.";
+
+    function QueryCityList(val) {
+        //Ajax post and receive city list
+
+        $("#loading_gif").show();
+          $.ajax({
+            url: "/FacetSearch/QueryCityList",
+           // headers: headers,  use this for special header info like security auth
+            method: 'POST',
+             data: JSON.stringify({ StateID: val }),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            // This prevents JQuery from trying to append the form as a querystring
+            processData: false,
+        
+         }).done(function(data)
+            {
+                   //Get rid of spinning circle
+                   $("#loading_gif").hide();
+
+                   //Clear the drop down
+                   $("#CityToQueryDropdown").find('option').remove().end();
+
+                   //enumerate the drop down
+                   $.each(data, function(key, value) { 
+                        $('#CityToQueryDropdown')
+                            .append($('<option>', { key : value.City })
+                            .text(value.City)); 
+                    });
+            }
+            ).fail(function(data)
+            {
+               $("#loading_gif").hide();
+               return;
+            }); 
+
+         $("#CityToQueryDropdown").prop('disabled', false);
+     
+    }
+     function handleFacetSearch() {
+        //Prevent the form from trying to post itself again
+        event.preventDefault();
+        if ($( "#CityToQueryDropdown" ).val()=="0")
+        {
+           $('#MissingCityMessage').show();
+           return;
+        }
+        $('#MissingCityMessage').hide();
+
+        var CityToQuery = $('#CityToQueryDropdown').val();
+        var StateToQuery = $('#StateToQuery').val();
+
+         $("#FacetSearchButton").prop('disabled', true);
+        
+        //Use AJAX and submit the form data to the server
+        $.ajax({
+            url: "/FacetSearch",
+           // headers: headers,  use this for special header info like security auth
+            method: 'POST',
+             data: JSON.stringify({ City: CityToQuery, State: StateToQuery}),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            // This prevents JQuery from trying to append the form as a querystring
+            processData: false,
+        
+         }).done(function(data)
+            {
+               console.log(data);
+              
+                //Clear results DIV
+                $("#FacetResultsDIV").empty();
+                $("#FacetSearchButton").prop('disabled', false);
+
+                 $.each(data[0], function(title, val1) {
+                    // $("#FacetResultsDIV").append($("<H5 style='background-color:#2222FF'></H5>").text(title));
+
+                     var table = document.createElement('table');
+                        table.setAttribute("width","400px");
+                         $("#FacetResultsDIV").append(table);
+                            var thead = document.createElement('thead');
+                            thead.setAttribute("style", "background-color:lightblue;color:black");
+                            
+                            table.appendChild(thead);
+                            thead.appendChild(document.createElement("th")).
+                            appendChild(document.createTextNode(title));
+
+                    $.each(val1, function (name_value, val2) {
+                        
+                          var row = table.insertRow(0);
+                          row.insertCell(0).innerHTML=val2._id;
+                          row.insertCell(1).innerHTML="<span class='badge'>" + val2.count + "</span>";
+                     
+                    })
+                    $("#FacetResultsDIV").append("<br>");
+
+                    });
+
+                 var Query="db.business.aggregate( [<br>&nbsp;&nbsp;&nbsp;{\"$match\": { \"state\": \"" + StateToQuery + "\", \"city\": \"" + CityToQuery + "\"} },<br>";
+                 Query+="&nbsp;&nbsp;&nbsp;{\"$facet\" : {<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\"ByCategories\": [  { \"$unwind\" : \"$categories\" },<br>";
+                 Query+="&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp{ \"$match\" : {\"categories\" : { \"$in\" : [\"Restaurants\", \"Food\", \"Bars\", \"Coffee & Tea\", \"Pizza\", \"Burgers\", \"Sandwiches\"] }}},<br>";
+                 Query+="&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp{ \"$sortByCount\" : \"$categories\" } ],<br>&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp\"ByStars\": [ { \"$bucket\" : { \"groupBy\" : \"$stars\", boundaries: [ 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5 ], \"default\" : 0 } } ],<br>";
+                 Query+="&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp\"ByPriceRange\": [ { \"$bucket\" : { \"groupBy\" : \"$attributes.Price Range\", \"boundaries\" : [ 1, 2, 3, 4, 5 ], \"default\" : 0 } } ]";
+                 document.getElementById('lblTextSampleSource').innerHTML=Query;
+         }) //done()
+                            
+            .fail(function(data)
+            {
+               $("#FacetSearchButton").prop('disabled', false);
+                //document.getElementById('lblTextResults').innerHTML = 'Failed !';
+            }); 
+
+    };
+     
+</script>
+
+
+<nav class="navbar navbar-inverse">
+  <div class="container">
+    <div class="navbar-header">
+        <a class="navbar-brand" href="#"><img class="MongoImage" src="images/mongodb_logo3.png"></a>
+    </div>
+  </div>
+</nav>
+
+  <div class="container">  
+  <div class="row">
+    <div class="col-sm-3 col-md-3 col-lg-3">
+
+    <div class="sidebar">
+      <div class="well">   
+       <div class="list-group">
+          <a href="/" class="list-group-item list-group-item-info">MongoDB<br/><I>A General Purpose Database</I></a>
+       
+       </div>
+        <div class="list-group">
+           <a href="#" class="list-group-item list-group-item-success">Advanced Search</a>
+           <a href="/FacetSearch" class="list-group-item active">Faceted Search</a>
+            <a href="/TextSearch" class="list-group-item">Text Search</a>
+            <a href="/GraphSearch" class="list-group-item">Graph Queries</a>
+            <a href="#" class="list-group-item">Geo-spatial Search</a>
+          </div>
+
+          <div class="list-group">
+          <a href="#" class="list-group-item list-group-item-success">Data Analytics</a>
+            <a href="#" class="list-group-item">Spark Integration</a>
+            <a href="#" class="list-group-item">Reporting Tools</a>
+          </div>
+          <div class="list-group">
+          <a href="#" class="list-group-item list-group-item-success">Relational-like</a>
+            <a href="#" class="list-group-item">Constraints</a>
+            <a href="#" class="list-group-item">Views</a>
+             <a href="#" class="list-group-item">Joins</a>
+          </div>
+       
+       
+       </div>
+      </div> 
+      </div> <!--col-sm-6-->
+      
+      <div class="col-sm-9 col-md-9 col-lg-9">
+      <div class="content">
+        <div class="hero-unit">
+            <h1>Facet Queries Overview</h1>
+            <p>--TODO--..Text describing facet queries, set up demo, etc...</p>
+            <p><a class="btn primary large">Learn more &raquo;</a></p>
+        </div>
+        <label for="StateToQuery">Select a state:</label>
+        <select class="form-control" id="StateToQuery" required onchange="QueryCityList(this.value)">
+            <option value="AK">Alaska</option>
+            <option value="AZ" selected="true">Arizone</option>
+            <option value="CA">California</option>
+              <option value="FL">Florida</option>
+              <option value="IL">Illinois</option>
+              <option value="NC">North Carolina</option>
+              <option value="PA">Pennsylvania</option>
+              <option value="TX">Texas</option>
+           </select>
+     
+          <label for="CityToQuery">Select a city:</label>
+           <select class="form-control" id="CityToQueryDropdown" required disabled>
+            <option value="0">--- Select a state above ---</option>
+           </select>
+            <div class="alert alert-danger fade in" id="MissingCityMessage" style="display:none;">
+                <strong>Opps!</strong> Please choose a city from the drop down box above.
+            </div>
+
+           <br>
+           <p>Interested in knowing what the MongoDB query would be?   <button type="button" class="btn btn-link" id="TextSearchShowCodeButton" data-toggle="modal" data-target="#ShowQuery">Show Query</button><br>
+          
+          <div>
+           <button type="submit" class="btn btn-default" id="FacetSearchButton" onclick="handleFacetSearch()" style="border:solid;" >Query Facets</button>&nbsp;&nbsp; 
+           <img src="/images/white-loading.gif" id="loading_gif" style="display: none;width:40px;height:40px;" >
+           </div>
+           <br>
+            <!--Show Query Dialog-->
+                <div class="modal fade" id="ShowQuery" role="dialog">
+                <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Show Query</h4>
+                    </div>
+                    <div class="modal-body">
+                    <p>This is some sample code that shows the query executed against MongoDB.</p>
+                    <label id="lblTextSampleSource" class="text-danger"></label>
+                    </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+                </div>
+                </div>    
+
+           <label id="lblTextResults" class="bg-info"></label>
+
+            <div class="content-fluid">
+            <div class="panel panel-default">
+            <div class="panel-body" style="height: 300px;overflow: auto" id="FacetResultsDIV">
+                   <!-- <table id="TableGraphResults" class="TextSearchResultsCSS"/>-->
+                </div>
+            </div>
+            </div>
+
+      </div> <!-- content -->
+      </div> <!-- col-sm-6 -->
+      </div> <!-- row -->
+      </div> <!-- container-->
+    
+  </body>
+</html>

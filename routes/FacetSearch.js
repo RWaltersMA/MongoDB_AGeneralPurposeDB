@@ -19,15 +19,50 @@ var connectionString = url.format({
 });
 
 router.get('/', function (req,res,next) {
-       res.render('text', { title: 'MongoDB - General purpose database for GIANT IDEAS' });
+       res.render('facet', { title: 'MongoDB - General purpose database for GIANT IDEAS' });
 
+})
+
+//This function will accept a state abreviation and return a list of Cities in that State
+router.post('/QueryCityList', function (req,res,next) {
+
+var ResultSet=[];
+
+var SearchCriteria=req.body.StateID;
+
+MongoClient.connect(connectionString, function(err, database) {
+
+    assert.equal(null, err);
+    if(err) throw err;
+
+    db = database;
+    //db.runCommand ( { distinct: "business", key: "city", query: { state: "NC"} } )
+    //Could also use Aggregation Framework: db.business.aggregate([{$group: {_id:"$city"}}, {$sort:{"_id":1}}])
+    //db.business.aggregate([{$match: {"state": SearchCriteria }},{$group: {_id:"$city"}}, {$sort:{"_id":1}}])
+
+    var FacetSearchResults = db.collection("business").distinct("city",{ "state": SearchCriteria },function(err, docs) {
+        var v=docs.sort();
+
+        v.forEach(function (item, index, array) {
+                ResultSet.push({
+                        City: item
+                        });
+
+        });
+
+            res.send(ResultSet);
+            res.end();
+            db.close();
+            })  
+    })
 })
 
 router.post('/', function (req,res, next){
 
 var ResultSet=[];
 
-var SearchCriteria=req.body.criteria;
+var CitySearchCriteria=req.body.City;
+var StateSearchCriteria=req.body.State;
 
 MongoClient.connect(connectionString, function(err, database) {
 
@@ -36,9 +71,13 @@ MongoClient.connect(connectionString, function(err, database) {
 
     db = database;
 
+console.log(StateSearchCriteria);
+console.log(CitySearchCriteria);
+
     var FacetSearchResults = db.collection("business").aggregate( [
-   {
-      "$facet" : {
+   
+      {"$match": { "state": StateSearchCriteria, "city": CitySearchCriteria} },
+      {"$facet" : {
 
          "ByCategories": [  { "$unwind" : "$categories" },
              { "$match" : {"categories" : { "$in" : ["Restaurants", "Food", "Bars", "Coffee & Tea", "Pizza", "Burgers", "Sandwiches"] }}},
