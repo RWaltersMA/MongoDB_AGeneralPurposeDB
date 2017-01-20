@@ -12,6 +12,8 @@ var index = require('./routes/index');
 var textsearch = require('./routes/TextSearch');
 var graphsearch = require('./routes/GraphSearch');
 var facetsearch = require('./routes/FacetSearch');
+var lookup = require('./routes/Lookup');
+var sparkintegration = require('./routes/SparkIntegration');
 
 //var parsesearch = multer(); // for parsing multipart/form-data
 
@@ -38,6 +40,8 @@ app.use('/', index);
 app.use('/TextSearch', textsearch);
 app.use('/GraphSearch', graphsearch);
 app.use('/FacetSearch', facetsearch);
+app.use('/Lookup', lookup);
+app.use('/SparkIntegration', sparkintegration);
 
 /*
 //Render home page 
