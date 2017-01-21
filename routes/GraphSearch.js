@@ -62,8 +62,6 @@ var ResultSet=[];
 var UserIDToQuery=req.body.UserID;
 var LevelsToQuery=req.body.Levels;
 
-console.log(UserIDToQuery);
-console.log(LevelsToQuery);
 
 MongoClient.connect(connectionString, function(err, database) {
 

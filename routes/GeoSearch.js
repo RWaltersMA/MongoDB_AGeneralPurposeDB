@@ -19,16 +19,14 @@ var connectionString = url.format({
 });
 
 router.get('/', function (req,res,next) {
-       res.render('facet', { title: 'MongoDB - General purpose database for GIANT IDEAS' });
+       res.render('geo', { title: 'MongoDB - General purpose database for GIANT IDEAS' });
 
 })
 
 //This function will accept a state abreviation and return a list of Cities in that State
-router.post('/QueryCityList', function (req,res,next) {
+router.post('/QueryBusinessList', function (req,res,next) {
 
 var ResultSet=[];
-
-var SearchCriteria=req.body.StateID;
 
 MongoClient.connect(connectionString, function(err, database) {
 
@@ -40,14 +38,16 @@ MongoClient.connect(connectionString, function(err, database) {
     //Could also use Aggregation Framework: db.business.aggregate([{$group: {_id:"$city"}}, {$sort:{"_id":1}}])
     //db.business.aggregate([{$match: {"state": SearchCriteria }},{$group: {_id:"$city"}}, {$sort:{"_id":1}}])
 
-    var FacetSearchResults = db.collection("business").distinct("city",{ "state": SearchCriteria },function(err, docs) {
-        var v=docs.sort();
+    var FacetSearchResults = db.collection("business").aggregate([{$match: { "state":"NV", "city":"Las Vegas"}},{$limit:10},{$group: {_id:"$name"}}, {$sort:{"_id":1}}],function(err, docs) {
+       //var v=docs.sort();
 
-        v.forEach(function (item, index, array) {
+      
+
+        docs.forEach(function (item, index, array) {
                 ResultSet.push({
-                        City: item
+                        Business: item["_id"]
                         });
-
+           
         });
 
             res.send(ResultSet);
@@ -60,9 +60,8 @@ MongoClient.connect(connectionString, function(err, database) {
 router.post('/', function (req,res, next){
 
 var ResultSet=[];
-
-var CitySearchCriteria=req.body.City;
-var StateSearchCriteria=req.body.State;
+var BusinessName=req.body.Business;
+var Distance=Number(req.body.Distance);
 
 MongoClient.connect(connectionString, function(err, database) {
 
@@ -70,26 +69,31 @@ MongoClient.connect(connectionString, function(err, database) {
     if(err) throw err;
 
     db = database;
-    
-    var FacetSearchResults = db.collection("business").aggregate( [
-   
-      {"$match": { "state": StateSearchCriteria, "city": CitySearchCriteria} },
-      {"$facet" : {
 
-         "ByCategories": [  { "$unwind" : "$categories" },
-             { "$match" : {"categories" : { "$in" : ["Restaurants", "Food", "Bars", "Coffee & Tea", "Pizza", "Burgers", "Sandwiches"] }}},
-             { "$sortByCount" : "$categories" } ],
-         "ByStars": [ { "$bucket" : { "groupBy" : "$stars", boundaries: [ 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5 ], "default" : 0 } } ],
-         "ByPriceRange": [ { "$bucket" : { "groupBy" : "$attributes.Price Range", "boundaries" : [ 1, 2, 3, 4, 5 ], "default" : 0 } } ]
-      }
-   }]).toArray().then(function (items) {
+    //Obtain the coordinates of the selected business
+
+    var Coord=db.collection("business").findOne({ "name" : BusinessName, "state" : "NV", "city":"Las Vegas" }, {_id:0, longitude:1, latitude:1}, function(err,coord) {
+
+    var GeoSearchResults = db.collection("business").aggregate([    {
+              $geoNear: {  near: { type: "Point", coordinates: [ coord.longitude,coord.latitude  ] },
+              distanceField: "dist.calculated", 
+              maxDistance: Distance,
+              query: { },
+              includeLocs: "dist.location", 
+              num: 50,
+              spherical: true      }    }, { $project: { name:1, dist:1 }} ]).toArray().then(function (items) {
 
             items.forEach((item, idx, array) =>
             {
+               
+
                 ResultSet.push({
-                        Categories: item['ByCategories'],
-                        Stars: item['ByStars'],
-                        PriceRange: item['ByPriceRange']
+                        BusinessName: item['name'],
+                        DistanceToBusiness: item.dist.calculated,
+                        BusinessCoord: item.dist.location.coordinates
+
+                    //    Stars: item['ByStars'],
+                      //  PriceRange: item['ByPriceRange']
                 });
 
             });
@@ -102,6 +106,7 @@ MongoClient.connect(connectionString, function(err, database) {
             console.log(e);
   });
  });
+});
 });
 
 module.exports = router;
