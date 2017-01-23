@@ -107,10 +107,16 @@ MongoClient.connect(connectionString, function(err, database) {
     var InsertAllResults= db.collection("personal_ratings").insert(TheRatings,function(err, doc){
 
         exec('sh ~/CodeStaging/SparkReccEngine/submit-scala.sh -h localhost -p 27017 -d yelp > /tmp/spark-submit.log 2>&1' ,function(err,stdout,stderr){
-      if (err) throw err;
+      if (err)
+      {
+            res.send({err});
+      }
+      else{
+          res.send({});
+      }
 
 
-         res.send({});
+      //   res.send({});
         res.end();
         db.close();
         });
