@@ -64,6 +64,7 @@
                   // $("#loading_gif").hide();
 
                  $("#HangOnItsCrunchingMessage").show();
+                 $("#ViewRecomendationsButton").prop('disabled',true);
 
             }
             ).fail(function(data)
@@ -105,7 +106,7 @@
              
                           var row = table.insertRow(0);
                           row.insertCell(0).innerHTML=data[i].businessName;
-                          row.insertCell(1).innerHTML=data[i].review_starts;
+                          row.insertCell(1).innerHTML=data[i].review_stars;
                
                         }
             }
@@ -209,7 +210,7 @@
                          <br>
                          <div class="alert alert-info fade in" id="HangOnItsCrunchingMessage" style="display:none;">
                             <strong>Hang on!!</strong> Spark is leveraging data stored in MongoDB to create your recommendations!<br>
-                            This may take up to 5 minutes so check out other features!  When Spark is finished, the View Recommendations button shown below will be enabled.
+                            This may take up to 5 minutes so check out other features and come back to this tab!  When Spark is finished, the View Recommendations button shown below will be enabled.
                         </div>
                         <br>
                          <button type="button" <% if (!HasResults) { %> class="btn btn-default" <% } else { %> class="btn btn-success" <% } %>  id="ViewRecomendationsButton" onclick="ViewRecomendations()" <% if(!HasResults){ %> disabled <% } %> >VIEW RECOMMENDATIONS</button> 
