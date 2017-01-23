@@ -182,7 +182,7 @@ var ResultSet=[];
       //db.id_names.find({"business_name" : /pizza/i })
           // Top 20 recommendations with names, with stars greater than or equal to 3
           var LookupResults = db.collection("user_recommendations").aggregate([
-                    { '$match' : { 'review_stars' : { '$gte' : 3 }}},
+                    { '$match' : { 'review_stars' : { '$gte' : 2 }}},
                     { '$lookup' : {'from': 'id_names', 'localField': 'businessId', 'foreignField': 'businessId', 'as': 'business' }},
                     { '$unwind' : '$business' }, 
                     { '$project' : { '_id':0, 'userId':1, 'businessId':1, 'businessName': '$business.business_name', 'review_stars':1 }},
