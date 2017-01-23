@@ -109,13 +109,27 @@ MongoClient.connect(connectionString, function(err, database) {
         exec('sh ~/CodeStaging/SparkReccEngine/submit-scala.sh -h localhost -p 27017 -d yelp > /tmp/spark-submit.log 2>&1' ,function(err,stdout,stderr){
       if (err)
       {
-            res.send({err});
+          var AuditFailure= db.collection("audit").insert(err,function(err, doc){
+
+          }); 
       }
-      else{
-          res.send({});
+      
+            if (stdout)
+      {
+          var AuditFailure= db.collection("audit").insert(stdout,function(err, doc){
+
+          }); 
       }
 
+            if (stderr)
+      {
+          var AuditFailure= db.collection("audit").insert(stderr,function(err, doc){
 
+          }); 
+      }
+
+      
+        res.send({});
       //   res.send({});
         res.end();
         db.close();
