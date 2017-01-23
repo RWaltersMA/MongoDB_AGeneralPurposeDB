@@ -113,7 +113,7 @@ MongoClient.connect(connectionString, function(err, database) {
             db.close();
 
 
-      /*  exec('sh ~/CodeStaging/SparkReccEngine/submit-scala.sh -h localhost -p 27017 -d yelp > /tmp/spark-submit.log 2>&1' ,function(err,stdout,stderr){
+        exec('sh ~/CodeStaging/SparkReccEngine/submit-scala.sh -h localhost -p 27017 -d yelp > /tmp/spark-submit.log 2>&1' ,function(err,stdout,stderr){
       if (err)
       {
           var AuditFailure= db.collection("audit").insert(err,function(err, doc){
@@ -139,7 +139,7 @@ MongoClient.connect(connectionString, function(err, database) {
      //   res.send({});
       //  res.end();
        // db.close();
-    });*/
+    });
 
         });
         });
