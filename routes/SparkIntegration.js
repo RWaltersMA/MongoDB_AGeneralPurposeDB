@@ -102,15 +102,18 @@ MongoClient.connect(connectionString, function(err, database) {
 
     var TheRatings=JSON.parse("[" + req.body.MyRatings + "]");  // When you insert multiple documents you need []
 
-    var DeleteAllResults = db.collection("personal_ratings").remove( { } ,function (err,doc) {
+    var DeleteAllResults = db.collection("personal_ratings").remove( { }).then(function (err,doc) {
 
-    var InsertAllResults= db.collection("personal_ratings").insert(TheRatings,function(err, doc){
+    var InsertAllResults= db.collection("personal_ratings").insert(TheRatings).then (function(err, doc){
+
 
         res.send({});
       //   res.send({});
         res.end();
+            db.close();
 
-        exec('sh ~/CodeStaging/SparkReccEngine/submit-scala.sh -h localhost -p 27017 -d yelp > /tmp/spark-submit.log 2>&1' ,function(err,stdout,stderr){
+
+      /*  exec('sh ~/CodeStaging/SparkReccEngine/submit-scala.sh -h localhost -p 27017 -d yelp > /tmp/spark-submit.log 2>&1' ,function(err,stdout,stderr){
       if (err)
       {
           var AuditFailure= db.collection("audit").insert(err,function(err, doc){
@@ -136,11 +139,12 @@ MongoClient.connect(connectionString, function(err, database) {
      //   res.send({});
       //  res.end();
        // db.close();
-        });
+    });*/
+
         });
         });
        
-        db.close();
+    
 });
 
        
