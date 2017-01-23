@@ -129,13 +129,16 @@ MongoClient.connect(connectionString, function(err, database) {
       }
 
       
+     //   res.send({});
+      //  res.end();
+       // db.close();
+        });
+        });
+        });
         res.send({});
       //   res.send({});
         res.end();
         db.close();
-        });
-        });
-        });
 });
 
        
