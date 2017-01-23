@@ -34,7 +34,7 @@ MongoClient.connect(connectionString, function(err, database) {
     var ResultSet=[];
     var HasResults=0;
 
-    var TextSearchResults = db.collection("id_names").find({"business_name" : /pizza/i }).toArray().then(function (items) { 
+    var TextSearchResults = db.collection("id_names").find({"business_name" : /pizza/i }).limit(10).toArray().then(function (items) { 
  
             items.forEach((item, idx, array) => 
             {       
@@ -67,6 +67,26 @@ MongoClient.connect(connectionString, function(err, database) {
 }); //MongoClient
 });
 
+router.post('/ClearRecommendations/', function (req, res, next)
+{
+    
+MongoClient.connect(connectionString, function(err, database) {
+
+    assert.equal(null, err);
+    if(err) throw err;
+
+    db = database;
+    var DeleteAllRecommendations = db.collection("user_recommendations").remove( { } ,function (err,doc) {
+
+        //console.log("Error: " + err);
+        res.send({});
+        res.end();
+        db.close();
+        });
+
+})
+
+})
 
 //This function will receive a JSON string describing the businessId and ratings and insert it into the user_recommendations colletion
 router.post('/UploadRecommendations/', function (req, res, next){
