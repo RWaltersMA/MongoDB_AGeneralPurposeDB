@@ -110,7 +110,7 @@
         <div class="list-group">
            <a href="#" class="list-group-item list-group-item-success">Advanced Search</a>
            <a href="/FacetSearch" class="list-group-item">Faceted Search</a>
-            <a href="/TextSearch" class="list-group-item active"><b>Text Search</b></a>
+            <a href="/TextSearch" class="list-group-item active">Text Search</a>
             <a href="/GraphSearch" class="list-group-item">Graph Queries</a>
             <a href="/GeoSearch" class="list-group-item">Geo-spatial Search</a>
           </div>
@@ -118,13 +118,13 @@
           <div class="list-group">
           <a href="#" class="list-group-item list-group-item-success">Data Analytics</a>
             <a href="/SparkIntegration" class="list-group-item">Spark Integration</a>
-            <a href="#" class="list-group-item">Reporting Tools</a>
+            <a href="#" class="list-group-item disabled">Reporting Tools</a>
           </div>
           <div class="list-group">
           <a href="#" class="list-group-item list-group-item-success">Relational-like</a>
-            <a href="#" class="list-group-item">Constraints</a>
-            <a href="#" class="list-group-item">Views</a>
-             <a href="#" class="list-group-item">Joins</a>
+            <a href="#" class="list-group-item disabled">Constraints</a>
+            <a href="#" class="list-group-item disabled">Views</a>
+             <a href="#" class="list-group-item disabled">Joins</a>
           </div>
        
        
@@ -136,11 +136,11 @@
       <div class="content">
         <div class="hero-group">
             <h2>Text Search</h2>
-            <p>-MongoDB provides text indexes enabling fast searching across a collection, support for collation, etc.. --TODO--</p>
-            
+            <p>MongoDB provides text search capabilties across collation aware collections!  Leveraging the power of text indexes queries can be returned fast and efficiently.</p>
+            <p>To see text search in action, a text index has been created on the business name key in our collection.  Specify a partial name of a business like, "coffee" to see a list of business that match that search criteria.</p>
             <div class="form-group">
-                   <p><b>Text Searching</b> - h</p>
-                      <p>Enter a search term (i.e. coffee) to find a name of a business:</p>
+                  
+                  <p>Enter a search term to find a name of a business:</p>
                   <!--    <p id="TextSearchCodeSample" class="CodeSample" style="display:none">db.business.find( { $text: <br>{ $search: "<label style="display:inline-block" id="lblTextSearchSampleSource"></label>" } ,<br>{ name: 1, city: 1, state: 1, categories: 1}) </p>-->
                   <label for="inputSearch">Search: </label>
                   <input type="text" class="form-control" id="inputSearchCriteria" placeholder="Enter search term (i.e. coffee)..." >

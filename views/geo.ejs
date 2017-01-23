@@ -193,13 +193,13 @@ src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAlcTazO9PgfR_LcG9JPe4eoHP
           <div class="list-group">
           <a href="#" class="list-group-item list-group-item-success">Data Analytics</a>
             <a href="/SparkIntegration" class="list-group-item">Spark Integration</a>
-            <a href="#" class="list-group-item">Reporting Tools</a>
+            <a href="#" class="list-group-item disabled">Reporting Tools</a>
           </div>
           <div class="list-group">
           <a href="#" class="list-group-item list-group-item-success">Relational-like</a>
-            <a href="#" class="list-group-item">Constraints</a>
-            <a href="#" class="list-group-item">Views</a>
-             <a href="#" class="list-group-item">Joins</a>
+            <a href="#" class="list-group-item disabled">Constraints</a>
+            <a href="#" class="list-group-item disabled">Views</a>
+             <a href="#" class="list-group-item disabled">Joins</a>
           </div>
        
        
@@ -210,9 +210,10 @@ src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAlcTazO9PgfR_LcG9JPe4eoHP
       <div class="col-sm-9 col-md-9 col-lg-9">
       <div class="content">
         <div class="hero-unit">
-            <h1>Geospatial Queries Overview</h1>
-            <p>Geospatial allows you to... To demonstrate, below is a list of businesses in the Las Vegas, Nevada area.  Pick a business and then choose a distance.  The query will return a list of businesses within those parameters.</p>
-            <p><a class="btn primary large">Learn more &raquo;</a></p>
+            <h1>Geospatial Queries</h1>
+            <p>MongoDB natively understands Geospatial data allowing you to perform advanced functions like distance from and intersection queries.  This native query capability in combination of geospatial indexing support makes MongoDB a first choice for any geospatial application.</p>
+            <p>Want to kick the tires?  Below is a list of businesses in the Las Vegas, Nevada area.  Pick a business and then choose a distance.  The query will return a list of businesses within the specified distance you provided.</p>
+            <p><a class="btn primary large" href="https://www.mongodb.com/blog/post/geospatial-performance-improvements-in-mongodb-3-2">Learn more &raquo;</a></p>
         </div>
         <label for="BusinessToQuery">Select a business:</label>
         <select class="form-control" id="BusinessToQuery" required onchange="QueryBusinessList()">

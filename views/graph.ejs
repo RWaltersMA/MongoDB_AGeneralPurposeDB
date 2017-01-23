@@ -139,13 +139,13 @@
           <div class="list-group">
           <a href="#" class="list-group-item list-group-item-success">Data Analytics</a>
             <a href="/SparkIntegration" class="list-group-item">Spark Integration</a>
-            <a href="#" class="list-group-item">Reporting Tools</a>
+            <a href="#" class="list-group-item disabled">Reporting Tools</a>
           </div>
           <div class="list-group">
           <a href="#" class="list-group-item list-group-item-success">Relational-like</a>
-            <a href="#" class="list-group-item">Constraints</a>
-            <a href="#" class="list-group-item">Views</a>
-             <a href="#" class="list-group-item">Joins</a>
+            <a href="#" class="list-group-item disabled">Constraints</a>
+            <a href="#" class="list-group-item disabled">Views</a>
+             <a href="#" class="list-group-item disabled">Joins</a>
           </div>
        
        
@@ -156,9 +156,11 @@
       <div class="col-sm-9 col-md-9 col-lg-9">
       <div class="content">
         <div class="hero-unit">
-            <h1>Graph Queries Overview</h1>
-            <p>--TODO--..Text describing graph queries, there place in MongoDB, etc...</p>
-            <p><a class="btn primary large">Learn more &raquo;</a></p>
+            <h1>Graph Queries</h1>
+            <p>Graph theory has established itself as an important mathematical tool in a wide variety of subjects including operational research, fraud detection, and social networking to name a few.  MongoDB provides native graph query capabilties eliminated the need to leverage third party solutions!</p>
+            <p>Not sure what a graph query is?  Imagine you have a list of users and these users have friends.  What if you wanted to find a list of someone's 2nd degree connections i.e. this person's friends of friends.  This is possible without graph queries but would require lots of round trip queries to a database.  With MongoDB $graphLookup aggregation function users can quickly obtain answers to these queries with one query to the server dramatically improving application performance!
+            <p>To see graph queries in action, specify a user from the list below and select how many levels of connections you wish to query.</p>
+            <p><a class="btn primary large" href="https://docs.mongodb.com/manual/reference/operator/aggregation/graphLookup/">Learn more &raquo;</a></p>
         </div>
         <label for="UserToQuery">Select a user to query their friends:</label>
         <select class="form-control" id="UserToQuery" required>

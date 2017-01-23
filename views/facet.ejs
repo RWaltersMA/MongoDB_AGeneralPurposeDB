@@ -157,13 +157,13 @@
           <div class="list-group">
           <a href="#" class="list-group-item list-group-item-success">Data Analytics</a>
             <a href="/SparkIntegration" class="list-group-item">Spark Integration</a>
-            <a href="#" class="list-group-item">Reporting Tools</a>
+            <a href="#" class="list-group-item disabled">Reporting Tools</a>
           </div>
           <div class="list-group">
           <a href="#" class="list-group-item list-group-item-success">Relational-like</a>
-            <a href="#" class="list-group-item">Constraints</a>
-            <a href="#" class="list-group-item">Views</a>
-             <a href="#" class="list-group-item">Joins</a>
+            <a href="#" class="list-group-item disabled">Constraints</a>
+            <a href="#" class="list-group-item disabled">Views</a>
+             <a href="#" class="list-group-item disabled">Joins</a>
           </div>
        
        
@@ -175,13 +175,16 @@
       <div class="content">
         <div class="hero-unit">
             <h1>Facet Queries Overview</h1>
-            <p>--TODO--..Text describing facet queries, set up demo, etc...</p>
-            <p><a class="btn primary large">Learn more &raquo;</a></p>
+            <p>Faceted search, or faceted navigation, is a way of browsing and searching for items in a set of data by applying filters on various properties (facets) of the items in the collection. </p>
+            <p>Without native facet search in MongoDB, developers would have to issue multiple filter queries to obtain the desired groupings of data.  In MongoDB just one query is needed to obtain faceted search results improving development time and overall application performance!.</p>
+            <p>To see Facet search in action, select a city and state from the dropdowns below.  This web page will issue a faceted search against our business dataset and return a list of businesses and their corresponding categories.</p>
+            <p>
+            <p><a class="btn primary large" href="https://www.mongodb.com/blog/post/faceted-search-with-mongodb">Learn more &raquo;</a></p>
         </div>
         <label for="StateToQuery">Select a state:</label>
         <select class="form-control" id="StateToQuery" required onchange="QueryCityList(this.value)">
             <option value="AK">Alaska</option>
-            <option value="AZ" selected="true">Arizone</option>
+            <option value="AZ" selected="true">Arizona</option>
             <option value="CA">California</option>
               <option value="FL">Florida</option>
               <option value="IL">Illinois</option>
