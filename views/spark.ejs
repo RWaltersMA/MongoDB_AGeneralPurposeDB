@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    
+    <title>MongoDB - General purpose database for GIANT IDEAS</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/mystyle.css">
+  </head>
+  <body>
+ 
+ <script>
+ // support functions here
+
+
+ function rate_business(businessId, rating)
+ {
+   //  console.log(businessId);
+  //   console.log(rating);
+
+     var $myDiv="Rating" + businessId;
+     $('#'+$myDiv).prop('innerHTML',rating);
+
+
+ }
+ function recommend()
+ {
+    // $("#HangOnItsCrunchingMessage").show();
+
+   
+      var Ratings=""; // Store Ratings
+      var first=true;
+
+     $('[id^=Ratin]').each(function(item) {
+    var number = this.id.split('g').pop();
+ 
+        if (first)
+        {
+            first=false;
+        }
+        else
+        {
+            Ratings+=",";
+        }
+   
+      
+        Ratings+="{ \"businessId\": \"" + number + "\", \"ratings\": \"" + this.innerHTML + "\" }";
+
+     });
+
+  // console.log(Ratings); 
+    
+         $.ajax({
+            url: "/SparkIntegration/UploadRecommendations",
+           // headers: headers,  use this for special header info like security auth
+            method: 'POST',
+            data:  JSON.stringify({MyRatings:Ratings}),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            // This prevents JQuery from trying to append the form as a querystring
+            processData: false,
+        
+         }).done(function(data)
+            {
+                   //Get rid of spinning circle
+                  // $("#loading_gif").hide();
+
+                 $("#HangOnItsCrunchingMessage").show();
+
+            }
+            ).fail(function(data)
+            {
+             
+               return;
+            }); 
+     
+ }
+
+
+ </script>
+ 
+  </head>
+  <body> <!-- write onload function to check if data is present in db.collection("user_recommendations"), if so enable the button,-->
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+    <nav class="navbar navbar-inverse">
+    <div class="container">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#"><img class="MongoImage" src="images/mongodb_logo3.png"></a>
+        </div>
+    </div>
+    </nav>
+
+    <div class="container">  
+    <div class="row">
+    <div class="col-sm-3 col-md-3 col-lg-3">
+
+    <div class="sidebar">
+      <div class="well">   
+       <div class="list-group">
+          <a href="/" class="list-group-item list-group-item-info">MongoDB<br/><I>A General Purpose Database</I></a>
+       
+       </div>
+        <div class="list-group">
+           <a href="#" class="list-group-item list-group-item-success">Advanced Search</a>
+           <a href="/FacetSearch" class="list-group-item">Faceted Search</a>
+            <a href="/TextSearch" class="list-group-item"><b>Text Search</b></a>
+            <a href="/GraphSearch" class="list-group-item">Graph Queries</a>
+            <a href="/GeoSearch" class="list-group-item">Geo-spatial Search</a>
+          </div>
+
+          <div class="list-group">
+          <a href="#" class="list-group-item list-group-item-success">Data Analytics</a>
+            <a href="/SparkIntegration" class="list-group-item active">Spark Integration</a>
+            <a href="#" class="list-group-item">Reporting Tools</a>
+          </div>
+          <div class="list-group">
+          <a href="#" class="list-group-item list-group-item-success">Relational-like</a>
+            <a href="#" class="list-group-item">Constraints</a>
+            <a href="#" class="list-group-item">Views</a>
+             <a href="#" class="list-group-item">Joins</a>
+          </div>
+       
+       
+       </div>
+      </div> 
+      </div> <!--col-sm-6-->
+
+      <div class="col-sm-9 col-md-9 col-lg-9">
+      <div class="content">
+        <div class="hero-group">
+            <h2>Spark Integration</h2>
+            <p>-MongoDB provides native integration with Apache Spark.  </p>
+            
+            <div class="form-group">
+                   <p><b>Recommendations</b> - h</p>
+                      <p>Please rate the following 10 businesses on a scale of 1( least) to 5 (best)</p>
+                    
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Business Name</th>
+                            <th>Rating</th>
+                            <th>Your Rating</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                       
+                    <% ResultSet.forEach(function (item) { %>
+                        <tr>
+                        <td><%= item.business_name %></a></td>
+                        <td><button type="button" name="rating_button" class="btn btn-default" onclick="rate_business(<%= item.businessId%>,1)">1</button>&nbsp;&nbsp;
+                        <button type="button" name="rating_button" class="btn btn-default" onclick="rate_business(<%= item.businessId%>,2)">2</button>&nbsp;&nbsp;
+                        <button type="button" name="rating_button" class="btn btn-default" onclick="rate_business(<%= item.businessId%>,3)">3</button>&nbsp;&nbsp;
+                        <button type="button" name="rating_button" class="btn btn-default" onclick="rate_business(<%= item.businessId%>,4)">4</button>&nbsp;&nbsp;
+                        <button type="button" name="rating_button" class="btn btn-default" onclick="rate_business(<%= item.businessId%>,5)">5</button>
+                        </td>
+                        <td style="text-align:center">
+                        <div id="Rating<%= item.businessId%>">3</div>
+                        </td>
+                        </tr>
+                        <% }) %>
+                         </tbody>
+                        </table>
+
+                         <button type="button" class="btn btn-default" id="submitRecommendations" onclick="recommend()" style="border:solid;" >Recommend Businesses</button> 
+                         <br>
+                         <div class="alert alert-info fade in" id="HangOnItsCrunchingMessage" style="display:none;">
+                            <strong>Hang on!!</strong> Spark is leveraging data stored in MongoDB to create your recommendations!<br>
+                            This may take up to 5 minutes so check out other features!  When Spark is finished, the View Recommendations button shown below will be enabled.
+                        </div>
+                        <br>
+                         <button type="button" class="btn btn-default" id="ViewRecomendations" onclick="ViewRecomendations()" disabled>Recommend Businesses</button> 
+                            
+            </div>
+        </div> <!--hero-->
+    </div> <!--content-->
+    </div> <!-- col-sm -->
+
+    </div> <!--row-->
+    </div> <!--container-->
+    
+  </body>
+</html>
