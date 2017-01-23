@@ -18,18 +18,13 @@
 
  function rate_business(businessId, rating)
  {
-   //  console.log(businessId);
-  //   console.log(rating);
 
      var $myDiv="Rating" + businessId;
      $('#'+$myDiv).prop('innerHTML',rating);
 
-
  }
  function recommend()
  {
-    // $("#HangOnItsCrunchingMessage").show();
-
    
       var Ratings=""; // Store Ratings
       var first=true;
@@ -78,7 +73,48 @@
             }); 
      
  }
+ function ViewRecomendations()
+ {
+       $.ajax({
+            url: "/SparkIntegration/GetRecommendations",
+           // headers: headers,  use this for special header info like security auth
+            method: 'GET',
+            data:  {}, // This is where we may want to send a unique client/session token in future to support multiple users JSON.stringify({MyRatings:Ratings}),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            // This prevents JQuery from trying to append the form as a querystring
+            processData: false,
+        
+         }).done(function(data)
+            {
+                  var table = document.getElementById("TableSparkResults");
+                //console.log(table);
+                
+                var ArrayHeader = ["Business Name","Review Stars"];
+                var thead = document.createElement('thead');
 
+                table.appendChild(thead);
+
+                for(var i=0;i<ArrayHeader.length;i++){
+                    thead.appendChild(document.createElement("th")).
+                    appendChild(document.createTextNode(ArrayHeader[i]));
+                }
+
+             for (var i=0;i<data.length;i++)
+                        {
+             
+                          var row = table.insertRow(0);
+                          row.insertCell(0).innerHTML=data[i].businessName;
+                          row.insertCell(1).innerHTML=data[i].review_starts;
+               
+                        }
+            }
+            ).fail(function(data)
+            {
+              console.log("failed");
+               return;
+            }); 
+ }
 
  </script>
  
@@ -176,8 +212,10 @@
                             This may take up to 5 minutes so check out other features!  When Spark is finished, the View Recommendations button shown below will be enabled.
                         </div>
                         <br>
-                         <button type="button" class="btn btn-default" id="ViewRecomendations" onclick="ViewRecomendations()" disabled>Recommend Businesses</button> 
-                            
+                         <button type="button" <% if (!HasResults) { %> class="btn btn-default" <% } else { %> class="btn btn-success" <% } %>  id="ViewRecomendationsButton" onclick="ViewRecomendations()" <% if(!HasResults){ %> disabled <% } %> >VIEW RECOMMENDATIONS</button> 
+                            <br>
+                            <br>
+                              <table id="TableSparkResults" class="TextSearchResultsCSS"/>
             </div>
         </div> <!--hero-->
     </div> <!--content-->

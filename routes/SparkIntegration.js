@@ -32,6 +32,7 @@ MongoClient.connect(connectionString, function(err, database) {
 
     db = database;
     var ResultSet=[];
+    var HasResults=0;
 
     var TextSearchResults = db.collection("id_names").find({"business_name" : /pizza/i }).toArray().then(function (items) { 
  
@@ -43,8 +44,22 @@ MongoClient.connect(connectionString, function(err, database) {
 
             });
 
-            db.close();
-            res.render('spark', { ResultSet });
+            //Check to see if there are any results ready from a previous Spark Run, this will need to be updated to pass Session info for multi-user support
+            var ResultsPresent = db.collection("user_recommendations").count().then( function(thecount)
+                {
+                     if (thecount>0)
+                     {
+                         HasResults=1;
+                     }
+                      db.close();
+           
+                        res.render('spark', {ResultSet:ResultSet, HasResults: HasResults} );
+                }
+            )
+
+        //    db.close();
+           
+          //  res.render('spark', {ResultSet:ResultSet, HasResults: HasResults} );
         })
     .catch(function(e) {
             console.log(e);
@@ -70,13 +85,17 @@ MongoClient.connect(connectionString, function(err, database) {
     var DeleteAllResults = db.collection("personal_ratings").remove( { } ,function (err,doc) {
 
     var InsertAllResults= db.collection("personal_ratings").insert(TheRatings,function(err, doc){
-  
-        // res.sendStatus(200);//; // sendStatus(201);
+
+        exec('sh ~/CodeStaging/SparkReccEngine/submit-scala.sh -h localhost -p 27017 -d yelp > /tmp/spark-submit.log 2>&1' ,function(err,stdout,stderr){
+      if (err) throw err;
+
+
          res.send({});
         res.end();
         db.close();
-  });
-    });
+        });
+        });
+        });
 });
 
        
@@ -95,13 +114,13 @@ MongoClient.connect(connectionString, function(err, database) {
 */
 
 
-router.post('/', function (req,res, next){
+router.get('/GetRecommendations/', function (req,res, next){
 
 var ResultSet=[];
 
 //Run spark job to compute recommendations
-exec('sh ~/CodeStaging/SparkReccEngine/submit-scala.sh -h localhost -p 27017 -d yelp > /tmp/spark-submit.log 2>&1' ,function(err,stdout,stderr){
-      if (err) throw err;
+//exec('sh ~/CodeStaging/SparkReccEngine/submit-scala.sh -h localhost -p 27017 -d yelp > /tmp/spark-submit.log 2>&1' ,function(err,stdout,stderr){
+    //  if (err) throw err;
 
 
       //Get newly computed recommendations
@@ -132,6 +151,8 @@ exec('sh ~/CodeStaging/SparkReccEngine/submit-scala.sh -h localhost -p 27017 -d 
       
                   });
       
+                  console.log("RESULTS->" + ResultSet);
+
                   res.send(ResultSet); // sendStatus(201);
                   res.end();
                   db.close();
@@ -141,6 +162,6 @@ exec('sh ~/CodeStaging/SparkReccEngine/submit-scala.sh -h localhost -p 27017 -d 
           });
       }); //MongoClient
        
-   });
+
 });
 module.exports = router;
