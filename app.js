@@ -12,11 +12,9 @@ var index = require('./routes/index');
 var textsearch = require('./routes/TextSearch');
 var graphsearch = require('./routes/GraphSearch');
 var facetsearch = require('./routes/FacetSearch');
-//var lookup = require('./routes/Lookup');
 var sparkintegration = require('./routes/SparkIntegration');
 var geosearch = require('./routes/GeoSearch');
-
-//var parsesearch = multer(); // for parsing multipart/form-data
+var constraints = require('./routes/Constraints');
 
 var settings=require('./config/config');  //change monogodb server location here
 
@@ -41,38 +39,13 @@ app.use('/', index);
 app.use('/TextSearch', textsearch);
 app.use('/GraphSearch', graphsearch);
 app.use('/FacetSearch', facetsearch);
-//app.use('/Lookup', lookup);
 app.use('/SparkIntegration', sparkintegration);
 app.use('/GeoSearch', geosearch);
-
-/*
-//Render home page 
-app.get('/', function(request, response) {
-        
-          response.render('index', { title: 'MongoDB - General purpose database for GIANT IDEAS' });
-     
-        });
-
-//Render Upload photo page
-app.get('/new', function(request, response) {
-
-    response.render('new');
-})
-*/
-//Return values fom a text search
-
-//Main Entry Point, create the MongoDB Connection and use connection-pooling from the driver
-/*MongoClient.connect(connectionString, function(err, database) {
-
-    assert.equal(null, err);
-    if(err) throw err;
-
-    db = database;*/
+app.use('/Constraints', constraints);
 
   // Start the application after the database connection is ready
   app.listen(3000);
   console.log("Listening on port 3000");
-//});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
