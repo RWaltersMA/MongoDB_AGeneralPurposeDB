@@ -34,7 +34,7 @@
     <div class="sidebar">
       <div class="well">   
        <div class="list-group">
-          <a href="/" class="list-group-item list-group-item-info"><b>MongoDB<br/><I>A General Purpose Database</I></b></a>
+          <a href="/" class="list-group-item list-group-item-info">MongoDB<br/><I>A General Purpose Database</I></a>
        
        </div>
         <div class="list-group">
@@ -53,7 +53,7 @@
           <div class="list-group">
           <a href="#" class="list-group-item list-group-item-success">Relational-like</a>
             <a href="/Constraints" class="list-group-item">Constraints</a>
-            <a href="#" class="list-group-item disabled">Views</a>
+            <a href="/Views" class="list-group-item active">Views</a>
              <a href="/Joins" class="list-group-item">Joins</a>
           </div>
        
@@ -65,13 +65,26 @@
       <div class="col-sm-9 col-md-9 col-lg-9">
       <div class="content">
         <div class="hero-unit">
-            <h1>MongoDB</h1>
-            <h2>A general purpose database for modern applications!</h2>
-            <p>Document oriented databases started as the need for storing and querying non-structured data increased.  Over the years MongoDB has invested heavily in features and capabilities that enable user to replace existing relational database applications with MongoDB as a backend database platform.</p>
-            <p>This website helps you explore some of the many key capabilities that showcase MongoDB's multi-model approach.  Have an application that relies heavily on geospatial data?  No problem.  Need to perform advanced analytics like graph-based queries on data?  MongoDB does that too.  Have data mining algorithms in Apache Spark that need access to source data?  MongoDB integrates with Spark!</p>
-            <p>To learn about features of the MongoDB database platform choose an option on the menu to the left.</p>
-            <p><a class="btn primary large" href="https://www.mongodb.com/mongodb-3.4">Learn more &raquo;</a></p>
+            <h3>Read-only Views</h3>
+           <p>Read-only views (ROV) are a similar concept to table views found in relational databases. They enable administrators to define a query that is materialized at runtime. ROVs do not store data and are considered first class objects in MongoDB. Being first class objects allows administrators to define permissions on who can access the views. ROVs become a separation layer between the data itself and the user. This is one of the biggest benefits of the feature: <b>Users accessing the view do not need access to the underlying data the view is referencing.</b></p>
+            <p><a class="btn primary large" href="https://www.mongodb.com/blog/post/providing-least-privileged-data-access-in-mongodb">Learn more &raquo;</a></p>
+        <div class="well">
+               <h4><div id="connectionstatus"></div></h4>
+                  <div class="row">
+                    <div class="col-sm-8">
+                        <div id="console"></div>
+                        <input id="consoleinput"></input>
+                    </div>
+                    <div class="col-sm-4">
+                        <div id="manual"></div>
+                    </div>
+                  </div>
+
         </div>
+
+
+
+        </div> <!-- hero-->
       </div> <!-- content -->
       </div> <!-- col-sm-6 -->
       </div> <!-- row -->

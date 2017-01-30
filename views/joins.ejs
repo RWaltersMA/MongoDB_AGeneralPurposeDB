@@ -5,17 +5,20 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     
-    <title>MongoDB - General purpose database for GIANT IDEAS</title>
+    <title><%= title %></title>
+
+    <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- Optional theme -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
     <link rel="stylesheet" href="css/mystyle.css">
   </head>
   <body>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
- <script>
- 
-    function QueryCityList(val) {
+<script>
+   function QueryCityList(val) {
         //Ajax post and receive city list
 
         $("#loading_gif").show();
@@ -53,7 +56,7 @@
          $("#CityToQueryDropdown").prop('disabled', false);
      
     }
-     function handleFacetSearch() {
+      function handleJoin() {
         //Prevent the form from trying to post itself again
         event.preventDefault();
         if ($( "#CityToQueryDropdown" ).val()=="0")
@@ -66,11 +69,12 @@
         var CityToQuery = $('#CityToQueryDropdown').val();
         var StateToQuery = $('#StateToQuery').val();
 
-         $("#FacetSearchButton").prop('disabled', true);
+         $("#JoinButton").prop('disabled', true);
+         $("#loading_gif").show();
         
         //Use AJAX and submit the form data to the server
         $.ajax({
-            url: "/FacetSearch",
+            url: "/Joins",
            // headers: headers,  use this for special header info like security auth
             method: 'POST',
              data: JSON.stringify({ City: CityToQuery, State: StateToQuery}),
@@ -83,50 +87,42 @@
             {
               
                 //Clear results DIV
-                $("#FacetResultsDIV").empty();
-                $("#FacetSearchButton").prop('disabled', false);
+                $("#JoinResultsDIV").empty();
+                $("#JoinButton").prop('disabled', false);
+                $("#loading_gif").hide();
 
-                 $.each(data[0], function(title, val1) {
-                    
-                     var table = document.createElement('table');
-                        table.setAttribute("width","400px");
-                         $("#FacetResultsDIV").append(table);
-                            var thead = document.createElement('thead');
-                            thead.setAttribute("style", "background-color:lightblue;color:black");
-                            
-                            table.appendChild(thead);
-                            thead.appendChild(document.createElement("th")).
-                            appendChild(document.createTextNode(title));
 
-                    $.each(val1, function (name_value, val2) {
-                        
-                          var row = table.insertRow(0);
-                          row.insertCell(0).innerHTML=val2._id;
-                          row.insertCell(1).innerHTML="<span class='badge'>" + val2.count + "</span>";
-                     
-                    })
-                    $("#FacetResultsDIV").append("<br>");
+               var Summary="";
+                
+                 for (var i=0;i<data.length;i++)
+                {
+                 
 
-                    });
+                      console.log("=>" + data[i]["item"].reviews.length);
 
-                 var Query="db.business.aggregate( [<br>&nbsp;&nbsp;&nbsp;{\"$match\": { \"state\": \"" + StateToQuery + "\", \"city\": \"" + CityToQuery + "\"} },<br>";
-                 Query+="&nbsp;&nbsp;&nbsp;{\"$facet\" : {<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\"ByCategories\": [  { \"$unwind\" : \"$categories\" },<br>";
-                 Query+="&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp{ \"$match\" : {\"categories\" : { \"$in\" : [\"Restaurants\", \"Food\", \"Bars\", \"Coffee & Tea\", \"Pizza\", \"Burgers\", \"Sandwiches\"] }}},<br>";
-                 Query+="&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp{ \"$sortByCount\" : \"$categories\" } ],<br>&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp\"ByStars\": [ { \"$bucket\" : { \"groupBy\" : \"$stars\", boundaries: [ 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5 ], \"default\" : 0 } } ],<br>";
-                 Query+="&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp\"ByPriceRange\": [ { \"$bucket\" : { \"groupBy\" : \"$attributes.Price Range\", \"boundaries\" : [ 1, 2, 3, 4, 5 ], \"default\" : 0 } } ]";
-                 document.getElementById('lblTextSampleSource').innerHTML=Query;
+                      for (var x=0;x<data[i]["item"].reviews.length;x++)
+                      {
+                          Summary+="<p><I>\"" + data[i]["item"].reviews[x].text + "\"</I></p><br><br><br>";
+                      }
+                    $("#JoinResultsDIV").append('<div class="panel panel-info"><div class="panel-heading"><b>' + data[i]["item"].name + '</b><br>' + data[i]["item"].full_address + '</div><div class="panel-body">Stars : ' + data[i]["item"].stars + Summary + '</div></div>');
+
+                }
+                 var Query="db.business.aggregate( [ { \"$match\" : { \"state\" : \"NC\",\"city\" : \"Charlotte\",\"categories\" : { \"$in\" : [ \"Pizza\" ] } } }, { \"$sort\" : { \"stars\" : 1 } }, { \"$limit\" : 5 }, { \"$lookup\" : { \"from\" : \"reviews\",";
+                 Query+="\"localField\" : \"business_id\", \"foreignField\" : \"business_id\", \"as\" : \"reviews\" } }, { \"$project\" : { \"name\" : 1, \"full_address\" : 1, \"stars\" : 1, \"reviews.text\" : 1 } } ]";
+                 document.getElementById('lblJoinSampleSource').innerHTML=Query;
+      
          }) //done()
                             
             .fail(function(data)
             {
-               $("#FacetSearchButton").prop('disabled', false);
-                //document.getElementById('lblTextResults').innerHTML = 'Failed !';
+                $("#loading_gif").hide();
+               $("#JoinButton").prop('disabled', false);
+            
             }); 
 
     };
      
-</script>
-
+ </script>
 
 <nav class="navbar navbar-inverse">
   <div class="container">
@@ -148,7 +144,7 @@
        </div>
         <div class="list-group">
            <a href="#" class="list-group-item list-group-item-success">Advanced Search</a>
-           <a href="/FacetSearch" class="list-group-item active">Faceted Search</a>
+           <a href="/FacetSearch" class="list-group-item">Faceted Search</a>
             <a href="/TextSearch" class="list-group-item">Text Search</a>
             <a href="/GraphSearch" class="list-group-item">Graph Queries</a>
             <a href="/GeoSearch" class="list-group-item">Geo-spatial Search</a>
@@ -162,8 +158,8 @@
           <div class="list-group">
           <a href="#" class="list-group-item list-group-item-success">Relational-like</a>
             <a href="/Constraints" class="list-group-item">Constraints</a>
-            <a href="/Views" class="list-group-item">Views</a>
-             <a href="/Joins" class="list-group-item">Joins</a>
+            <a href="#" class="list-group-item disabled">Views</a>
+             <a href="/Joins" class="list-group-item active">Joins</a>
           </div>
        
        
@@ -174,38 +170,33 @@
       <div class="col-sm-9 col-md-9 col-lg-9">
       <div class="content">
         <div class="hero-unit">
-            <h1>Facet Queries Overview</h1>
-            <p>Faceted search, or faceted navigation, is a way of browsing and searching for items in a set of data by applying filters on various properties (facets) of the items in the collection. </p>
-            <p>Without native facet search in MongoDB, developers would have to issue multiple filter queries to obtain the desired groupings of data.  In MongoDB just one query is needed to obtain faceted search results improving development time and overall application performance!.</p>
-            <p>To see Facet search in action, select a city and state from the dropdowns below.  This web page will issue a faceted search against our business dataset and return a list of businesses and their corresponding categories.</p>
-            <p>
-            <p><a class="btn primary large" href="https://www.mongodb.com/blog/post/faceted-search-with-mongodb">Learn more &raquo;</a></p>
-        </div>
+           <h3>Joins</h3>
+           <p>Coming from a relational database background to a document oriented model is a lot more than just a rename of some core concepts like referring to "Collections" instead of "Tables".  The big win with document oriented databases is the focus on denormalizing your data and leveraging document structures like arrays and subdocuments to yield superior performance when compared with traditional relational databases.
+However, even with this change of data architecture there exists on occasion the need to separate data into different collections.</p>
+            <p>In our business reviews databases there are two collections: "business" and "reviews".  The reviews collection stores a document for each user review of a businesses_id.  This business_id is present in the business collection and identifies a specific business.  Suppose we want to query the 5 worst pizza businesses and their corresponding user reviews.  In a relational world we would perform a left outer join of these two "tables" since not all businesses will have reviews but we would want the list of businesses returned regardless.  In MongoDB, we use the aggregation framework and an operator called, "$lookup" to reference another collection effectively doing a left outer join of that collection.</p>
+             <p><a class="btn primary large" href="https://docs.mongodb.com/manual/reference/operator/aggregation/lookup/">Learn more about $lookup operator &raquo;</a></p>
+           <p>To query the 5 worst pizza places chose a state and city from the list below:</p>
         <label for="StateToQuery">Select a state:</label>
         <select class="form-control" id="StateToQuery" required onchange="QueryCityList(this.value)">
-            <option value="AK">Alaska</option>
             <option value="AZ" selected="true">Arizona</option>
-            <option value="CA">California</option>
-              <option value="FL">Florida</option>
               <option value="IL">Illinois</option>
               <option value="NC">North Carolina</option>
               <option value="PA">Pennsylvania</option>
               <option value="TX">Texas</option>
            </select>
      
-          <label for="CityToQuery">Select a city:</label>
-           <select class="form-control" id="CityToQueryDropdown" required disabled>
-            <option value="0">--- Select a state above ---</option>
-           </select>
-            <div class="alert alert-danger fade in" id="MissingCityMessage" style="display:none;">
-                <strong>Opps!</strong> Please choose a city from the drop down box above.
-            </div>
-
-           <br>
-           <p>Interested in knowing what the MongoDB query would be?   <button type="button" class="btn btn-link" id="TextSearchShowCodeButton" data-toggle="modal" data-target="#ShowQuery">Show Query</button><br>
+        <label for="CityToQuery">Select a city:</label>
+        <select class="form-control" id="CityToQueryDropdown" required disabled>
+        <option value="0">--- Select a state above ---</option>
+        </select>
+        <div class="alert alert-danger fade in" id="MissingCityMessage" style="display:none;">
+            <strong>Opps!</strong> Please choose a city from the drop down box above.
+        </div>
+  <br>
+           <p>Interested in knowing what the MongoDB query would be?   <button type="button" class="btn btn-link" id="JoinShowCodeButton" data-toggle="modal" data-target="#ShowQuery">Show Query</button><br>
           
           <div>
-           <button type="submit" class="btn btn-default" id="FacetSearchButton" onclick="handleFacetSearch()" style="border:solid;" >Query Facets</button>&nbsp;&nbsp; 
+           <button type="submit" class="btn btn-default" id="JoinButton" onclick="handleJoin()" style="border:solid;" >Query 5 worst pizza restaurants</button>&nbsp;&nbsp; 
            <img src="/images/white-loading.gif" id="loading_gif" style="display: none;width:40px;height:40px;" >
            </div>
            <br>
@@ -219,7 +210,7 @@
                     </div>
                     <div class="modal-body">
                     <p>This is some sample code that shows the query executed against MongoDB.</p>
-                    <label id="lblTextSampleSource" class="text-danger"></label>
+                    <label id="lblJoinSampleSource" class="text-danger"></label>
                     </div>
                     <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -231,13 +222,16 @@
            <label id="lblTextResults" class="bg-info"></label>
 
             <div class="content-fluid">
+            <div class="panel-group" id="accordion">
             <div class="panel panel-default">
-            <div class="panel-body" style="height: 300px;overflow: auto" id="FacetResultsDIV">
-                   <!-- <table id="TableGraphResults" class="TextSearchResultsCSS"/>-->
+                <div style="height: 300px;overflow: auto" id="JoinResultsDIV">
                 </div>
             </div>
             </div>
+            </div>
 
+
+        </div>
       </div> <!-- content -->
       </div> <!-- col-sm-6 -->
       </div> <!-- row -->

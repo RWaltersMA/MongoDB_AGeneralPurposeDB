@@ -15,6 +15,8 @@ var facetsearch = require('./routes/FacetSearch');
 var sparkintegration = require('./routes/SparkIntegration');
 var geosearch = require('./routes/GeoSearch');
 var constraints = require('./routes/Constraints');
+var views = require('./routes/Views');
+var joins = require('./routes/Joins');
 
 var settings=require('./config/config');  //change monogodb server location here
 
@@ -42,6 +44,8 @@ app.use('/FacetSearch', facetsearch);
 app.use('/SparkIntegration', sparkintegration);
 app.use('/GeoSearch', geosearch);
 app.use('/Constraints', constraints);
+app.use('/Views', views);
+app.use('/Joins', joins);
 
   // Start the application after the database connection is ready
   app.listen(3000);
