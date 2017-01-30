@@ -94,7 +94,11 @@
 
 
                var Summary="";
-                
+               if (data.length==0)
+               {
+                    $("#JoinResultsDIV").append('<div class="panel panel-warning"><div class="panel-heading"><b>There are no Pizza restaurant reviews for this city and state, please choose another.</b></div></div>');
+                    return;
+               } 
                  for (var i=0;i<data.length;i++)
                 {
                  
@@ -160,7 +164,7 @@
           <div class="list-group">
           <a href="#" class="list-group-item list-group-item-success">Relational-like</a>
             <a href="/Constraints" class="list-group-item">Constraints</a>
-            <a href="#" class="list-group-item disabled">Views</a>
+            <a href="/Views" class="list-group-item">Views</a>
              <a href="/Joins" class="list-group-item active">Joins</a>
           </div>
        
@@ -176,7 +180,7 @@
            <p>Coming from a relational database background to a document oriented model is a lot more than just a rename of some core concepts like referring to "Collections" instead of "Tables".  The big win with document oriented databases is the focus on denormalizing your data and leveraging document structures like arrays and subdocuments to yield superior performance when compared with traditional relational databases.
 However, even with this change of data architecture there exists on occasion the need to separate data into different collections.</p>
             <p>In our business reviews databases there are two collections: "business" and "reviews".  The reviews collection stores a document for each user review of a businesses_id.  This business_id is present in the business collection and identifies a specific business.  Suppose we want to query the 5 worst pizza businesses and their corresponding user reviews.  In a relational world we would perform a left outer join of these two "tables" since not all businesses will have reviews but we would want the list of businesses returned regardless.  In MongoDB, we use the aggregation framework and an operator called, "$lookup" to reference another collection effectively doing a left outer join of that collection.</p>
-             <p><a class="btn primary large" href="https://docs.mongodb.com/manual/reference/operator/aggregation/lookup/">Learn more about $lookup operator &raquo;</a></p>
+             <p><a class="btn primary large" href="https://docs.mongodb.com/manual/reference/operator/aggregation/lookup/" target="_">Learn more about $lookup operator &raquo;</a></p>
            <p>To query the 5 worst pizza places chose a state and city from the list below:</p>
         <label for="StateToQuery">Select a state:</label>
         <select class="form-control" id="StateToQuery" required onchange="QueryCityList(this.value)">
