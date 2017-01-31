@@ -34,7 +34,7 @@
     <div class="sidebar">
       <div class="well">   
        <div class="list-group">
-          <a href="/" class="list-group-item list-group-item-info"><b>MongoDB<br/><I>A General Purpose Database</I></b></a>
+          <a href="/" class="list-group-item list-group-item-info">MongoDB<br/><I>A General Purpose Database</I></a>
        
        </div>
         <div class="list-group">
@@ -48,7 +48,7 @@
           <div class="list-group">
           <a href="#" class="list-group-item list-group-item-success">Data Analytics</a>
             <a href="/SparkIntegration" class="list-group-item">Spark Integration</a>
-            <a href="/Reporting" class="list-group-item">Reporting Tools</a>
+            <a href="/Reporting" class="list-group-item active">Reporting Tools</a>
           </div>
           <div class="list-group">
           <a href="#" class="list-group-item list-group-item-success">Relational-like</a>
@@ -65,11 +65,27 @@
       <div class="col-sm-9 col-md-9 col-lg-9">
       <div class="content">
         <div class="hero-unit">
-            <h1>MongoDB</h1>
-            <h2>A general purpose database for modern applications!</h2>
-            <p>Document oriented databases started as the need for storing and querying non-structured data increased.  Over the years MongoDB has invested heavily in features and capabilities that enable user to replace existing relational database applications with MongoDB as a backend database platform.</p>
-            <p>This website helps you explore some of the many key capabilities that showcase MongoDB's multi-model approach.  Have an application that relies heavily on geospatial data?  No problem.  Need to perform advanced analytics like graph-based queries on data?  MongoDB does that too.  Have data mining algorithms in Apache Spark that need access to source data?  MongoDB integrates with Spark!</p>
-            <p>To learn about features of the MongoDB database platform choose an option on the menu to the left.</p>
+            <h3>MongoDB speaks the SQL Language</h3>
+            <p>Many customers use popular reporting tools like Tableau and Qlik to build reports.  These business intelligence tools connect to datasources like excel files, relational databases and text files.  Today these tools don't speak natively to MongoDB so you may think you need to move the data to a relational database before building reports.  With MongoDB 3.4 moving data out of MongoDB in order to leverage these reporting tools is unnecessary.  In fact you can issue read-only SQL queries against a MongoDB using the MongoDB BI Connector.</p>
+            <h3>How does the BI Connector work?</h3>
+            <p>Since reporting tools speak SQL and MongoDB speaks the Mongo Query Language we need an intermediate service to translate the SQL to Mongo statement and any JSON results from Mongo to relational datasets.  This is the job of the MongoSQLD service.</p>
+             <div class="row">
+                    <div class="col-sm-12">
+                          <img style="width:100%" src="images/biconnector.png">
+                    </div>
+                    <div class="col-sm-12">
+                    <p>Figure 1: Data flow from BI reporting tool to MongoDB and back leveraging the MongoSQLD service
+                    </div>
+                    <div class="col-sm-12">
+                    <p>Before the MongoSQLD service is ready it first has to know how to do the relational data type to MongoDB data type mapping for the destination MongoDB database.  While this mapping file, called the DRDL file, could be written from scratch there is a new command line tool called <b>mongodrdl</b> that creates one for you. </p>
+                    <button id="ButtonViewDRDL">View DRDL file used for this example</button>
+                    <p>The mongosqld service is started and by default listens on port 3307.  To the BI tool the <b>mongosqld</b> service looks like a MySQL Server endpoint.</p>
+                    
+                    </div>
+            </div>
+        
+
+       
             <p><a class="btn primary large" href="https://www.mongodb.com/mongodb-3.4">Learn more &raquo;</a></p>
         </div>
       </div> <!-- content -->
