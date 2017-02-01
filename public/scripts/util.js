@@ -21,3 +21,10 @@ function syntaxHighlight(json) {
         return '<span class="' + cls + '">' + match + '</span>';
     });
 }
+
+    function syntaxFormat(json)
+    {
+            var j= json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/~1/g, '&nbsp;&nbsp;&nbsp;').replace(/~X/g, '<br>');
+           // console.log(j);
+            return j;
+    };

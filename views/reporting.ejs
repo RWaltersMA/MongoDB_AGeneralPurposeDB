@@ -17,7 +17,80 @@
   <body>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script src="scripts/util.js"></script>
+<script>
+ $(document).ready(function() {
 
+    
+
+     var DRDLDocument="schema:~X- db: yelp~X~1tables:~X~1- table: business~X~1~1collection: business~X~1~1pipeline: []~X~1~1columns:~X~1- Name: _id~X~1~1MongoType: bson.ObjectId~X~1~1SqlName: _id~X~1~1SqlType: varchar~X~1- Name: attributes.Accepts Credit Cards~X~1~1MongoType: bool~X~1~1SqlName: attributes.Accepts Credit Cards~X~1~1SqlType: boolean~X~1- Name: attributes.Accepts Insurance~X~1~1MongoType: bool~X~1~1SqlName: attributes.Accepts Insurance~X~1~1SqlType: boolean~X~1- Name: attributes.Ages Allowed~X~1~1MongoType: string~X~1~1SqlName: attributes.Ages Allowed~X~1~1SqlType: varchar~X~1- Name: attributes.Alcohol~X~1~1MongoType: string~X~1~1SqlName: attributes.Alcohol~X~1~1SqlType: varchar~X~1- Name: attributes.Dogs Allowed~X~1~1MongoType: bool~X~1~1SqlName: attributes.Dogs Allowed~X~1~1SqlType: boolean~X~1- Name: attributes.Drive-Thru~X~1~1MongoType: bool~X~1~1SqlName: attributes.Drive-Thru~X~1~1SqlType: boolean~X~1- Name: attributes.Good for Kids~X~1~1MongoType: bool~X~1~1SqlName: attributes.Good for Kids~X~1~1SqlType: boolean~X~1- Name: attributes.Price Range~X~1~1MongoType: int~X~1~1SqlName: attributes.Price Range~X~1~1SqlType: int~X~1- Name: attributes.Take-out~X~1~1MongoType: bool~X~1~1SqlName: attributes.Take-out~X~1~1SqlType: boolean~X~1- Name: attributes.Takes Reservations~X~1~1MongoType: bool~X~1~1SqlName: attributes.Takes Reservations~X~1~1SqlType: boolean~X~1- Name: business_id~X~1~1MongoType: string~X~1~1SqlName: business_id~X~1~1SqlType: varchar~X~1- Name: city~X~1~1MongoType: string~X~1~1SqlName: city~X~1~1SqlType: varchar~X~1- Name: full_address~X~1MongoType: string~X~1~1SqlName: full_address~X~1~1SqlType: varchar~X~1- Name: name~X~1~1MongoType: string~X~1~1SqlName: name~X~1~1SqlType: varchar~X~1- Name: open~X~1~1MongoType: bool~X~1~1SqlName: open~X~1~1SqlType: boolean~X~1- Name: review_count~X~1~1MongoType: int~X~1~1SqlName: review_count~X~1~1SqlType: int~X~1- Name: stars~X~1~1MongoType: float64~X~1~1SqlName: stars~X~1~1SqlType: float64~X~1- Name: state~X~1~1MongoType: string~X~1~1SqlName: state~X~1~1SqlType: varchar~X~1- Name: type~X~1~1MongoType: string~X~1~1SqlName: type~X~1~1SqlType: varchar~X- table: business_categories~Xcollection: business~X~1pipeline:~X~1- $unwind:~X~1~1includeArrayIndex: categories_idx~X~1~1~1path: $categories~X~1~1columns:~X~1- Name: _id~X~1~1MongoType: bson.ObjectId~X~1~1SqlName: _id~X~1~1SqlType: varchar~X~1- Name: categories~X~1~1MongoType: string~X~1~1SqlName: categories~X~1~1SqlType: varchar~X~1- Name: categories_idx~X~1~1MongoType: int~X~1~1SqlName: categories_idx~X~1~1SqlType: int~X~1- table: business_neighborhoods~X~1collection: business~X~1pipeline:~X~1~1- $unwind:~X~1~1~1includeArrayIndex: neighborhoods_idx~X~1~1~1path: $neighborhoods~X~1columns:~X~1- Name: _id~X~1~1MongoType: bson.ObjectId~X~1~1SqlName: _id~X~1~1SqlType: varchar~X~1- Name: neighborhoods~X~1~1MongoType: string~X~1~1SqlName: neighborhoods~X~1~1SqlType: varchar~X~1- Name: neighborhoods_idx~X~1~1MongoType: int~X~1~1SqlName: neighborhoods_idx~X~1~1SqlType: int~X~1- table: reviews~X~1collection: reviews~X~1pipeline: []~X~1columns:~X~1- Name: _id~X~1~1MongoType: bson.ObjectId~X~1~1SqlName: _id~X~1~1SqlType: varchar~X~1- Name: business_id~X~1~1MongoType: string~X~1~1SqlName: business_id~X~1~1SqlType: varchar~X~1- Name: date~X~1~1MongoType: string~X~1~1SqlName: date~X~1~1SqlType: varchar~X~1- Name: review_id~X~1~1MongoType: string~X~1~1SqlName: review_id~X~1~1SqlType: varchar~X~1- Name: stars~X~1~1MongoType: int~X~1~1SqlName: stars~X~1~1SqlType: int~X~1- Name: text~X~1~1MongoType: string~X~1~1SqlName: text~X~1~1SqlType: varchar~X~1- Name: type~X~1~1MongoType: string~X~1~1SqlName: type~X~1~1SqlType: varchar~X~1- Name: user_id~X~1~1MongoType: string~X~1SqlName: user_id~X~1~1SqlType: varchar~X~1- Name: votes.cool~X~1~1MongoType: int~X~1~1SqlName: votes.cool~X~1~1SqlType: int~X~1- Name: votes.funny~X~1~1MongoType: int~X~1~1SqlName: votes.funny~X~1~1SqlType: int~X~1- Name: votes.useful~X~1~1MongoType: int~X~1~1SqlName: votes.useful~X~1~1SqlType: int~X~1- table: users~X~1collection: users~X~1pipeline: []~X~1columns:~X~1- Name: _id~X~1~1MongoType: bson.ObjectId~X~1~1SqlName: _id~X~1~1SqlType: varchar~X~1- Name: average_stars~X~1~1MongoType: float64~X~1~1SqlName: average_stars~X~1~1SqlType: float64~X~1- Name: fans~X~1~1MongoType: int~X~1~1SqlName: fans~X~1~1SqlType: int~X~1- Name: name~X~1~1MongoType: string~X~1~1SqlName: name~X~1~1SqlType: varchar~X~1- Name: review_count~X~1~1MongoType: int~X~1~1SqlName: review_count~X~1~1SqlType: int~X~1- Name: type~X~1~1MongoType: string~X~1~1SqlName: type~X~1~1SqlType: varchar~X~1- Name: user_id~X~1~1MongoType: string~X~1~1SqlName: user_id~X~1~1SqlType: varchar";
+
+    $('#divDRDL').append(syntaxFormat(DRDLDocument));
+ });
+
+ function ExecuteSQLQuery()
+ {
+         $('#SQLResults').empty();
+          $("#loading_gif").show();
+
+          var SQLQuery=$('#inputQuery').val();
+
+
+          $.ajax({
+            url: "/Reporting/QuerySQL",
+           // headers: headers,  use this for special header info like security auth
+            method: 'POST',
+             data: JSON.stringify({ SQLQuery: SQLQuery }),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            // This prevents JQuery from trying to append the form as a querystring
+            processData: false,
+        
+         }).done(function(data)
+            {
+               // console.log(data);
+                   //Get rid of spinning circle
+                   $("#loading_gif").hide();
+
+                var table = document.getElementById("SQLResults");
+                var thead = document.createElement('thead');
+                table.appendChild(thead);
+                  
+                $.each(data.Fields, function(key, value) { 
+                    
+                    thead.appendChild(document.createElement("th")).
+                    appendChild(document.createTextNode(value));
+                })
+
+               
+
+                $.each(data.QueryResults, function (key, ResultSet) {
+                        //each iteration is an array of data that should be a row
+                        //The ResultSet is a javascript object so enumerate over and pick out the key/value pairs
+
+                        var iColumn=0;
+                        var row = table.insertRow(0);
+                        for (var prop in ResultSet) {
+                         
+                              row.insertCell(iColumn).innerHTML=ResultSet[prop];
+                              iColumn++;
+                            }
+                        
+                       
+                })
+
+            }
+            ).fail(function(data)
+            {
+               $("#loading_gif").hide();
+
+               return;
+            }); 
+
+        
+ }
+
+</script>
 
 <nav class="navbar navbar-inverse">
   <div class="container">
@@ -68,30 +141,80 @@
             <h3>MongoDB speaks the SQL Language</h3>
             <p>Many customers use popular reporting tools like Tableau and Qlik to build reports.  These business intelligence tools connect to datasources like excel files, relational databases and text files.  Today these tools don't speak natively to MongoDB so you may think you need to move the data to a relational database before building reports.  With MongoDB 3.4 moving data out of MongoDB in order to leverage these reporting tools is unnecessary.  In fact you can issue read-only SQL queries against a MongoDB using the MongoDB BI Connector.</p>
             <h3>How does the BI Connector work?</h3>
-            <p>Since reporting tools speak SQL and MongoDB speaks the Mongo Query Language we need an intermediate service to translate the SQL to Mongo statement and any JSON results from Mongo to relational datasets.  This is the job of the MongoSQLD service.</p>
+            <p>Since reporting tools speak SQL and MongoDB speaks the Mongo Query Language we need an intermediate service to translate the SQL to Mongo statement and any JSON results from Mongo to relational datasets.  This is the job of the MongoSQLD service (a.k.a the BI Connector).</p>
              <div class="row">
                     <div class="col-sm-12">
                           <img style="width:100%" src="images/biconnector.png">
                     </div>
                     <div class="col-sm-12">
-                    <p>Figure 1: Data flow from BI reporting tool to MongoDB and back leveraging the MongoSQLD service
+                    <p><I>Figure: Data flow from BI reporting tool to MongoDB and back leveraging the MongoSQLD service</I></p>
                     </div>
                     <div class="col-sm-12">
-                    <p>Before the MongoSQLD service is ready it first has to know how to do the relational data type to MongoDB data type mapping for the destination MongoDB database.  While this mapping file, called the DRDL file, could be written from scratch there is a new command line tool called <b>mongodrdl</b> that creates one for you. </p>
-                    <button id="ButtonViewDRDL">View DRDL file used for this example</button>
-                    <p>The mongosqld service is started and by default listens on port 3307.  To the BI tool the <b>mongosqld</b> service looks like a MySQL Server endpoint.</p>
+                    <p>Before the MongoSQLD service is ready it first has to know how to map the relational columns and data types with the MongoDB fields and data types for the given MongoDB database.  While this mapping file, called the DRDL file, could be written from scratch there is a new command line tool called <b>mongodrdl</b> that creates one for you. </p>
+                    <button id="ButtonViewDRDL" class="btn btn-primary" data-toggle="modal" data-target="#ShowDRDL">>View DRDL file used for this example</button>
+                    <p>The mongosqld service is started and passed to it the DRDL file.  The <b>mongosqld</b> service behaves like a MySQL Server database.  To the BI reporting tools connecting to the <b>mongosqld</b> service, they connect and issue SQL queries just as if they were connecting to a relational database.</p>
                     
                     </div>
             </div>
+            
+            <div class="well">
+            <div class="row">
+                <div class="col-sm-12">
+                    <h4>Scenario: Issue SQL queries directly to MongoDB</h4>
+                    <br>
+                    <p>Select a SQL query to run with MongoDB via the BI Connector or specify your own:</p>
+                    <label for="inputSearch">Search: </label>
+                    <input type="text" class="form-control" id="inputQuery" placeholder="Enter SQL Query (i.e. SELECT * FROM business)..." >
+                </div>
+            </div> <!-- row -->
+            <div class="row">
+                <div class="col-sm-4">
+                  <button id="ExecuteQueryButton" class="btn btn-primary" onclick="ExecuteSQLQuery()">Execute SQL Query</button>
+                </div>
+                <div class="col-sm-8">
+                  <img src="/images/white-loading.gif" id="loading_gif" style="display: none;width:40px;height:40px;" >
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-sm-12">
+                
+                </div>
+            </div>
+            <div class="row">
+                    <div class="panel panel-default">
+                        <div class="panel-body" style="height: 300px;overflow: auto">
+                            <table id="SQLResults" class="TextSearchResultsCSS"/>
+                        </div>
+                    </div>
+                
+            </div> <!-- row -->
+            </div> <!--well-->
         
-
-       
             <p><a class="btn primary large" href="https://www.mongodb.com/mongodb-3.4">Learn more &raquo;</a></p>
-        </div>
+   
+        </div> <!-- HERO -->
       </div> <!-- content -->
       </div> <!-- col-sm-6 -->
       </div> <!-- row -->
       </div> <!-- container-->
-    
+               <!--Show Query Dialog-->
+                <div class="modal fade" id="ShowDRDL" role="dialog">
+                <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Show DRDL file</h4>
+                    </div>
+                    <div class="modal-body">
+                    <p>This is a sample DRDL file used to map relational tables with MongoDB collections:</p>
+                     <div id="divDRDL" class="well" style="height: 300px;overflow: auto"></div>
+                    </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+                </div>
+                </div>    
   </body>
 </html>
