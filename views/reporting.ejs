@@ -28,6 +28,23 @@
     $('#divDRDL').append(syntaxFormat(DRDLDocument));
  });
 
+function PredefinedSQLQuery(val)
+{
+  if (val=="0")
+  {
+     $('#inputQuery').val("");
+     return;
+  }
+  if (val=="1")  // Query for users > 200 reviews
+  {
+    $('#inputQuery').val("SELECT name, review_count from users where review_count > 100");
+  }
+  if (val=="2")
+  {
+    $('#inputQuery').val("SELECT table_name FROM information_schema.tables WHERE table_schema='yelp'");
+  }
+  
+}
  function ExecuteSQLQuery()
  {
          $('#SQLResults').empty();
@@ -35,59 +52,84 @@
 
           var SQLQuery=$('#inputQuery').val();
 
+          var table = document.getElementById("SQLResults");
+    
+          try {
 
-          $.ajax({
-            url: "/Reporting/QuerySQL",
-           // headers: headers,  use this for special header info like security auth
-            method: 'POST',
-             data: JSON.stringify({ SQLQuery: SQLQuery }),
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            // This prevents JQuery from trying to append the form as a querystring
-            processData: false,
-        
-         }).done(function(data)
+          var xhr = new XMLHttpRequest();
+          xhr.open('POST', '/Reporting/QuerySQL', true);
+          xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+
+          xhr.previous_text = '';
+           xhr.onerror = function(err) { console.log("[XHR] Fatal Error." + err); };
+            xhr.onreadystatechange = function() 
             {
-               // console.log(data);
-                   //Get rid of spinning circle
-                   $("#loading_gif").hide();
+                try
+                {
+                    if (xhr.readyState ==4 )
+                    { 
+                        //May not need the below originally get for streaming from server but doesn't work well in this scenario
+                        var new_response = xhr.responseText.substring(xhr.previous_text.length);                     
+                        if (new_response.length==0) return; // No more data to present
 
-                var table = document.getElementById("SQLResults");
-                var thead = document.createElement('thead');
-                table.appendChild(thead);
-                  
-                $.each(data.Fields, function(key, value) { 
-                    
-                    thead.appendChild(document.createElement("th")).
-                    appendChild(document.createTextNode(value));
-                })
+                       var v=JSON.parse(new_response);  // This is where the whole partial download breaks down
+                      
+                         if(v.hasOwnProperty('Error')) {
+                            var row = table.insertRow(0);
+                          row.insertCell(0).innerHTML='<b>' + v.Error + '</b>';
+                          return;
+                         }
 
-               
 
-                $.each(data.QueryResults, function (key, ResultSet) {
-                        //each iteration is an array of data that should be a row
-                        //The ResultSet is a javascript object so enumerate over and pick out the key/value pairs
-
-                        var iColumn=0;
-                        var row = table.insertRow(0);
-                        for (var prop in ResultSet) {
-                         
-                              row.insertCell(iColumn).innerHTML=ResultSet[prop];
-                              iColumn++;
+                      for (var iRow=0;iRow<v.length;iRow++)
+                      {
+                         var row = table.insertRow(0);
+                      
+                            if(v[iRow].hasOwnProperty('QueryResults')){
+                               var iColumn=0;
+                            //   var g=JSON.stringify(v[iRow].QueryResults);
+                            //   console.log("QR=" + g);
+                               
+                                for(var property in v[iRow].QueryResults) {
+                                 
+                                      row.insertCell(iColumn).innerHTML=v[iRow].QueryResults[property];
+                                      iColumn++;
+                                  }
                             }
-                        
-                       
-                })
+                            if(v[iRow].hasOwnProperty('Fields')){
+                              
+                                var thead = document.createElement('thead');
+                                table.appendChild(thead);
+                                for (var i=0;i<v[iRow].Fields.length;i++) {
+                                  
+                                  thead.appendChild(document.createElement("th")).
+                                  appendChild(document.createTextNode(v[iRow].Fields[i]));
+          
+                                }
+                            }
 
-            }
-            ).fail(function(data)
-            {
-               $("#loading_gif").hide();
 
-               return;
-            }); 
+                      }
+                     
+                        xhr.previous_text = xhr.responseText;
+                    }
+                }
+                catch (e)
+                {
+                    console.log("<b>[XHR] Exception: " + e + "</b>");
+                }
+            };   
+             xhr.send('SQLQuery=' + SQLQuery); 
+        }
+        catch (e)
+        {
+            var table = document.getElementById("SQLResults");
+             var row = table.insertRow(0);
+             row.insertCell(0).innerHTML='<b> Exception: ' + e + '</b>';
+        }
+         $("#loading_gif").hide();
 
-        
+
  }
 
 </script>
@@ -150,9 +192,10 @@
                     <p><I>Figure: Data flow from BI reporting tool to MongoDB and back leveraging the MongoSQLD service</I></p>
                     </div>
                     <div class="col-sm-12">
-                    <p>Before the MongoSQLD service is ready it first has to know how to map the relational columns and data types with the MongoDB fields and data types for the given MongoDB database.  While this mapping file, called the DRDL file, could be written from scratch there is a new command line tool called <b>mongodrdl</b> that creates one for you. </p>
-                    <button id="ButtonViewDRDL" class="btn btn-primary" data-toggle="modal" data-target="#ShowDRDL">>View DRDL file used for this example</button>
-                    <p>The mongosqld service is started and passed to it the DRDL file.  The <b>mongosqld</b> service behaves like a MySQL Server database.  To the BI reporting tools connecting to the <b>mongosqld</b> service, they connect and issue SQL queries just as if they were connecting to a relational database.</p>
+                    <p>Before the MongoSQLD service is ready to be used it must first know how to map the relational columns and data types with the MongoDB fields and data types for the given MongoDB database.  While this mapping file, called the DRDL file, could be written from scratch there is a  command line tool called <b>mongodrdl</b> that creates one for you. You can then tweak this file as neccessary to suit your specific needs.  In the following scenario you are connected to the business review database in MongoDB via the BI Connector.  To view the DRDL file that was created for the database click the "View DRDL" button.</p>
+                    <button id="ButtonViewDRDL" class="btn btn-primary" data-toggle="modal" data-target="#ShowDRDL">View DRDL file used for this example</button>
+                    <p>When the mongosqld service (a.k.a BI Connector) is started it is passed the location of the MongoDB database as well as the DRDL file.  The service then listens on a port and recieves SQL queries from clients.  To the BI reporting tools they connect and issue SQL queries just like they do on other relational databases like MySQL and Oracle.</p>
+                       <p><a class="btn primary large" href="https://docs.mongodb.com/bi-connector/master/" target="_">Learn more about the BI Connector &raquo;</a></p>
                     
                     </div>
             </div>
@@ -162,9 +205,20 @@
                 <div class="col-sm-12">
                     <h4>Scenario: Issue SQL queries directly to MongoDB</h4>
                     <br>
-                    <p>Select a SQL query to run with MongoDB via the BI Connector or specify your own:</p>
-                    <label for="inputSearch">Search: </label>
-                    <input type="text" class="form-control" id="inputQuery" placeholder="Enter SQL Query (i.e. SELECT * FROM business)..." >
+                    <p>In this scenario you can issue ad-hoc SQL statements directly to the MongoDB database via the BI Connector.  If your SQL statement skills are a little rusty you may select a pre-defined query from the list below:</p>
+                    <label for="PredefinedSQLToQuery">Select a pre-defined SQL query to execute:</label>
+                    <select class="form-control" id="PredefinedSQLToQuery" required onchange="PredefinedSQLQuery(this.value)">
+                    <option value="0" >-- Select a query ---</option>
+                    <option value="1" >Users who reviewed more than 100 businesses</option>
+                    <option value="2" >List tables</option>
+                    
+                    </select>
+                    <p>or type your own SELECT statement to execute against MongoDB:</p>
+                    <label for="inputSearch">SQL statement: </label>
+                    <div class="input-group">
+                      <input type="text" class="form-control" id="inputQuery" placeholder="Enter SQL Query (i.e. SELECT * FROM business)..." >
+                      <span class="input-group-addon">LIMIT 20</span>
+                    </div>
                 </div>
             </div> <!-- row -->
             <div class="row">
@@ -190,8 +244,7 @@
                 
             </div> <!-- row -->
             </div> <!--well-->
-        
-            <p><a class="btn primary large" href="https://www.mongodb.com/mongodb-3.4">Learn more &raquo;</a></p>
+      
    
         </div> <!-- HERO -->
       </div> <!-- content -->

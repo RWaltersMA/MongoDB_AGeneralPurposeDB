@@ -1,5 +1,6 @@
 var express = require('express');
 var mysql      = require('mysql');
+var audit = require('../public/scripts/audit.js');
 var router = express.Router();
 
 var pool      =    mysql.createPool({
@@ -17,12 +18,29 @@ router.get('/', function(req, res, next) {
      
 });
 
+/* This is called when the user issues a SQL statement */
 router.post('/QuerySQL', function (req,res,next) {
 
 var ResultSet=[];
 var Fields=[];
 
 var SQLQuery=req.body.SQLQuery;
+
+if (~SQLQuery.toUpperCase().indexOf("LIMIT")) {
+        res.send( { Error: "A LIMIT of 20 will be enforce on the query, do not specify one in your query." } );
+        res.end;
+        return;
+} else  {
+  SQLQuery+=" LIMIT 20";
+}
+console.log(SQLQuery);
+
+audit.writeAudit("Executed SQL Query: " + SQLQuery.replace(/['"]+/g, ''),0);
+
+
+var IsFirst=true;
+var DeliveredFields=false;
+
 
  pool.getConnection(function(err,connection){
         if (err) {
@@ -31,113 +49,68 @@ var SQLQuery=req.body.SQLQuery;
                 return;
                 }  
 
-       // console.log('connected as id ' + connection.threadId);
-        connection.query(SQLQuery, function (error, results, fields) {
-      
-        
-            if (error)
+       var query=connection.query({sql: SQLQuery, timeout: 40000});
+       query
+  .on('error', function(err) {
+      res.send( { Error: " " + err });
+      res.end;
+      return;
+    // Handle error, an 'end' event will be emitted after this as well
+  })
+  .on('fields', function(fields) {
+    // the field packets for the rows to follow
+    // We only want to push the field headers once, so let's check to see if they've been sent yet
+        if (DeliveredFields==false)
+        {
+             if (IsFirst==true)
             {
-                res.send( { Error: error } );
-                res.end;
-                return;
+                res.write('[');
+                IsFirst=false;
             }
-            
+            else{
+                res.write(',');
+            }
             for (var i=0;i<fields.length;i++)
-            {
-                Fields.push(fields[i].name);
-            }
-            for (var i=0;i<results.length;i++)
-            {
-                ResultSet.push(results[i]);
-            }
+                {
+                    Fields.push(fields[i].name);
+                }
+            res.write ( JSON.stringify( { Fields: Fields } ));
+            DeliveredFields=true;
 
-        //console.log('The solution is: ', JSON.parse(JSON.stringify(results[0])));
+    }
+           
+  })
+  .on('result', function(row) {
+    // Pausing the connnection is useful if your processing involves I/O
+        connection.pause();
 
-            res.send( { Fields: Fields, QueryResults: ResultSet } );
-            res.end(); 
-                  connection.release();
-        });
-         connection.on('error', function(err) {      
-            res.send( { Error: error } );
-            res.end;
-            return;  
-        });
-            
+        if (IsFirst==true)
+        {
+            res.write('[');
+            IsFirst=false;
+        }
+        else{
+            res.write(',');
+        }
+        res.write(JSON.stringify({ QueryResults: row }));
+     
+        connection.resume();
+ 
+  })
+  .on('end', function() {
+
+    connection.release();
+
+    if (IsFirst==false) // If query is not formed correctly the return is blank so we need to make sure we only put a close bracket when there is data
+        {
+         res.end(']');
+        }
+        else{
+            res.status(200);
+        }
+     
   });
-
-
-
-/*
-MongoClient.connect(connectionString, function(err, database) {
-
-    assert.equal(null, err);
-    if(err) throw err;
-
-    db = database;
-    
-    var JoinSearchResults = db.collection("business").aggregate(
-   [
-		{
-			"$match" : {
-				"state" : StateSearchCriteria,
-				"city" : CitySearchCriteria,
-				"categories" : {
-					"$in" : [
-						"Pizza"
-					]
-				}
-			}
-		},
-		{
-			"$sort" : {
-				"stars" : 1
-			}
-		},
-		{
-			"$limit" : 5
-		},
-		{
-			"$lookup" : {
-				"from" : "reviews",
-				"localField" : "business_id",
-				"foreignField" : "business_id",
-				"as" : "reviews"
-			}
-		},
-		{
-			"$project" : {
-				"name" : 1,
-				"full_address" : 1,
-				"stars" : 1,
-				"reviews.text" : 1
-			}
-		}
-	]).toArray().then(function (items) {
-
-      
-
-            items.forEach((item, idx, array) =>
-            {
-                // console.log(idx + " " + item);
-            ResultSet.push({ item } ); /*
-                ResultSet.push({
-                        BusinessName: item['name'],
-                        FullAddress: item['full_address'],
-                        Stars: item['stars'],
-                        ReviewText: item['reviews.text']
-                //});
-
-            });
-
-            res.send(ResultSet); // sendStatus(201);
-            res.end();
-            db.close();
-        })
-    .catch(function(e) {
-            console.log(e);
-  });
- });*/
-
-});
+ });
+})
 
 module.exports = router;
