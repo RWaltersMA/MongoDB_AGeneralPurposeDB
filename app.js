@@ -4,6 +4,9 @@ var mongodb = require('mongodb');
 var ObjectID=require('mongodb').ObjectID;
 var MongoClient = require('mongodb').MongoClient;
 
+var expressSession = require('express-session');
+var MongoStore = require('connect-mongo')(expressSession);
+
 var url = require('url');
 var router = express.Router();
 
@@ -18,6 +21,7 @@ var constraints = require('./routes/Constraints');
 var views = require('./routes/Views');
 var joins = require('./routes/Joins');
 var reporting = require('./routes/Reporting');
+var welcome=require('./routes/Welcome');
 
 var settings=require('./config/config');  //change monogodb server location here
 
@@ -37,6 +41,16 @@ var connectionString = url.format({
     pathname: settings.database
 });
 
+app.use(expressSession({
+  
+    secret: 'TheVegetarians',
+    store: new MongoStore({
+    host: '127.0.0.1',
+    port: '27017',
+    url: 'mongodb://localhost:27017/MyGiantIdeaSessionStore'}),
+    resave: false,
+    saveUninitialized: false
+}));
 
 app.use('/', index);
 app.use('/TextSearch', textsearch);
@@ -48,6 +62,7 @@ app.use('/Constraints', constraints);
 app.use('/Views', views);
 app.use('/Joins', joins);
 app.use('/Reporting',reporting);
+app.use('/Welcome',welcome);
 
   // Start the application after the database connection is ready
   app.listen(3000);
@@ -70,5 +85,7 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+
 
 module.exports = app;

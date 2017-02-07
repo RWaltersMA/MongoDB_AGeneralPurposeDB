@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    
+    <title><%= title %></title>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/mystyle.css">
+  </head>
+  <body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script>
+
+window.onload = function () {
+
+    $('#ShowContactForm').modal();
+}
+
+
+ function ContinueTheTour()
+ {
+        event.preventDefault();
+
+          $("#ContinueButton").prop('disabled', true);
+
+        var Email=$("#inputEmailAddress").val();
+        
+         $('#msgEmailIssue').hide();
+
+        
+        //Use AJAX and submit the form data to the server
+        $.ajax({
+            url: "/Welcome",
+           // headers: headers,  use this for special header info like security auth
+            method: 'POST',
+             data: JSON.stringify({ email: Email}),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            // This prevents JQuery from trying to append the form as a querystring
+            processData: false,
+        
+         }).done(function(data)
+            {
+                $("#ContinueButton").prop('disabled', false);
+
+                if (data.status==0)
+                {
+                     $('#msgEmailIssue').show();
+                     return;
+                }
+                 $(location).attr('href', '');
+             
+            })
+        
+ }       
+</script>
+
+
+<nav class="navbar navbar-inverse">
+  <div class="container">
+    <div class="navbar-header">
+        <a class="navbar-brand" href="#"><img class="MongoImage" src="images/mongodb_logo3.png"></a>
+    </div>
+  </div>
+</nav>
+
+  <div class="container">  
+  <div class="row">
+    <div class="col-sm-3 col-md-3 col-lg-3">
+
+    <div class="sidebar">
+      <div class="well">   
+       <div class="list-group">
+          <a href="/" class="list-group-item list-group-item-info"><b>MongoDB<br/><I>A General Purpose Database</I></b></a>
+       
+       </div>
+        <div class="list-group">
+           <a href="#" class="list-group-item list-group-item-success">Advanced Search</a>
+           <a href="/FacetSearch" class="list-group-item disabled">Faceted Search</a>
+            <a href="/TextSearch" class="list-group-item disabled">Text Search</a>
+            <a href="/GraphSearch" class="list-group-item disabled">Graph Queries</a>
+            <a href="/GeoSearch" class="list-group-item disabled">Geo-spatial Search</a>
+          </div>
+
+          <div class="list-group">
+          <a href="#" class="list-group-item list-group-item-success ">Data Analytics</a>
+            <a href="/SparkIntegration" class="list-group-item disabled">Spark Integration</a>
+            <a href="/Reporting" class="list-group-item disabled">Reporting Tools</a>
+          </div>
+          <div class="list-group">
+          <a href="#" class="list-group-item list-group-item-success">Relational-like</a>
+            <a href="/Constraints" class="list-group-item disabled">Constraints</a>
+            <a href="/Views" class="list-group-item disabled">Views</a>
+             <a href="/Joins" class="list-group-item disabled">Joins</a>
+          </div>
+       
+       
+       </div>
+      </div> 
+      </div> <!--col-sm-6-->
+      
+      <div class="col-sm-9 col-md-9 col-lg-9">
+      <div class="content">
+        <div class="hero-unit">
+           <div class="modal fade" id="ShowContactForm" role="dialog">
+                <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Experience a MongoDB deployment!</h4>
+                    </div>
+                    <div class="modal-body">
+                    <h3>MongoDB</h3>
+                    <h4>A general purpose database for modern applications</h4>
+                    <p>Most of the data today is non-structured and does not fit neatly into rows, columns and tables referenced with constraints. With over 21 Million downloads, <a href="http://db-engines.com/en/ranking" target="_">MongoDB is the world's most popular open source document oriented database.</a> Built upon its foundation of addressing non-structured data, MongoDB goes far beyond just storing and retrieving data. In fact, with MongoDB you can perform advanced analytics queries like faceted, graph, and geospatial based searches natively without needing any third party software.  Coupled with management tools like <a href="https://www.mongodb.com/products/ops-manager" target="_">OpsManager</a>, <a href="https://www.mongodb.com/products/compass" target="_">Compass</a> and a follow the sun support model from MongoDB it’s no surprise that companies are migrating their existing everyday relational database applications with MongoDB!</p>
+
+                    <h4>This website allows you to explore MongoDB features interactively</h4>
+                    <p>Pre-loaded with a business review database, this website allows you to explore many key capabilities that showcase MongoDB's multi-model approach to data management.  Written from a perspective of someone familiar with relational database technologies you will not only discover some of the key enhancements with MongoDB, you will learn the MongoDB equivalent of joins, views, and constraints.</p>
+                    <p>To experience these capabilities now, please provide your contact email address:</p>
+                    <input type="text" class="form-control" id="inputEmailAddress" placeholder="Enter contact email address" >
+                    <button type="submit" class="btn btn-success" id="ContinueButton" onclick="ContinueTheTour()">Continue</button><br>
+                    <div id="msgEmailIssue" style="display:none"><p class="text-danger">Please provide a valid email address.</p></div>
+            
+                    </div>
+                    <div class="modal-footer">
+                   <!-- <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>-->
+                    </div>
+                </div>
+                </div>
+                </div>    
+
+
+           
+            <div class="col-sm-9 col-md-9 col-lg-9">
+            <div class="content">
+            <div class="hero-group">
+            <div class="form-group">
+            </div>
+            </div>
+            </div>
+            </div>
+            
+
+            
+            <p><a class="btn primary large" href="https://www.mongodb.com/mongodb-3.4">Learn more &raquo;</a></p>
+        </div>
+      </div> <!-- content -->
+      </div> <!-- col-sm-6 -->
+      </div> <!-- row -->
+      </div> <!-- container-->
+    
+  </body>
+</html>

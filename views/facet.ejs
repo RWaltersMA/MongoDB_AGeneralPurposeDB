@@ -89,20 +89,33 @@
                  $.each(data[0], function(title, val1) {
                     
                      var table = document.createElement('table');
-                        table.setAttribute("width","400px");
+                     table.setAttribute("class","TextSearchResultsCSS");
+                        table.setAttribute("style","width:400px");
                          $("#FacetResultsDIV").append(table);
                             var thead = document.createElement('thead');
-                            thead.setAttribute("style", "background-color:lightblue;color:black");
+                            thead.setAttribute("style", "background-color:lightblue;color:black;");
                             
                             table.appendChild(thead);
-                            thead.appendChild(document.createElement("th")).
-                            appendChild(document.createTextNode(title));
+                            var th=document.createElement("th");
+                            
+                            th.setAttribute("style","text-align:center;width:200px");
+
+                            thead.appendChild(th)
+                           
+                            .appendChild(document.createTextNode(title));
+
+                            var th_rating=document.createElement("th");
+                            th_rating.setAttribute("style","text-align:center;width:200px");
+                            thead.appendChild(th_rating).
+                            appendChild(document.createTextNode("Rating"));
 
                     $.each(val1, function (name_value, val2) {
                         
                           var row = table.insertRow(0);
                           row.insertCell(0).innerHTML=val2._id;
-                          row.insertCell(1).innerHTML="<span class='badge'>" + val2.count + "</span>";
+                          row.insertCell(1).innerHTML="<span class='badge pull-right'>" + val2.count + "</span>";
+                         
+                          
                      
                     })
                     $("#FacetResultsDIV").append("<br>");

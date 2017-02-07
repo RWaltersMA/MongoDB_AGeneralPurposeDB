@@ -14,12 +14,31 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
     <link rel="stylesheet" href="css/mystyle.css">
   </head>
-  <body>
+  <body data-spy="scroll" data-target="#myScrollspy" data-offset="15">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script src="scripts/util.js"></script>
 
+<script>
 
+window.onload = function () {
+
+  var Datamodel="{~X~1\"business_id\":\"encrypted business id\",~X~1\"name\":\"business name\",~X~1\"neighborhood\":\"hood name\",~X~1\"address\":\"full address\",~X~1\"city\":\"city\",~X~1\"state\":\"state\",~X~1\"postal code\":\"postal code\",~X~1\"location\":{ sub document containing longitude and lattitude },~X~1\"stars\":star rating, rounded to half-stars,~X~1\"review_count\":number of reviews,~X~1\"is_open\":0/1 (closed/open),~X~1\"attributes\":[\"an array of strings: each array element is an attribute\"],~X~1\"categories\":[\"an array of strings of business categories\"],~X~1\"hours\":[\"an array of strings of business hours\"],~X~1\"type\": \"business\"~X}";
+
+  $('#business_collection').append(syntaxHighlight(Datamodel));
+
+  var usersmodel="{~X~1\"user_id\":\"encrypted user id\",~X~1\"name\":\"first name\",~X~1\"review_count\":number of reviews,~X~1\"yelping_since\": date formatted like \"2009-12-19\",~X~1\"friends\":[\"an array of encrypted ids of friends\"],~X~1\"useful\":\"number of useful votes sent by the user\",~X~1\"funny\":\"number of funny votes sent by the user\",~X~1\"cool\":\"number of cool votes sent by the user\",~X~1\"fans\":\"number of fans the user has\",~X~1\"elite\":[\"an array of years the user was elite\"],~X~1\"average_stars\":floating point average like 4.31,~X~1\"compliment_hot\":number of hot compliments received by the user,~X~1\"compliment_more\":number of more compliments received by the user,~X~1\"compliment_profile\": number of profile compliments received by the user,~X~1\"compliment_cute\": number of cute compliments received by the user,~X~1\"compliment_list\": number of list compliments received by the user,~X~1\"compliment_note\": number of note compliments received by the user,~X~1\"compliment_plain\": number of plain compliments received by the user,~X~1\"compliment_cool\": number of cool compliments received by the user,~X~1\"compliment_funny\": number of funny compliments received by the user,~X~1\"compliment_writer\": number of writer compliments received by the user,~X~1\"compliment_photos\": number of photo compliments received by the user,~X~1\"type\":\"user\"~X}";
+
+  $('#users_collection').append(syntaxHighlight(usersmodel));
+
+  var reviewmodel="{~X~1\"review_id\":\"encrypted review id\",~X~1\"user_id\":\"encrypted user id\",~X~1\"business_id\":\"encrypted business id\",~X~1\"stars\":star rating, rounded to half-stars,~X~1\"date\":\"date formatted like \"2009-12-19\",~X~1\"text\":\"review text\",~X~1\"useful\":number of useful votes received,~X~1\"funny\":number of funny votes received,~X~1\"cool\": number of cool review votes received,~X~1\"type\": \"review\"~X}";
+
+  $('#review_collection').append(syntaxHighlight(reviewmodel));
+
+}
+</script>
 <nav class="navbar navbar-inverse">
+
   <div class="container">
     <div class="navbar-header">
         <a class="navbar-brand" href="#"><img class="MongoImage" src="images/mongodb_logo3.png"></a>
@@ -30,7 +49,6 @@
   <div class="container">  
   <div class="row">
     <div class="col-sm-3 col-md-3 col-lg-3">
-
     <div class="sidebar">
       <div class="well">   
        <div class="list-group">
@@ -58,23 +76,37 @@
           </div>
        
        
-       </div>
-      </div> 
+       </div> <!-- well -->
+      </div> <!-- sidebar-->
       </div> <!--col-sm-6-->
       
       <div class="col-sm-9 col-md-9 col-lg-9">
       <div class="content">
         <div class="hero-unit">
-            <h1>MongoDB</h1>
-            <h2>A general purpose database for modern applications!</h2>
-            <p>Document oriented databases started as the need for storing and querying non-structured data increased.  Over the years MongoDB has invested heavily in features and capabilities that enable user to replace existing relational database applications with MongoDB as a backend database platform.</p>
-            <p>This website helps you explore some of the many key capabilities that showcase MongoDB's multi-model approach.  Have an application that relies heavily on geospatial data?  No problem.  Need to perform advanced analytics like graph-based queries on data?  MongoDB does that too.  Have data mining algorithms in Apache Spark that need access to source data?  MongoDB integrates with Spark!</p>
-            <p>To learn about features of the MongoDB database platform choose an option on the menu to the left.</p>
-            <p><a class="btn primary large" href="https://www.mongodb.com/mongodb-3.4">Learn more &raquo;</a></p>
+            <h3>MongoDB</h3>
+            <h4>A general purpose database for modern applications</h4><br>
+            <p>Thank you for taking the time to check out some of the capabilities of MongoDB!</p><br>
+            <p><b>Select a capability on the left menu to explore.</b></p><br>
+            <p>If you are a propeller head and curious about the data set that is being used for this website:</p>
+            <p>Yelp, Inc. has published over 4.1 Million reviews from 1M users as part of its <a href="https://www.yelp.com/dataset_challenge" target="_">Yelp Dataset Challenge</a>.  If you are a student and want to win some cash the Yelp dataset is easily imported into MongoDB.  Check out the contest website for rules.  For the rest of us who are not students there is a lot of academic and learning value from these data.  The features listed on the left side of this web page leverage the Yelp data that has been loaded into a MongoDB instance.  This enables you to both explore this rich dataset and discover the native power of MongoDB.</p>
+            <p class="text-warning">Note:  This dataset is a subset of the entire Yelp data so if you query a particular city for example you may only see a cluster of reviews in a given area as opposed to the whole city itself.</p>
+            <br>
+            <p>These are the collections that represent the Yelp data in MongoDB:</p>
+            <br>
+            <div class="well">
+           
+            <h4>business collection</h4>
+            <div id="business_collection"></div>
+            <h4>users collection</h4>
+            <div id="users_collection"></div>
+            <h4>reviews collection</h4>
+            <div id="review_collection"></div>
+            </div>
+            <p><a class="btn primary large" href="https://www.mongodb.com/mongodb-3.4">Learn more about MongoDB &raquo;</a></p>
         </div>
       </div> <!-- content -->
       </div> <!-- col-sm-6 -->
-      </div> <!-- row -->
+      </div> <!-- row --> 
       </div> <!-- container-->
     
   </body>

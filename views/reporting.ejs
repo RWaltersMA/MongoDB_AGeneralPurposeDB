@@ -25,7 +25,7 @@
 
      var DRDLDocument="schema:~X- db: yelp~X~1tables:~X~1- table: business~X~1~1collection: business~X~1~1pipeline: []~X~1~1columns:~X~1- Name: _id~X~1~1MongoType: bson.ObjectId~X~1~1SqlName: _id~X~1~1SqlType: varchar~X~1- Name: attributes.Accepts Credit Cards~X~1~1MongoType: bool~X~1~1SqlName: attributes.Accepts Credit Cards~X~1~1SqlType: boolean~X~1- Name: attributes.Accepts Insurance~X~1~1MongoType: bool~X~1~1SqlName: attributes.Accepts Insurance~X~1~1SqlType: boolean~X~1- Name: attributes.Ages Allowed~X~1~1MongoType: string~X~1~1SqlName: attributes.Ages Allowed~X~1~1SqlType: varchar~X~1- Name: attributes.Alcohol~X~1~1MongoType: string~X~1~1SqlName: attributes.Alcohol~X~1~1SqlType: varchar~X~1- Name: attributes.Dogs Allowed~X~1~1MongoType: bool~X~1~1SqlName: attributes.Dogs Allowed~X~1~1SqlType: boolean~X~1- Name: attributes.Drive-Thru~X~1~1MongoType: bool~X~1~1SqlName: attributes.Drive-Thru~X~1~1SqlType: boolean~X~1- Name: attributes.Good for Kids~X~1~1MongoType: bool~X~1~1SqlName: attributes.Good for Kids~X~1~1SqlType: boolean~X~1- Name: attributes.Price Range~X~1~1MongoType: int~X~1~1SqlName: attributes.Price Range~X~1~1SqlType: int~X~1- Name: attributes.Take-out~X~1~1MongoType: bool~X~1~1SqlName: attributes.Take-out~X~1~1SqlType: boolean~X~1- Name: attributes.Takes Reservations~X~1~1MongoType: bool~X~1~1SqlName: attributes.Takes Reservations~X~1~1SqlType: boolean~X~1- Name: business_id~X~1~1MongoType: string~X~1~1SqlName: business_id~X~1~1SqlType: varchar~X~1- Name: city~X~1~1MongoType: string~X~1~1SqlName: city~X~1~1SqlType: varchar~X~1- Name: full_address~X~1MongoType: string~X~1~1SqlName: full_address~X~1~1SqlType: varchar~X~1- Name: name~X~1~1MongoType: string~X~1~1SqlName: name~X~1~1SqlType: varchar~X~1- Name: open~X~1~1MongoType: bool~X~1~1SqlName: open~X~1~1SqlType: boolean~X~1- Name: review_count~X~1~1MongoType: int~X~1~1SqlName: review_count~X~1~1SqlType: int~X~1- Name: stars~X~1~1MongoType: float64~X~1~1SqlName: stars~X~1~1SqlType: float64~X~1- Name: state~X~1~1MongoType: string~X~1~1SqlName: state~X~1~1SqlType: varchar~X~1- Name: type~X~1~1MongoType: string~X~1~1SqlName: type~X~1~1SqlType: varchar~X- table: business_categories~Xcollection: business~X~1pipeline:~X~1- $unwind:~X~1~1includeArrayIndex: categories_idx~X~1~1~1path: $categories~X~1~1columns:~X~1- Name: _id~X~1~1MongoType: bson.ObjectId~X~1~1SqlName: _id~X~1~1SqlType: varchar~X~1- Name: categories~X~1~1MongoType: string~X~1~1SqlName: categories~X~1~1SqlType: varchar~X~1- Name: categories_idx~X~1~1MongoType: int~X~1~1SqlName: categories_idx~X~1~1SqlType: int~X~1- table: business_neighborhoods~X~1collection: business~X~1pipeline:~X~1~1- $unwind:~X~1~1~1includeArrayIndex: neighborhoods_idx~X~1~1~1path: $neighborhoods~X~1columns:~X~1- Name: _id~X~1~1MongoType: bson.ObjectId~X~1~1SqlName: _id~X~1~1SqlType: varchar~X~1- Name: neighborhoods~X~1~1MongoType: string~X~1~1SqlName: neighborhoods~X~1~1SqlType: varchar~X~1- Name: neighborhoods_idx~X~1~1MongoType: int~X~1~1SqlName: neighborhoods_idx~X~1~1SqlType: int~X~1- table: reviews~X~1collection: reviews~X~1pipeline: []~X~1columns:~X~1- Name: _id~X~1~1MongoType: bson.ObjectId~X~1~1SqlName: _id~X~1~1SqlType: varchar~X~1- Name: business_id~X~1~1MongoType: string~X~1~1SqlName: business_id~X~1~1SqlType: varchar~X~1- Name: date~X~1~1MongoType: string~X~1~1SqlName: date~X~1~1SqlType: varchar~X~1- Name: review_id~X~1~1MongoType: string~X~1~1SqlName: review_id~X~1~1SqlType: varchar~X~1- Name: stars~X~1~1MongoType: int~X~1~1SqlName: stars~X~1~1SqlType: int~X~1- Name: text~X~1~1MongoType: string~X~1~1SqlName: text~X~1~1SqlType: varchar~X~1- Name: type~X~1~1MongoType: string~X~1~1SqlName: type~X~1~1SqlType: varchar~X~1- Name: user_id~X~1~1MongoType: string~X~1SqlName: user_id~X~1~1SqlType: varchar~X~1- Name: votes.cool~X~1~1MongoType: int~X~1~1SqlName: votes.cool~X~1~1SqlType: int~X~1- Name: votes.funny~X~1~1MongoType: int~X~1~1SqlName: votes.funny~X~1~1SqlType: int~X~1- Name: votes.useful~X~1~1MongoType: int~X~1~1SqlName: votes.useful~X~1~1SqlType: int~X~1- table: users~X~1collection: users~X~1pipeline: []~X~1columns:~X~1- Name: _id~X~1~1MongoType: bson.ObjectId~X~1~1SqlName: _id~X~1~1SqlType: varchar~X~1- Name: average_stars~X~1~1MongoType: float64~X~1~1SqlName: average_stars~X~1~1SqlType: float64~X~1- Name: fans~X~1~1MongoType: int~X~1~1SqlName: fans~X~1~1SqlType: int~X~1- Name: name~X~1~1MongoType: string~X~1~1SqlName: name~X~1~1SqlType: varchar~X~1- Name: review_count~X~1~1MongoType: int~X~1~1SqlName: review_count~X~1~1SqlType: int~X~1- Name: type~X~1~1MongoType: string~X~1~1SqlName: type~X~1~1SqlType: varchar~X~1- Name: user_id~X~1~1MongoType: string~X~1~1SqlName: user_id~X~1~1SqlType: varchar";
 
-    $('#divDRDL').append(syntaxFormat(DRDLDocument));
+    $('#divDRDL').append(syntaxHighlight(DRDLDocument));
  });
 
 function PredefinedSQLQuery(val)
@@ -43,16 +43,22 @@ function PredefinedSQLQuery(val)
   {
     $('#inputQuery').val("SELECT table_name FROM information_schema.tables WHERE table_schema='yelp'");
   }
+  if (val=="3")
+  {
+    $('#inputQuery').val("select business.name as business_name, reviews.text as review_text from users INNER JOIN reviews on users.user_id = reviews.user_id INNER JOIN business on business.business_id=reviews.business_id WHERE users.name='Jeremy'");
+  }
   
 }
  function ExecuteSQLQuery()
  {
          $('#SQLResults').empty();
-          $("#loading_gif").show();
+          $('#loading_gif').toggle();
 
           var SQLQuery=$('#inputQuery').val();
 
           var table = document.getElementById("SQLResults");
+
+          $('#NumberOfRecordsLabel').innerHTML="<b>Number of records ... </b>";
     
           try {
 
@@ -87,9 +93,7 @@ function PredefinedSQLQuery(val)
                       
                             if(v[iRow].hasOwnProperty('QueryResults')){
                                var iColumn=0;
-                            //   var g=JSON.stringify(v[iRow].QueryResults);
-                            //   console.log("QR=" + g);
-                               
+   
                                 for(var property in v[iRow].QueryResults) {
                                  
                                       row.insertCell(iColumn).innerHTML=v[iRow].QueryResults[property];
@@ -99,6 +103,7 @@ function PredefinedSQLQuery(val)
                             if(v[iRow].hasOwnProperty('Fields')){
                               
                                 var thead = document.createElement('thead');
+                                thead.setAttribute("style", "background-color:lightblue;color:black");
                                 table.appendChild(thead);
                                 for (var i=0;i<v[iRow].Fields.length;i++) {
                                   
@@ -210,13 +215,15 @@ function PredefinedSQLQuery(val)
                     <select class="form-control" id="PredefinedSQLToQuery" required onchange="PredefinedSQLQuery(this.value)">
                     <option value="0" >-- Select a query ---</option>
                     <option value="1" >Users who reviewed more than 100 businesses</option>
-                    <option value="2" >List tables</option>
+                    <option value="2" >List tables (metadata query)</option>
+                    <option value="3">Jeremy's restaurant reviews (join query)</option>
                     
                     </select>
                     <p>or type your own SELECT statement to execute against MongoDB:</p>
                     <label for="inputSearch">SQL statement: </label>
                     <div class="input-group">
-                      <input type="text" class="form-control" id="inputQuery" placeholder="Enter SQL Query (i.e. SELECT * FROM business)..." >
+                      <textarea id="inputQuery" placeholder="Enter SQL Query (i.e. SELECT * FROM business)..." class="form-control" rows=5></textarea>
+                     <!-- <input type="text" class="form-control" id="inputQuery" placeholder="Enter SQL Query (i.e. SELECT * FROM business)..." >-->
                       <span class="input-group-addon">LIMIT 20</span>
                     </div>
                 </div>
@@ -226,13 +233,14 @@ function PredefinedSQLQuery(val)
                   <button id="ExecuteQueryButton" class="btn btn-primary" onclick="ExecuteSQLQuery()">Execute SQL Query</button>
                 </div>
                 <div class="col-sm-8">
-                  <img src="/images/white-loading.gif" id="loading_gif" style="display: none;width:40px;height:40px;" >
+                        <img src="/images/white-loading.gif" id="loading_gif" style="display: none;width:40px;height:40px;">
                 </div>
             </div>
             <br>
             <div class="row">
                 <div class="col-sm-12">
-                
+             
+                <div id="NumberOfRecordsLabel"></div>
                 </div>
             </div>
             <div class="row">
