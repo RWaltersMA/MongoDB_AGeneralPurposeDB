@@ -13,6 +13,7 @@
   <body>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script src="scripts/util.js"></script>
  <script>
  
     function QueryCityList(val) {
@@ -122,12 +123,10 @@
 
                     });
 
-                 var Query="db.business.aggregate( [<br>&nbsp;&nbsp;&nbsp;{\"$match\": { \"state\": \"" + StateToQuery + "\", \"city\": \"" + CityToQuery + "\"} },<br>";
-                 Query+="&nbsp;&nbsp;&nbsp;{\"$facet\" : {<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\"ByCategories\": [  { \"$unwind\" : \"$categories\" },<br>";
-                 Query+="&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp{ \"$match\" : {\"categories\" : { \"$in\" : [\"Restaurants\", \"Food\", \"Bars\", \"Coffee & Tea\", \"Pizza\", \"Burgers\", \"Sandwiches\"] }}},<br>";
-                 Query+="&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp{ \"$sortByCount\" : \"$categories\" } ],<br>&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp\"ByStars\": [ { \"$bucket\" : { \"groupBy\" : \"$stars\", boundaries: [ 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5 ], \"default\" : 0 } } ],<br>";
-                 Query+="&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp\"ByPriceRange\": [ { \"$bucket\" : { \"groupBy\" : \"$attributes.Price Range\", \"boundaries\" : [ 1, 2, 3, 4, 5 ], \"default\" : 0 } } ]";
-                 document.getElementById('lblTextSampleSource').innerHTML=Query;
+                 var Query="db.business.aggregate([~X{\"$match\": ~X~1{ \"state\": \"" + StateToQuery + "\", \"city\": \"" + CityToQuery + "\"} ~X},~X{\"$facet\" :~X~1{ \"ByCategories\":~X~1~1[ ~X~1~1~1{ \"$unwind\" : \"$categories\" },~X~1~1~1{ \"$match\" :~X~1~1~1~1{\"categories\" : ~X~1~1~1~1~1{ \"$in\" : ~X~1~1~1~1~1~1[\"Restaurants\", \"Food\", \"Bars\", \"Coffee & Tea\", \"Pizza\", \"Burgers\", \"Sandwiches\"] ~X~1~1~1~1~1}~X~1~1~1~1}~X~1~1~1~1}, ~X~1~1~1{ \"$sortByCount\" : \"$categories\" }~X~1~1],~X~1\"ByStars\":~X~1~1[~X~1~1~1{ \"$bucket\" :~X~1~1~1~1{ \"groupBy\" : \"$stars\", boundaries: [ 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5 ], \"default\" : 0 }~X~1~1~1}~X~1~1],~X~1\"ByPriceRange\":~X~1~1[ ~X~1~1~1{ \"$bucket\" : { \"groupBy\" : \"$attributes.Price Range\", \"boundaries\" : [ 1, 2, 3, 4, 5 ], \"default\" : 0 } }~X~1~1] ~X~1}~X} ] )";
+
+                 $('#divTextSampleSource').empty();
+                 $('#divTextSampleSource').append(syntaxHighlight(Query));
          }) //done()
                             
             .fail(function(data)
@@ -189,21 +188,22 @@
         <div class="hero-unit">
             <h1>Facet Queries Overview</h1>
             <p>Faceted search, or faceted navigation, is a way of browsing and searching for items in a set of data by applying filters on various properties (facets) of the items in the collection. </p>
-            <p>Without native facet search in MongoDB, developers would have to issue multiple filter queries to obtain the desired groupings of data.  In MongoDB just one query is needed to obtain faceted search results improving development time and overall application performance!.</p>
-            <p>To see Facet search in action, select a city and state from the dropdowns below.  This web page will issue a faceted search against our business dataset and return a list of businesses and their corresponding categories.</p>
+            <p>Without native facet search in MongoDB, developers would have to issue multiple filter queries to obtain the desired groupings of data.  In MongoDB just one query is needed to obtain faceted search results improving development time and overall application performance!</p>
+            <p>To see Facet search in action, select a city and state from the dropdowns below.  This web page will issue a faceted search against the business collection and return a list of businesses and their corresponding categories.</p>
             <p>
-            <p><a class="btn primary large" href="https://www.mongodb.com/blog/post/faceted-search-with-mongodb">Learn more &raquo;</a></p>
+            <p><a class="btn primary large" href="https://www.mongodb.com/blog/post/faceted-search-with-mongodb" target="_">Learn more about faceted search &raquo;</a></p>
         </div>
         <label for="StateToQuery">Select a state:</label>
         <select class="form-control" id="StateToQuery" required onchange="QueryCityList(this.value)">
-            <option value="AK">Alaska</option>
-            <option value="AZ" selected="true">Arizona</option>
-            <option value="CA">California</option>
-              <option value="FL">Florida</option>
+        <option value="0" selected="true">-- Select a state --</option>
+           <!-- <option value="AK">Alaska</option>-->
+           <!-- <option value="AZ" selected="true">Arizona</option>-->
+           <!-- <option value="CA">California</option>-->
+            <!--  <option value="FL">Florida</option>-->
               <option value="IL">Illinois</option>
               <option value="NC">North Carolina</option>
-              <option value="PA">Pennsylvania</option>
-              <option value="TX">Texas</option>
+            <!--  <option value="PA">Pennsylvania</option>-->
+            <!--  <option value="TX">Texas</option>-->
            </select>
      
           <label for="CityToQuery">Select a city:</label>
@@ -231,8 +231,8 @@
                     <h4 class="modal-title">Show Query</h4>
                     </div>
                     <div class="modal-body">
-                    <p>This is some sample code that shows the query executed against MongoDB.</p>
-                    <label id="lblTextSampleSource" class="text-danger"></label>
+                    <p>This is the equivalent MongoDB query syntax used to obtain the results:</p>
+                    <div id="divTextSampleSource"></div>
                     </div>
                     <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -245,8 +245,9 @@
 
             <div class="content-fluid">
             <div class="panel panel-default">
-            <div class="panel-body" style="height: 300px;overflow: auto" id="FacetResultsDIV">
-                   <!-- <table id="TableGraphResults" class="TextSearchResultsCSS"/>-->
+            <div class="panel-heading">Faceted Search Results</div>
+            <div class="panel-body"  id="FacetResultsDIV">
+                   <!-- style="height: 300px;overflow: auto" <table id="TableGraphResults" class="TextSearchResultsCSS"/>-->
                 </div>
             </div>
             </div>
