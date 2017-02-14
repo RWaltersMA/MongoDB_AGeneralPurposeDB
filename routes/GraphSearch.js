@@ -51,6 +51,7 @@ MongoClient.connect(connectionString, function(err, database) {
         })
     .catch(function(e) {
             console.log(e);
+             res.status(500).send(e);
 });
 }); //MongoClient
 });
@@ -106,6 +107,7 @@ MongoClient.connect(connectionString, function(err, database) {
             db.close();
         })
     .catch(function(e) {
+         res.status(500).send(e);
             console.log(e);
 });
 }); //MongoClient

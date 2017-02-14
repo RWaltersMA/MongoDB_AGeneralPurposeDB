@@ -46,13 +46,13 @@
 
      });
 
-   console.log("R->" + Ratings); 
+   //console.log("R->" + Ratings); 
     
          $.ajax({
             url: "/SparkIntegration/UploadRecommendations",
            // headers: headers,  use this for special header info like security auth
             method: 'POST',
-            data:  JSON.stringify({MyRatings:Ratings}),
+            data:  JSON.stringify({MyRatings:Ratings, MySession:req.session.sessionID}),
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             // This prevents JQuery from trying to append the form as a querystring
@@ -62,15 +62,15 @@
             {
                    //Get rid of spinning circle
                   // $("#loading_gif").hide();
-
+                document.getElementById('lblErrorMessage').innerHTML = '';
                  $("#HangOnItsCrunchingMessage").show();
                  $("#ViewRecomendationsButton").prop('disabled',true);
 
             }
             ).fail(function(data)
             {
-             
-               return;
+                document.getElementById('lblErrorMessage').innerHTML = 'Unable to query data source, please try again later. Error: ' + data.responseText ;
+                return;
             }); 
      
  }
@@ -88,12 +88,13 @@
         
          }).done(function(data)
             {
-                  var table = document.getElementById("TableSparkResults");
-                //console.log(table);
+                document.getElementById('lblErrorMessage').innerHTML = '';
+                var table = document.getElementById("TableSparkResults");
                 
                 var ArrayHeader = ["Business Name","Review Stars"];
                 var thead = document.createElement('thead');
-
+                thead.setAttribute("style", "background-color:lightblue;color:black;");
+                
                 table.appendChild(thead);
 
                 for(var i=0;i<ArrayHeader.length;i++){
@@ -112,8 +113,8 @@
             }
             ).fail(function(data)
             {
-              console.log("failed");
-               return;
+              document.getElementById('lblErrorMessage').innerHTML = 'Unable to query data source, please try again later. Error: ' + data.responseText ;
+              return;
             }); 
  }
 
@@ -133,12 +134,13 @@ function ClearRecommendations()
             {
                $("#TableSparkResults").empty();
                $("#ViewRecomendationsButton").prop('disabled', true);
+               document.getElementById('lblErrorMessage').innerHTML = '';
             
             }
             ).fail(function(data)
             {
-              console.log("failed to clear recommendations" + data.responseText);
-               return;
+            document.getElementById('lblErrorMessage').innerHTML = 'Unable to query data source, please try again later. Error: ' + data.responseText ;
+            return;
             });
 }
  </script>
@@ -241,8 +243,9 @@ function ClearRecommendations()
                             <br>
                             <br>
                             <button type="button" class="btn btn-default" id="ClearRecommendationsButton" onclick="ClearRecommendations()">CLEAR RECOMMENDATIONS</button>
-                            <br><br>
-                              <table id="TableSparkResults" class="TextSearchResultsCSS"/>
+                            <br>
+                            <label id="lblErrorMessage"></label><br>
+                            <table id="TableSparkResults" class="TextSearchResultsCSS"/>
             </div>
         </div> <!--hero-->
     </div> <!--content-->

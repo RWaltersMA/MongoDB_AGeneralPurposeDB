@@ -57,12 +57,10 @@ MongoClient.connect(connectionString, function(err, database) {
                 }
             )
 
-        //    db.close();
-           
-          //  res.render('spark', {ResultSet:ResultSet, HasResults: HasResults} );
         })
     .catch(function(e) {
-            console.log(e);
+         res.status(500).send(e);
+         console.log(e);
 });
 }); //MongoClient
 });
@@ -102,15 +100,20 @@ MongoClient.connect(connectionString, function(err, database) {
 
     var TheRatings=JSON.parse("[" + req.body.MyRatings + "]");  // When you insert multiple documents you need []
 
-    var DeleteAllResults = db.collection("personal_ratings").remove( { }).then(function (err,doc) {
+    var SessionID=JSON.parse(req.body.MySession);
+    
+    var Audit= db.collection("audit").insert("THIS IS MY SESSION " + SessionID,function(err, doc){
+
+          }); 
+
+    var DeleteAllResults = db.collection("personal_ratings").remove( { userId: SessionID }).then(function (err,doc) {
 
     var InsertAllResults= db.collection("personal_ratings").insert(TheRatings).then (function(err, doc){
 
 
         res.send({});
-      //   res.send({});
         res.end();
-            db.close();
+        db.close();
 
 
         exec('sh ~/CodeStaging/SparkReccEngine/submit-scala.sh -h localhost -p 27017 -d yelp > /tmp/spark-submit.log 2>&1' ,function(err,stdout,stderr){
@@ -135,10 +138,6 @@ MongoClient.connect(connectionString, function(err, database) {
           }); 
       }
 
-      
-     //   res.send({});
-      //  res.end();
-       // db.close();
     });
 
         });
@@ -207,7 +206,8 @@ var ResultSet=[];
                   db.close();
               })
           .catch(function(e) {
-                  console.log(e);
+               res.status(500).send(e);
+               console.log(e);
           });
       }); //MongoClient
        

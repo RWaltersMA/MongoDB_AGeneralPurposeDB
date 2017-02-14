@@ -123,6 +123,8 @@
             {
                 $("#loading_gif").hide();
                $("#JoinButton").prop('disabled', false);
+              document.getElementById('lblTextResults').innerHTML = 'Unable to query data source, please try again later. Error: ' + data.responseText ;
+  
             
             }); 
 
@@ -215,7 +217,6 @@ However, even with this change of data architecture there exists on occasion the
                     <h4 class="modal-title">Show Query</h4>
                     </div>
                     <div class="modal-body">
-                    <p>This is some sample code that shows the query executed against MongoDB.</p>
                     <label id="lblJoinSampleSource" class="text-danger"></label>
                     </div>
                     <div class="modal-footer">
@@ -225,7 +226,7 @@ However, even with this change of data architecture there exists on occasion the
                 </div>
                 </div>    
 
-           <label id="lblTextResults" class="bg-info"></label>
+           <label id="lblTextResults"></label>
 
             <div class="content-fluid">
             <div class="panel-group" id="accordion">

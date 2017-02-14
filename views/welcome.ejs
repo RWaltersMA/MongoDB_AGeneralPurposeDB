@@ -59,6 +59,11 @@ window.onload = function () {
                  $(location).attr('href', '');
              
             })
+            .fail(function(data))
+            {
+                   document.getElementById('lblErrorMessage').innerHTML = 'Unable to continue, please try again later. Error: ' + data.responseText ;
+            
+            })
         
  }       
 </script>
@@ -130,6 +135,7 @@ window.onload = function () {
                     <div id="msgEmailIssue" style="display:none"><p class="text-danger">Please provide a valid email address.</p></div>
             
                     </div>
+                    <label id="lblErrorMessage"></label>
                     <div class="modal-footer">
                    <!-- <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>-->
                     </div>

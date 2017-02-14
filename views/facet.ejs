@@ -64,6 +64,8 @@
         }
         $('#MissingCityMessage').hide();
 
+        $('#ShowQueryDIV').show();
+
         var CityToQuery = $('#CityToQueryDropdown').val();
         var StateToQuery = $('#StateToQuery').val();
 
@@ -123,7 +125,7 @@
 
                     });
 
-                 var Query="db.business.aggregate([~X{\"$match\": ~X~1{ \"state\": \"" + StateToQuery + "\", \"city\": \"" + CityToQuery + "\"} ~X},~X{\"$facet\" :~X~1{ \"ByCategories\":~X~1~1[ ~X~1~1~1{ \"$unwind\" : \"$categories\" },~X~1~1~1{ \"$match\" :~X~1~1~1~1{\"categories\" : ~X~1~1~1~1~1{ \"$in\" : ~X~1~1~1~1~1~1[\"Restaurants\", \"Food\", \"Bars\", \"Coffee & Tea\", \"Pizza\", \"Burgers\", \"Sandwiches\"] ~X~1~1~1~1~1}~X~1~1~1~1}~X~1~1~1~1}, ~X~1~1~1{ \"$sortByCount\" : \"$categories\" }~X~1~1],~X~1\"ByStars\":~X~1~1[~X~1~1~1{ \"$bucket\" :~X~1~1~1~1{ \"groupBy\" : \"$stars\", boundaries: [ 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5 ], \"default\" : 0 }~X~1~1~1}~X~1~1],~X~1\"ByPriceRange\":~X~1~1[ ~X~1~1~1{ \"$bucket\" : { \"groupBy\" : \"$attributes.Price Range\", \"boundaries\" : [ 1, 2, 3, 4, 5 ], \"default\" : 0 } }~X~1~1] ~X~1}~X} ] )";
+                 var Query="Since we are only interested in a specific city and state the $match operator is a great way to limit the size of the data entering the aggregation pipeline.  The next stage in the pipeline is the $facet operator and here we define the three facets: ByCategories, ByStars, and ByPriceRange.  Since the category data is stored as an array we use the $unwind operator to deconstruct the array yielding a document for each element within the array.  With this deconstruction we can easily match the single value with the array of possible category values.  The $bucket operator categorizes documents into groups based on an expression.  In the ByStars facet the $bucket is forming groups based on the boundary specified.~X~X db.business.aggregate([~X{\"$match\": ~X~1{ \"state\": \"" + StateToQuery + "\", \"city\": \"" + CityToQuery + "\"} ~X},~X{\"$facet\" :~X~1{ \"ByCategories\":~X~1~1[ ~X~1~1~1{ \"$unwind\" : \"$categories\" },~X~1~1~1{ \"$match\" :~X~1~1~1~1{\"categories\" : ~X~1~1~1~1~1{ \"$in\" : ~X~1~1~1~1~1~1[\"Restaurants\", \"Food\", \"Bars\", \"Coffee & Tea\", \"Pizza\", \"Burgers\", \"Sandwiches\"] ~X~1~1~1~1~1}~X~1~1~1~1}~X~1~1~1~1}, ~X~1~1~1{ \"$sortByCount\" : \"$categories\" }~X~1~1],~X~1\"ByStars\":~X~1~1[~X~1~1~1{ \"$bucket\" :~X~1~1~1~1{ \"groupBy\" : \"$stars\", boundaries: [ 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5 ], \"default\" : 0 }~X~1~1~1}~X~1~1],~X~1\"ByPriceRange\":~X~1~1[ ~X~1~1~1{ \"$bucket\" : { \"groupBy\" : \"$attributes.Price Range\", \"boundaries\" : [ 1, 2, 3, 4, 5 ], \"default\" : 0 } }~X~1~1] ~X~1}~X} ] )";
 
                  $('#divTextSampleSource').empty();
                  $('#divTextSampleSource').append(syntaxHighlight(Query));
@@ -131,8 +133,9 @@
                             
             .fail(function(data)
             {
-               $("#FacetSearchButton").prop('disabled', false);
-                //document.getElementById('lblTextResults').innerHTML = 'Failed !';
+              $("#FacetSearchButton").prop('disabled', false);
+              document.getElementById('lblTextResults').innerHTML = 'Unable to query data source, please try again later. Error: ' + data.responseText ;
+  
             }); 
 
     };
@@ -196,14 +199,8 @@
         <label for="StateToQuery">Select a state:</label>
         <select class="form-control" id="StateToQuery" required onchange="QueryCityList(this.value)">
         <option value="0" selected="true">-- Select a state --</option>
-           <!-- <option value="AK">Alaska</option>-->
-           <!-- <option value="AZ" selected="true">Arizona</option>-->
-           <!-- <option value="CA">California</option>-->
-            <!--  <option value="FL">Florida</option>-->
               <option value="IL">Illinois</option>
               <option value="NC">North Carolina</option>
-            <!--  <option value="PA">Pennsylvania</option>-->
-            <!--  <option value="TX">Texas</option>-->
            </select>
      
           <label for="CityToQuery">Select a city:</label>
@@ -211,17 +208,19 @@
             <option value="0">--- Select a state above ---</option>
            </select>
             <div class="alert alert-danger fade in" id="MissingCityMessage" style="display:none;">
-                <strong>Opps!</strong> Please choose a city from the drop down box above.
+                <strong>Opps!</strong> Please choose a city and state from the drop down box above.
             </div>
 
            <br>
-           <p>Interested in knowing what the MongoDB query would be?   <button type="button" class="btn btn-link" id="TextSearchShowCodeButton" data-toggle="modal" data-target="#ShowQuery">Show Query</button><br>
-          
           <div>
            <button type="submit" class="btn btn-default" id="FacetSearchButton" onclick="handleFacetSearch()" style="border:solid;" >Query Facets</button>&nbsp;&nbsp; 
            <img src="/images/white-loading.gif" id="loading_gif" style="display: none;width:40px;height:40px;" >
+           <div id="ShowQueryDIV" style="display: none">
+           <p>Interested in knowing what the MongoDB query would be?   <button type="button" class="btn btn-link" id="TextSearchShowCodeButton" data-toggle="modal" data-target="#ShowQuery">Show Query</button><br>
            </div>
-           <br>
+        
+           </div>
+           
             <!--Show Query Dialog-->
                 <div class="modal fade" id="ShowQuery" role="dialog">
                 <div class="modal-dialog">
@@ -231,7 +230,6 @@
                     <h4 class="modal-title">Show Query</h4>
                     </div>
                     <div class="modal-body">
-                    <p>This is the equivalent MongoDB query syntax used to obtain the results:</p>
                     <div id="divTextSampleSource"></div>
                     </div>
                     <div class="modal-footer">
@@ -241,7 +239,7 @@
                 </div>
                 </div>    
 
-           <label id="lblTextResults" class="bg-info"></label>
+           <label id="lblTextResults"></label>
 
             <div class="content-fluid">
             <div class="panel panel-default">

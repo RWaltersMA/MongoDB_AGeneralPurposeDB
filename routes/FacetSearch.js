@@ -100,6 +100,7 @@ MongoClient.connect(connectionString, function(err, database) {
         })
     .catch(function(e) {
             console.log(e);
+             res.status(500).send(e);
   });
  });
 });
