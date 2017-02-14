@@ -33,7 +33,7 @@ if (~SQLQuery.toUpperCase().indexOf("LIMIT")) {
 } else  {
   SQLQuery+=" LIMIT 20";
 }
-console.log(SQLQuery);
+//console.log(SQLQuery);
 
 audit.writeAudit("Executed SQL Query: " + SQLQuery.replace(/['"]+/g, ''),0);
 

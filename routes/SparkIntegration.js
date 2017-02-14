@@ -5,6 +5,7 @@ var mongodb = require('mongodb');
 var ObjectID=require('mongodb').ObjectID;
 var MongoClient = require('mongodb').MongoClient;
 var assert = require('assert');
+var audit = require('../public/scripts/audit.js');
 
 //MongoDB Connection information
 var url = require('url');
@@ -100,12 +101,13 @@ MongoClient.connect(connectionString, function(err, database) {
 
     var TheRatings=JSON.parse("[" + req.body.MyRatings + "]");  // When you insert multiple documents you need []
 
-    var SessionID=JSON.parse(req.body.MySession);
-    
-    var Audit= db.collection("audit").insert("THIS IS MY SESSION " + SessionID,function(err, doc){
-
-          }); 
-
+    //We need to update the ratings array with the session ID of the user
+    var SessionID=req.session.sessionID;
+    for (var i=0;i<TheRatings.length;i++)
+    {
+        TheRatings[i].userId=SessionID;
+    }
+   
     var DeleteAllResults = db.collection("personal_ratings").remove( { userId: SessionID }).then(function (err,doc) {
 
     var InsertAllResults= db.collection("personal_ratings").insert(TheRatings).then (function(err, doc){
@@ -115,28 +117,25 @@ MongoClient.connect(connectionString, function(err, database) {
         res.end();
         db.close();
 
+        audit.writeAudit("Kicked off scala job for : " + req.session.user,0); 
 
         exec('sh ~/CodeStaging/SparkReccEngine/submit-scala.sh -h localhost -p 27017 -d yelp > /tmp/spark-submit.log 2>&1' ,function(err,stdout,stderr){
       if (err)
       {
-          var AuditFailure= db.collection("audit").insert(err,function(err, doc){
-
-          }); 
+          audit.writeAudit("Error executing Scala job : " + err.message,1);
       }
       
             if (stdout)
       {
-          var AuditFailure= db.collection("audit").insert(stdout,function(err, doc){
-
-          }); 
+           audit.writeAudit("Writing stdout from Scala job : " + stdout,0);
       }
 
             if (stderr)
       {
-          var AuditFailure= db.collection("audit").insert(stderr,function(err, doc){
-
-          }); 
+          audit.writeAudit("Error with stderr : " + stderr,1);
+    
       }
+      
 
     });
 

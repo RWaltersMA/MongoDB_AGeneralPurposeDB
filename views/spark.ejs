@@ -46,13 +46,13 @@
 
      });
 
-   //console.log("R->" + Ratings); 
+   //console.log("R->" + req.session.sessionID); 
     
          $.ajax({
             url: "/SparkIntegration/UploadRecommendations",
            // headers: headers,  use this for special header info like security auth
             method: 'POST',
-            data:  JSON.stringify({MyRatings:Ratings, MySession:req.session.sessionID}),
+            data:  JSON.stringify({MyRatings:Ratings}),
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             // This prevents JQuery from trying to append the form as a querystring
