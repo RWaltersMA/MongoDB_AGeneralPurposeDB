@@ -18,6 +18,7 @@ var connectionString = url.format({
 router.post('/', function(req, res, next) {
      
     var Email=req.body.email;
+    var Survey=req.body; //, "UseCase" : req.body.UseCase };
    
    if (Email.length<5)
    {
@@ -51,7 +52,7 @@ MongoClient.connect(connectionString, function(err, database) {
                             res.end();
                         }
                     //Add ID and information to visitors collection
-                    db.collection("visitors").findAndModify( { _id: Email}, [], {$set: { "last_login": d.toLocaleDateString(), "userid" : doc_id.value.NextUserID }, $inc: { "times_accessed":1} },{ new: true, upsert: true } ,
+                    db.collection("visitors").findAndModify( { _id: Email}, [], {$set: { "last_login": d.toLocaleDateString(), "userid" : doc_id.value.NextUserID, Survey }, $inc: { "times_accessed":1} },{ new: true, upsert: true } ,
                         function(err,doc_visitor) {
                                 if (err) // Failed to write to visitors collection default to some values to continue
                                 {

@@ -33,6 +33,8 @@ window.onload = function () {
           $("#ContinueButton").prop('disabled', true);
 
         var Email=$("#inputEmailAddress").val();
+        var ddHaveProject=$("#ddHaveProject").val();
+        var ddUseCase = $("#ddUseCase").val();
         
          $('#msgEmailIssue').hide();
 
@@ -42,7 +44,7 @@ window.onload = function () {
             url: "/Welcome",
            // headers: headers,  use this for special header info like security auth
             method: 'POST',
-             data: JSON.stringify({ email: Email}),
+             data: JSON.stringify({ email: Email, HaveProject: ddHaveProject, UseCase: ddUseCase  }),
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             // This prevents JQuery from trying to append the form as a querystring
@@ -130,10 +132,33 @@ window.onload = function () {
 
                     <h4>This website allows you to explore MongoDB features interactively</h4>
                     <p>Pre-loaded with a business review database, this website allows you to explore many key capabilities that showcase MongoDB's multi-model approach to data management.  Written from a perspective of someone familiar with relational database technologies you will not only discover some of the key enhancements with MongoDB, you will learn the MongoDB equivalent of joins, views, and constraints.</p>
-                    <p>To experience these capabilities now, please provide your contact email address:</p>
-                    <input type="text" class="form-control" id="inputEmailAddress" placeholder="Enter contact email address" >
+                    <p>To experience these capabilities now, please tell us a little about yourself:</p>
+                    <label for="inputEmailAddress">Business email:</label><br>
+                    <input type="text" class="form-control" id="inputEmailAddress" placeholder="Enter business email address" >
+                     <div id="msgEmailIssue" style="display:none"><p class="text-danger">Please provide a valid email address.</p></div><br>
+                    <label for="ddHaveProject">Do you have a MongoDB project?</label><br>
+                    
+                     <select class="form-control" id="ddHaveProject" required>
+                      <option value="Yes">Yes</option>
+                      <option value="No">No</option>
+                      <option value="Not Yet" selected="true">Not Yet</option>
+                      </select><br>
+                      <label for="ddUseCase">What's your use case?</label><br>
+                      <select class="form-control" id="ddUseCase" required>
+                         <option value="Catalog">Catalog</option>
+                         <option value="Content Management">Content Management</option>
+                         <option value="IOT">Internet of Things</option>
+                         <option value="Mobile">Mobile</option>
+                         <option value="Personalization">Personalization</option>
+                         <option value="analytics">Real Time analytics</option>
+                         <option value="Side Project">Side Project</option>
+                         <option value="Single View">Single View</option>
+                         <option value="Datawarehouse">Datawarehouse</option>
+                         <option value="Other" selected="true">Other</option>
+                         </select><br>
+                    
                     <button type="submit" class="btn btn-success" id="ContinueButton" onclick="ContinueTheTour()">Continue</button><br>
-                    <div id="msgEmailIssue" style="display:none"><p class="text-danger">Please provide a valid email address.</p></div>
+                   
             
                     </div>
                     <label id="lblErrorMessage"></label>
