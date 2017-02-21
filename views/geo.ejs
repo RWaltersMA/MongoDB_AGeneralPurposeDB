@@ -97,7 +97,13 @@
                 $('#ShowQueryDIV').show();
                 var table = document.getElementById("TableGeoResults");
 
-           
+                if (data.length==0)
+                {
+                   var row = table.insertRow(0);
+                   row.insertCell(0).innerHTML="No results for the given query.";
+                }
+                else
+                {
                //Define the header of the results table
                 var ArrayHeader = ["Business Name","Distance from origin"];
                 var thead = document.createElement('thead');
@@ -109,13 +115,13 @@
                     appendChild(document.createTextNode(ArrayHeader[i]));
                 }
                
-
                 var uluru = {lat: data[0].BusinessCoord[1], lng: data[0].BusinessCoord[0]};
                 var map = new google.maps.Map(document.getElementById('map'), {
                         zoom: 15,
                         center: uluru
                         });
-                        for (var i=0;i<data.length;i++)
+                        for (var i=data.length-1;i>=0;i--)
+                    //          for (var i=0:i<data.length;i>=0;i--)
                         {
                             var myLatLng = {lat: data[i].BusinessCoord[1], lng: data[i].BusinessCoord[0]};
                                          
@@ -127,12 +133,12 @@
              
                           var row = table.insertRow(0);
                           row.insertCell(0).innerHTML=data[i].BusinessName;
-                          row.insertCell(1).innerHTML=data[i].DistanceToBusiness;
+                          row.insertCell(1).innerHTML=data[i].DistanceToBusiness.toFixed(2);
                
                         }
                           
-
-                var Query="MongoDB has native support for querying geometries that lay within, intersect, and promixal to GeoJSON coordinates.  Geospaital indexes enhance these queries and provide individual query performance.  In this example the $geoNear aggregation operator is used to determine the list of documents that are within a specified distance from the point coordinates specified.  Notice the parameters provided include distance as well as whether to do the calculation as spherical or planar.~X~Xdb.business.aggregate([~X{~X~1$geoNear: {~X~1~1near: { type: \"Point\",~X~1~1~1coordinates: [ coord.longitude,coord.latitude  ] },~X~1~1~1distanceField: \"dist.calculated\",~X~1~1~1maxDistance: " + DistanceToQuery + ",~X~1~1~1query: { },~X~1~1~1includeLocs: \"dist.location\",~X~1~1~1num: 50,~X~1~1~1spherical: true~X~1~1~1}~X~1~1},~X~1{ $project: { name:1, dist:1 }}~X}~X])";
+                }
+                var Query="MongoDB has native support for querying geometries that lay within, intersect, and promixal to GeoJSON coordinates.  Geospaital indexes enhance these queries and provide individual query performance.  In this example the $geoNear aggregation operator is used to determine the list of documents that are within a specified distance from the point coordinates specified.  Notice the parameters provided include distance as well as whether to do the calculation as spherical or planar.~X~Xdb.business.aggregate([~X{~X~1$geoNear: {~X~1~1near: { type: \"Point\",~X~1~1~1coordinates: [ coord.longitude,coord.latitude  ] },~X~1~1~1distanceField: \"dist.calculated\",~X~1~1~1maxDistance: " + DistanceToQuery + ",~X~1~1~1query: { },~X~1~1~1includeLocs: \"dist.location\",~X~1~1~1num: 10,~X~1~1~1spherical: true~X~1~1~1}~X~1~1},~X~1{ $project: { name:1, dist:1 }}~X}~X])";
                 $('#lblQueryExample').empty();
                 $('#lblQueryExample').append(syntaxHighlight(Query));
 
@@ -224,7 +230,7 @@ src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAlcTazO9PgfR_LcG9JPe4eoHP
             <div class="alert alert-danger fade in" id="MissingBusinessMessage" style="display:none;">
                 <strong>Opps!</strong> Please choose a business.
             </div>
-           <label for="MetersFromSource">Find all businesses within this distance:</label>
+           <label for="MetersFromSource">Find 10 businesses within this distance:</label>
             <div class="input-group">
                 <input id="MetersFromSource" type="text" class="form-control" name="MetersFromSource" placeholder="Enter distance in meters" value="1000">
                 <span class="input-group-addon">meters</span>

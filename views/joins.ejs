@@ -17,10 +17,13 @@
   <body>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script src="scripts/util.js"></script>
 <script>
    function QueryCityList(val) {
         //Ajax post and receive city list
         //**TODO CHANGE TO /Joins/QueryCityList and filter CIty list to those that have data for Pizza restaurants!!
+
+        if ($( "#StateToQuery" ).val()=="0") return;
 
         $("#loading_gif").show();
           $.ajax({
@@ -91,7 +94,7 @@
                 $("#JoinResultsDIV").empty();
                 $("#JoinButton").prop('disabled', false);
                 $("#loading_gif").hide();
-
+                $("#ShowDisplayQuery").show();
 
                var Summary="";
                if (data.length==0)
@@ -104,7 +107,7 @@
                  
                     Summary="";
 
-                      console.log("=>" + data[i]["item"].reviews.length);
+                     // console.log("=>" + data[i]["item"].reviews.length);
 
                       for (var x=0;x<data[i]["item"].reviews.length;x++)
                       {
@@ -113,9 +116,10 @@
                     $("#JoinResultsDIV").append('<div class="panel panel-info"><div class="panel-heading"><b>' + data[i]["item"].name + '</b><br>' + data[i]["item"].full_address + '</div><div class="panel-body">Stars : ' + data[i]["item"].stars + Summary + '</div></div>');
 
                 }
-                 var Query="db.business.aggregate( [ { \"$match\" : { \"state\" : \"NC\",\"city\" : \"Charlotte\",\"categories\" : { \"$in\" : [ \"Pizza\" ] } } }, { \"$sort\" : { \"stars\" : 1 } }, { \"$limit\" : 5 }, { \"$lookup\" : { \"from\" : \"reviews\",";
-                 Query+="\"localField\" : \"business_id\", \"foreignField\" : \"business_id\", \"as\" : \"reviews\" } }, { \"$project\" : { \"name\" : 1, \"full_address\" : 1, \"stars\" : 1, \"reviews.text\" : 1 } } ]";
-                 document.getElementById('lblJoinSampleSource').innerHTML=Query;
+                 var Query="db.business.aggregate([~X~1{ \"$match\" :~X~1~1{ \"state\" : \"NC\",\"city\" : \"Charlotte\",\"categories\" : { \"$in\" : [ \"Pizza\" ] } } },~X~1{ \"$sort\" : { \"stars\" : 1 } },~X~1{ \"$limit\" : 5 },~X~1{ \"$lookup\" :~X~1~1{ \"from\" : \"reviews\",\"localField\" : \"business_id\", \"foreignField\" : \"business_id\", \"as\" : \"reviews\" } },~X~1{ \"$project\" : { \"name\" : 1, \"full_address\" : 1, \"stars\" : 1, \"reviews.text\" : 1 } }~X])";
+                
+                 $('#lblJoinSampleSource').empty();
+                $('#lblJoinSampleSource').append(syntaxHighlight(Query));
       
          }) //done()
                             
@@ -186,7 +190,8 @@ However, even with this change of data architecture there exists on occasion the
            <p>To query the 5 worst pizza places chose a state and city from the list below:</p>
         <label for="StateToQuery">Select a state:</label>
         <select class="form-control" id="StateToQuery" required onchange="QueryCityList(this.value)">
-            <option value="AZ" selected="true">Arizona</option>
+          <option value="0" selected="true">-- Select a state --</option>
+            <option value="AZ">Arizona</option>
               <option value="IL">Illinois</option>
               <option value="NC">North Carolina</option>
               <option value="PA">Pennsylvania</option>
@@ -195,18 +200,19 @@ However, even with this change of data architecture there exists on occasion the
      
         <label for="CityToQuery">Select a city:</label>
         <select class="form-control" id="CityToQueryDropdown" required disabled>
-        <option value="0">--- Select a state above ---</option>
+        <option value="0">--- ---</option>
         </select>
         <div class="alert alert-danger fade in" id="MissingCityMessage" style="display:none;">
-            <strong>Opps!</strong> Please choose a city from the drop down box above.
+            <strong>Opps!</strong> Please choose a city and state from the drop down boxes above.
         </div>
   <br>
-           <p>Interested in knowing what the MongoDB query would be?   <button type="button" class="btn btn-link" id="JoinShowCodeButton" data-toggle="modal" data-target="#ShowQuery">Show Query</button><br>
-          
           <div>
            <button type="submit" class="btn btn-default" id="JoinButton" onclick="handleJoin()" style="border:solid;" >Query 5 worst pizza restaurants</button>&nbsp;&nbsp; 
            <img src="/images/white-loading.gif" id="loading_gif" style="display: none;width:40px;height:40px;" >
            </div>
+           <div id="ShowDisplayQuery" style="display: none">
+           <p>Interested in knowing what the MongoDB query would be?   <button type="button" class="btn btn-link" id="JoinShowCodeButton" data-toggle="modal" data-target="#ShowQuery">Show Query</button><br>
+          </div>
            <br>
             <!--Show Query Dialog-->
                 <div class="modal fade" id="ShowQuery" role="dialog">
@@ -217,7 +223,7 @@ However, even with this change of data architecture there exists on occasion the
                     <h4 class="modal-title">Show Query</h4>
                     </div>
                     <div class="modal-body">
-                    <label id="lblJoinSampleSource" class="text-danger"></label>
+                    <div id="lblJoinSampleSource"></div>
                     </div>
                     <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>

@@ -117,7 +117,7 @@ MongoClient.connect(connectionString, function(err, database) {
         res.end();
         db.close();
 
-        audit.writeAudit("Kicked off scala job for : " + req.session.user,0); 
+        audit.writeAudit("Kicked off scala job for : " + req.session.user + " with a User ID=" + SessionID,0); 
 
         exec('sh ~/CodeStaging/SparkReccEngine/submit-scala.sh -h localhost -p 27017 -d yelp -u ' + SessionID + ' > /tmp/spark-submit.log 2>&1' ,function(err,stdout,stderr){
       if (err)

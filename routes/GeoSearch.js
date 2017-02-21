@@ -80,7 +80,7 @@ MongoClient.connect(connectionString, function(err, database) {
               maxDistance: Distance,
               query: { },
               includeLocs: "dist.location", 
-              num: 50,
+              num: 10,
               spherical: true      }    }, { $project: { name:1, dist:1 }} ]).toArray().then(function (items) {
 
             items.forEach((item, idx, array) =>
