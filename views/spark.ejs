@@ -24,7 +24,7 @@
  }
  function recommend()
  {
-   
+
       var Ratings=""; // Store Ratings
       var first=true;
 
@@ -45,7 +45,10 @@
 
      });
 
-     ClearRecommendations();
+
+//If there is a job running, don't allow the button to make another call
+        //Handle this in the UploadRecommendations API
+     //ClearRecommendations();
     
          $.ajax({
             url: "/SparkIntegration/UploadRecommendations",
@@ -64,6 +67,7 @@
                 document.getElementById('lblErrorMessage').innerHTML = '';
                  $("#HangOnItsCrunchingMessage").show();
                  $("#ViewRecommendationsDIV").hide();
+                 
             
             }
             ).fail(function(data)
@@ -294,11 +298,11 @@ window.onload = function () {
                          </tbody>
                         </table>
 
-                         <button type="button" class="btn btn-default" id="submitRecommendations" onclick="recommend()" style="border:solid;" >Recommend Businesses</button> 
-                         <br>
+                         <button type="button" class="btn btn-default" id="submitRecommendations" onclick="recommend()" style="border:solid;">Recommend Businesses</button> 
+                         <br><br>
                          <div class="alert alert-info fade in" id="HangOnItsCrunchingMessage" <% if (IsRunning) { %> style="display:block" <% } else { %> style="display:none" <% } %>>
                             <strong>Hang on!!</strong> Spark is leveraging data stored in MongoDB to create your recommendations!<br>
-                            This may take up to 5 minutes so check out other features and come back to this tab!  When Spark is finished, the View Recommendations button shown below will be enabled.
+                            This may take up to 5 minutes so check out other features and come back to this tab!  When Spark is finished, a View Recommendations button will be available.
                         </div>
                          <div class="alert alert-danger" id="lblErrorAlert" style="display:none">
                          <strong>Opps!</strong> An error occured while trying to launch the Spark job.  Please try again.

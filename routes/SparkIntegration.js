@@ -192,6 +192,23 @@ MongoClient.connect(connectionString, function(err, database) {
         TheRatings[i].userId=SessionID;
     }
    
+    //Check to see if a sessionID is already running a spark job, if so return
+    var IsActiveSession = db.collection("spark_progress").find({"userId":SessionID, "state":"running"}).count().then(function (err,actsession) {
+
+        if (actsession>0)
+        {
+            res.send({});
+             res.end();
+             db.close();
+             return;
+
+        }
+
+    //Clear the user_recommendations
+    var ClearUserRecommendation = db.collection("user_recommendations").remove( { userId: SessionID }).then(function (err,doc) {
+
+
+
     var DeleteAllResults = db.collection("personal_ratings").remove( { userId: SessionID }).then(function (err,doc) {
 
     //Clear the user recommendations collection for the given sessionID
@@ -235,9 +252,9 @@ MongoClient.connect(connectionString, function(err, database) {
         });
         });
        
-    
+    });
 });
-
+});
        
        
 });
