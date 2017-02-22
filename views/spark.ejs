@@ -67,7 +67,7 @@
                  $("#HangOnItsCrunchingMessage").show();
                  $("#ViewRecommendationsDIV").hide();
             
-                 setTimeout(CheckIfUserHasRecommendations, 7000);
+                
 
             }
             ).fail(function(data)
@@ -75,6 +75,8 @@
                 document.getElementById('lblErrorMessage').innerHTML = 'Unable to query data source, please try again later. Error: ' + data.responseText ;
                 return;
             }); 
+
+            setTimeout(CheckIfUserHasRecommendations, 7000);
      
  }
  function ViewRecomendations()
