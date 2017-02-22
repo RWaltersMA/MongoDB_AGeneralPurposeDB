@@ -162,7 +162,8 @@ function CheckIfUserHasRecommendations()
         
          }).done(function(data)
             {
-                if (data.HasResults==1)
+                //console.log("HasResults=" + data.HasResults);
+                if (data.HasRecommendations==1)
                 {
                     $("#ViewRecommendationsDIV").show();
                     // $("#ViewRecomendationsButton").prop('disabled',false);
