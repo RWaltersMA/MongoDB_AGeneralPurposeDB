@@ -169,11 +169,11 @@ function CheckIfUserHasRecommendations()
                 }
                 if (data.IsRunning==0)
                 {
-                    $("#HangOnItsCrunchingMessage").prop('disabled',true);
+                    $("#HangOnItsCrunchingMessage").hide();
                 }
                 if (data.IsRunning==1) //Spark job is running
                 {
-                    $("#HangOnItsCrunchingMessage").prop('disabled',false);
+                    $("#HangOnItsCrunchingMessage").show();
                 }
                 if (data.IsRunning==2)  //Spark job failed
                 {
