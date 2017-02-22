@@ -46,8 +46,6 @@
      });
 
     // ClearRecommendations();
-
-   //console.log("R->" + req.session.sessionID); 
     
          $.ajax({
             url: "/SparkIntegration/UploadRecommendations",
@@ -67,16 +65,12 @@
                  $("#HangOnItsCrunchingMessage").show();
                  $("#ViewRecommendationsDIV").hide();
             
-                
-
             }
             ).fail(function(data)
             {
                 document.getElementById('lblErrorMessage').innerHTML = 'Unable to query data source, please try again later. Error: ' + data.responseText ;
                 return;
             }); 
-
-          //  setTimeout(CheckIfUserHasRecommendations, 7000);
      
  }
  function ViewRecomendations()
@@ -308,13 +302,27 @@ window.onload = function () {
                          </div> 
                         <br>
                         <div id="ViewRecommendationsDIV" style="display:none">
-                         <button type="button" class="btn btn-success" id="ViewRecomendationsButton" onclick="ViewRecomendations()">VIEW RECOMMENDATIONS</button> 
-                        
-                            <br>
-                            <!--<button type="button" class="btn btn-default" id="ClearRecommendationsButton" onclick="ClearRecommendations()">CLEAR RECOMMENDATIONS</button>-->
-                            <br>
+                         <button type="button" class="btn btn-success" id="ViewRecomendationsButton" onclick="ViewRecomendations()" data-toggle="modal" data-target="#ShowSparkResults">VIEW RECOMMENDATIONS</button> 
+                         <div class="modal fade" id="ShowSparkResults" role="dialog">
+                            <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                <h4 class="modal-title">View Recommendations</h4>
+                                </div>
+                                <div class="modal-body">
+                                <div id="divSparkResults">
+                                 <table id="TableSparkResults" class="TextSearchResultsCSS"/></div>
+                                </div>
+                                <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                            </div>
+                            </div>    
+                           
                             <label id="lblErrorMessage"></label><br>
-                            <table id="TableSparkResults" class="TextSearchResultsCSS"/>
+                           
                         </div>
             </div>
         </div> <!--hero-->

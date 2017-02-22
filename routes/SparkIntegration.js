@@ -281,8 +281,6 @@ var ResultSet=[];
       
                   });
       
-                 // console.log("RESULTS->" + ResultSet);
-
                   res.send(ResultSet); // sendStatus(201);
                   res.end();
                   db.close();
