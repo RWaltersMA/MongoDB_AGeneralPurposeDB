@@ -225,7 +225,7 @@ MongoClient.connect(connectionString, function(err, database) {
                     exec('sh ~/CodeStaging/SparkReccEngine/submit-scala.sh -h ' + settings.host + ' -p ' + settings.port + ' -d ' + settings.database + ' -u ' 
                     + SessionID + ' > /tmp/spark-submit-$$.log 2>&1' ,function(err,stdout,stderr){
             
-            var state="stopped";
+          
             if (err)
             {
                 audit.writeAudit("Error executing Scala job : " + err.message,1);
@@ -243,7 +243,7 @@ MongoClient.connect(connectionString, function(err, database) {
                 audit.writeAudit("Error with stderr : " + stderr,1);
             
             }
-                var SparkJobDone = db.collection("spark_progress").update({ "userId" : SessionID},{ $set: {"state":state}},{ upsert: false } );
+               // var SparkJobDone = db.collection("spark_progress").update({ "userId" : SessionID},{ $set: {"state":state}},{ upsert: false } );
 
                 db.close();
             });
