@@ -78,11 +78,7 @@ MongoClient.connect(connectionString, function(err, database) {
     var StatusSet=[];
     var SessionID=req.session.sessionID;
 
-<<<<<<< HEAD
- var TextSearchResults = db.collection("id_names").aggregate([{"$sample": {"size" : 10}}]).toArray().then(function (items) { 
-=======
     var TextSearchResults = db.collection("id_names").aggregate([{"$sample": {"size" : 10}}]).toArray().then(function (items) { 
->>>>>>> 4d128d355245f80b9f6f980fa1e4080c7eed7eb9
  
             items.forEach((item, idx, array) => 
             {       
@@ -135,10 +131,7 @@ MongoClient.connect(connectionString, function(err, database) {
     if(err) throw err;
 
     db = database;
-<<<<<<< HEAD
-=======
 
->>>>>>> 4d128d355245f80b9f6f980fa1e4080c7eed7eb9
     var SessionID=req.session.sessionID;
     var DeleteAllRecommendations = db.collection("user_recommendations").remove( { userId: SessionID } ,function (err,doc) {
 
@@ -185,8 +178,6 @@ MongoClient.connect(connectionString, function(err, database) {
         res.end();
        
         audit.writeAudit("Kicked off scala job for : " + req.session.user + " with a User ID=" + SessionID,0); 
-
-<<<<<<< HEAD
         var SparkJobProgress = db.collection("spark_progress").update({ "userId" : SessionID},{ $inc: { "times_executed": 1 }, $set: {"state":"running"}},{ upsert: true } ).then(function (err,sparkdoc)
         {
                     exec('sh ~/CodeStaging/SparkReccEngine/submit-scala.sh -h ' + settings.host + ' -p ' + settings.port + ' -d ' + settings.database + ' -u ' 
@@ -213,27 +204,6 @@ MongoClient.connect(connectionString, function(err, database) {
                 var SparkJobDone = db.collection("spark_progress").update({ "userId" : SessionID},{ $set: {"state":state}},{ upsert: false } );
 
                 db.close();
-=======
-        exec('sh ~/CodeStaging/SparkReccEngine/submit-scala.sh -h ' + settings.host + ' -p ' + settings.port + ' -d ' + settings.database + ' -u ' 
-              + SessionID + ' > /tmp/spark-submit-$$.log 2>&1' ,function(err,stdout,stderr){
-      if (err)
-      {
-          audit.writeAudit("Error executing Scala job : " + err.message,1);
-      }
-      
-            if (stdout)
-      {
-           audit.writeAudit("Writing stdout from Scala job : " + stdout,0);
-      }
-
-            if (stderr)
-      {
-          audit.writeAudit("Error with stderr : " + stderr,1);
-    
-      }
-      
->>>>>>> 4d128d355245f80b9f6f980fa1e4080c7eed7eb9
-
             });
         });
 
@@ -277,25 +247,16 @@ var ResultSet=[];
           db = database;
       //db.id_names.find({"business_name" : /pizza/i })
           // Top 15 recommendations with names, with stars greater than or equal to 3 and given SessionID
-<<<<<<< HEAD
-         var SessionID=req.session.sessionID;
-         var LookupResults = db.collection("user_recommendations").aggregate([
-                  { '$match' : { 'userId': SessionID , 'review_stars' : { '$gte' : 2 }}},
-=======
+
           var SessionID=req.session.sessionID;
           var LookupResults = db.collection("user_recommendations").aggregate([
                     { '$match' : { 'userId': SessionID , 'review_stars' : { '$gte' : 2 }}},
->>>>>>> 4d128d355245f80b9f6f980fa1e4080c7eed7eb9
                     { '$lookup' : {'from': 'id_names', 'localField': 'businessId', 'foreignField': 'businessId', 'as': 'business' }},
                     { '$unwind' : '$business' }, 
                     { '$project' : { '_id':0, 'userId':1, 'businessId':1, 'businessName': '$business.business_name', 'review_stars':1 }},
                     { '$sort': {'review_stars': -1, 'businessId': 1}},
                     { '$limit' : 15 }
-<<<<<<< HEAD
-                                      ]).toArray().then(function (items) { 
-=======
                   ]).toArray().then(function (items) { 
->>>>>>> 4d128d355245f80b9f6f980fa1e4080c7eed7eb9
        
                   items.forEach((item, idx, array) => 
                   {       
