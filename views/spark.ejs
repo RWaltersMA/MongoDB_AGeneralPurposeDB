@@ -65,7 +65,8 @@
                   // $("#loading_gif").hide();
                 document.getElementById('lblErrorMessage').innerHTML = '';
                  $("#HangOnItsCrunchingMessage").show();
-                 $("#ViewRecomendationsButton").prop('disabled',true);
+                 $("#ViewRecommendationsDIV").hide();
+              //   $("#ViewRecomendationsButton").prop('disabled',true);
 
             }
             ).fail(function(data)
@@ -135,7 +136,8 @@ function ClearRecommendations()
          }).done(function(data)
             {
                $("#TableSparkResults").empty();
-               $("#ViewRecomendationsButton").prop('disabled', true);
+               $("#ViewRecommendationsDIV").hide();
+              // $("#ViewRecomendationsButton").prop('disabled', true);
                document.getElementById('lblErrorMessage').innerHTML = '';
             
             }
@@ -162,10 +164,12 @@ function CheckIfUserHasRecommendations()
             {
                 if (data.HasResults==1)
                 {
-                     $("#ViewRecomendationsButton").prop('disabled',false);
+                    $("#ViewRecommendationsDIV").show();
+                    // $("#ViewRecomendationsButton").prop('disabled',false);
                 }
                 else{
-                      $("#ViewRecomendationsButton").prop('disabled',true);
+                    $("#ViewRecommendationsDIV").hide();
+                   // $("#ViewRecomendationsButton").prop('disabled',true);
                 }
                 if (data.IsRunning==0)
                 {
@@ -295,7 +299,9 @@ window.onload = function () {
                          <strong>Opps!</strong> An error occured while trying to launch the Spark job.  Please try again.
                          </div> 
                         <br>
-                         <button type="button" <% if (!HasResults) { %> class="btn btn-default" <% } else { %> class="btn btn-success" <% } %>  id="ViewRecomendationsButton" onclick="ViewRecomendations()" <% if(!HasResults){ %> disabled <% } %> >VIEW RECOMMENDATIONS</button> 
+                        <div id="ViewRecommendationsDIV" style="display:none">
+                         <button type="button" class="btn btn-success" id="ViewRecomendationsButton" onclick="ViewRecomendations()">VIEW RECOMMENDATIONS</button> 
+                         </div>
                             <br>
                             <!--<button type="button" class="btn btn-default" id="ClearRecommendationsButton" onclick="ClearRecommendations()">CLEAR RECOMMENDATIONS</button>-->
                             <br>
