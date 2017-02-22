@@ -77,8 +77,6 @@ db.user_recommendations.aggregate([ {$match: {'review_stars' : {'$gte' : 3}}}, {
 */
 //Enumerate 10 restaurants in Arizona
 router.get('/', function (req,res,next) {
-       
-MongoClient.connect(connectionString, function(err, database) {
 
     if (!req.session.sessionID) 
     {
@@ -86,6 +84,9 @@ MongoClient.connect(connectionString, function(err, database) {
         res.end();
         return;
     }
+       
+MongoClient.connect(connectionString, function(err, database) {
+
     assert.equal(null, err);
     if(err) throw err;
 
