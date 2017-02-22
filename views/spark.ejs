@@ -76,7 +76,7 @@
                 return;
             }); 
 
-            setTimeout(CheckIfUserHasRecommendations, 7000);
+          //  setTimeout(CheckIfUserHasRecommendations, 7000);
      
  }
  function ViewRecomendations()
@@ -204,7 +204,7 @@ window.onload = function () {
     
     CheckIfUserHasRecommendations();
 
-    var timer = setTimeout(CheckIfUserHasRecommendations, 7000);
+    var timer = setInterval(CheckIfUserHasRecommendations, 7000);
 }
 
 
