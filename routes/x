@@ -35,7 +35,7 @@ MongoClient.connect(connectionString, function(err, database) {
     var ResultSet=[];
     var HasResults=0;
 
-    var TextSearchResults = db.collection("id_names").aggregate([{"$sample": {"size" : 10}}]).toArray().then(function (items) { 
+    var TextSearchResults = db.collection("id_names").find({"business_name" : /pizza/i }).limit(10).toArray().then(function (items) { 
  
             items.forEach((item, idx, array) => 
             {       
@@ -75,9 +75,7 @@ MongoClient.connect(connectionString, function(err, database) {
     if(err) throw err;
 
     db = database;
-
-    var SessionID=req.session.sessionID;
-    var DeleteAllRecommendations = db.collection("user_recommendations").remove( { userId: SessionID } ,function (err,doc) {
+    var DeleteAllRecommendations = db.collection("user_recommendations").remove( { } ,function (err,doc) {
 
         //console.log("Error: " + err);
         res.send({});
@@ -105,7 +103,6 @@ MongoClient.connect(connectionString, function(err, database) {
 
     //We need to update the ratings array with the session ID of the user
     var SessionID=req.session.sessionID;
-
     for (var i=0;i<TheRatings.length;i++)
     {
         TheRatings[i].userId=SessionID;
@@ -122,8 +119,7 @@ MongoClient.connect(connectionString, function(err, database) {
 
         audit.writeAudit("Kicked off scala job for : " + req.session.user + " with a User ID=" + SessionID,0); 
 
-        exec('sh ~/CodeStaging/SparkReccEngine/submit-scala.sh -h ' + settings.host + ' -p ' + settings.port + ' -d ' + settings.database + ' -u ' 
-              + SessionID + ' > /tmp/spark-submit-$$.log 2>&1' ,function(err,stdout,stderr){
+        exec('sh ~/CodeStaging/SparkReccEngine/submit-scala.sh -h localhost -p 27017 -d yelp -u ' + SessionID + ' > /tmp/spark-submit.log 2>&1' ,function(err,stdout,stderr){
       if (err)
       {
           audit.writeAudit("Error executing Scala job : " + err.message,1);
@@ -170,7 +166,7 @@ router.get('/GetRecommendations/', function (req,res, next){
 var ResultSet=[];
 
 //Run spark job to compute recommendations
-//exec('sh ~/CodeStaging/SparkReccEngine/submit-scala.sh -h localhost -p 27017 -d yelp > /tmp/spark-submit-$$.log 2>&1' ,function(err,stdout,stderr){
+//exec('sh ~/CodeStaging/SparkReccEngine/submit-scala.sh -h localhost -p 27017 -d yelp > /tmp/spark-submit.log 2>&1' ,function(err,stdout,stderr){
     //  if (err) throw err;
 
 
@@ -182,15 +178,13 @@ var ResultSet=[];
       
           db = database;
       //db.id_names.find({"business_name" : /pizza/i })
-          // Top 15 recommendations with names, with stars greater than or equal to 3 and given SessionID
-          var SessionID=req.session.sessionID;
+          // Top 20 recommendations with names, with stars greater than or equal to 3
           var LookupResults = db.collection("user_recommendations").aggregate([
-                    { '$match' : { 'userId': SessionID , 'review_stars' : { '$gte' : 2 }}},
+                    { '$match' : { 'review_stars' : { '$gte' : 2 }}},
                     { '$lookup' : {'from': 'id_names', 'localField': 'businessId', 'foreignField': 'businessId', 'as': 'business' }},
                     { '$unwind' : '$business' }, 
                     { '$project' : { '_id':0, 'userId':1, 'businessId':1, 'businessName': '$business.business_name', 'review_stars':1 }},
-                    { '$sort': {'review_stars': -1, 'businessId': 1}},
-                    { '$limit' : 15 }
+                    { '$limit' : 20 }
                   ]).toArray().then(function (items) { 
        
                   items.forEach((item, idx, array) => 
@@ -219,4 +213,3 @@ var ResultSet=[];
 
 });
 module.exports = router;
-
