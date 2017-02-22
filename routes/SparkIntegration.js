@@ -39,6 +39,12 @@ MongoClient.connect(connectionString, function(err, database) {
                      if (user_rec_count>0)
                      {
                          HasRecommendations=1;
+                            var SparkJobDone = db.collection("spark_progress").update({ "userId" : SessionID},{ $set: {"state":"stopped"}},{ upsert: false } );
+                            res.send({"HasRecommendations":HasRecommendations, "IsRunning":0});
+                            res.end();
+                            db.close();
+                            return;
+
                      }
                    // var SparkJobInProgress = db.collection("spark_progress").find({"userId":SessionID, "state":"running"}).count().then( function(sparkruncount)
                    var SparkJobInProgress = db.collection("spark_progress").findOne({"userId":SessionID}).then( function(sparkrun)
