@@ -94,6 +94,9 @@ MongoClient.connect(connectionString, function(err, database) {
                      if (thecount>0)
                      {
                          HasResults=1;
+                         //Update the state to stopped // probably a much better way to do this.
+                          var SparkJobDone = db.collection("spark_progress").update({ "userId" : SessionID},{ $set: {"state":"stopped"}},{ upsert: false } );
+
                      }
                      //Determine if there is a spark job going on for this user
                      //spark_progress will be used to track how many spark jobs are executed and which ones are currently running for a given user
