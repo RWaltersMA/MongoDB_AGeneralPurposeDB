@@ -150,6 +150,8 @@ function ClearRecommendations()
 
 function CheckIfUserHasRecommendations()
 {
+     console.log("Checking...");
+
       $.ajax({
             url: "/SparkIntegration/AnyRecommendations",
            // headers: headers,  use this for special header info like security auth
@@ -162,7 +164,9 @@ function CheckIfUserHasRecommendations()
         
          }).done(function(data)
             {
-                //console.log("HasResults=" + data.HasResults);
+                console.log("HasResults=" + data.HasRecommendations);
+                console.log("IsRunning=" + data.IsRunning);
+                
                 if (data.HasRecommendations==1)
                 {
                     $("#ViewRecommendationsDIV").show();
