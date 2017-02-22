@@ -110,6 +110,9 @@
                           row.insertCell(1).innerHTML=data[i].review_stars;
                
                         }
+                         //Auto scroll once the table is built
+                         var v=$('#ViewRecommendationsDIV');
+                          $('html,body').animate({scrollTop: v.offset().top},'slow');
             }
             ).fail(function(data)
             {
@@ -300,28 +303,13 @@ window.onload = function () {
                          <div class="alert alert-danger" id="lblErrorAlert" style="display:none">
                          <strong>Opps!</strong> An error occured while trying to launch the Spark job.  Please try again.
                          </div> 
-                        <br>
-                        <div id="ViewRecommendationsDIV" style="display:none">
-                         <button type="button" class="btn btn-success" id="ViewRecomendationsButton" onclick="ViewRecomendations()" data-toggle="modal" data-target="#ShowSparkResults">VIEW RECOMMENDATIONS</button> 
-                         <div class="modal fade" id="ShowSparkResults" role="dialog">
-                            <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                <h4 class="modal-title">View Recommendations</h4>
-                                </div>
-                                <div class="modal-body">
-                                <div id="divSparkResults">
-                                 <table id="TableSparkResults" class="TextSearchResultsCSS"/></div>
-                                </div>
-                                <div class="modal-footer">
-                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                </div>
-                            </div>
-                            </div>
-                            </div>    
+                        <br><br>
+                        <div id="ViewRecommendationsDIV" style="display:none;">
+                         <button type="button" class="btn btn-success" id="ViewRecomendationsButton" onclick="ViewRecomendations()">VIEW RECOMMENDATIONS</button> 
+                         <br>
+                         <table id="TableSparkResults" class="TextSearchResultsCSS" />
                            
-                            <label id="lblErrorMessage"></label><br>
+                         <label id="lblErrorMessage"></label><br>
                            
                         </div>
             </div>

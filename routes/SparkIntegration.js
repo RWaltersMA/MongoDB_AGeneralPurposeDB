@@ -22,6 +22,12 @@ var connectionString = url.format({
 //This is the WebAPI that will tell if the View Recommends button should be enabled.  The UI will pole this API every few seconds.
 router.get('/AnyRecommendations', function(req,res,next)
 {
+     if (!req.session.sessionID) 
+    {
+        res.redirect('/');
+        res.end();
+        return;
+    }
   var HasRecommendations=0;
   var IsRunningNow=0;
   var SessionID=req.session.sessionID;
@@ -74,6 +80,12 @@ router.get('/', function (req,res,next) {
        
 MongoClient.connect(connectionString, function(err, database) {
 
+    if (!req.session.sessionID) 
+    {
+        res.redirect('/');
+        res.end();
+        return;
+    }
     assert.equal(null, err);
     if(err) throw err;
 

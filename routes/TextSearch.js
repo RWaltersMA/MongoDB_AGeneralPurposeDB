@@ -20,6 +20,13 @@ var connectionString = url.format({
 });
 
 router.get('/', function (req,res,next) {
+     //If they jumped directly to a route and don't have a sessionID redirect them
+    if (!req.session.sessionID) 
+    {
+        res.redirect('/');
+        res.end();
+        return;
+    }
        res.render('text', { title: 'MongoDB - General purpose database for GIANT IDEAS' });
   
 })

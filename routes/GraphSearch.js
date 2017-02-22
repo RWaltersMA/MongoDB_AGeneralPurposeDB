@@ -21,6 +21,14 @@ var connectionString = url.format({
 router.get('/', function (req,res,next) {
     //Enumerate db.users.find( { $and: [{ $where: "this.friends.length < 4"}, { $where: "this.friends.length > 1"} ]} ).limit(10);
     //Fill an object to pass to UI
+    
+     //If they jumped directly to a route and don't have a sessionID redirect them
+    if (!req.session.sessionID) 
+    {
+        res.redirect('/');
+        res.end();
+        return;
+    }
 
 MongoClient.connect(connectionString, function(err, database) {
 
