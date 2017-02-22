@@ -15,7 +15,6 @@
  <script>
  // support functions here
 
-
  function rate_business(businessId, rating)
  {
 
@@ -45,6 +44,8 @@
         Ratings+="{ \"businessId\": " + number + ", \"review_stars\": " + this.innerHTML + ",\"userId\":3000000 }";
 
      });
+
+    // ClearRecommendations();
 
    //console.log("R->" + req.session.sessionID); 
     
@@ -144,6 +145,57 @@ function ClearRecommendations()
             return;
             });
 }
+
+function CheckIfUserHasRecommendations()
+{
+      $.ajax({
+            url: "/SparkIntegration/AnyRecommendations",
+           // headers: headers,  use this for special header info like security auth
+            method: 'GET',
+          //  data:  {}, // This is where we may want to send a unique client/session token in future to support multiple users JSON.stringify({MyRatings:Ratings}),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            // This prevents JQuery from trying to append the form as a querystring
+            processData: false,
+        
+         }).done(function(data)
+            {
+                if (data.HasResults==1)
+                {
+                     $("#ViewRecomendationsButton").prop('disabled',false);
+                }
+                else{
+                      $("#ViewRecomendationsButton").prop('disabled',true);
+                }
+                if (data.IsRunning==0)
+                {
+                    $("#HangOnItsCrunchingMessage").prop('disabled',true);
+                }
+                if (data.IsRunning==1) //Spark job is running
+                {
+                    $("#HangOnItsCrunchingMessage").prop('disabled',false);
+                }
+                if (data.IsRunning==2)  //Spark job failed
+                {
+                    $("#HangOnItsCrunchingMessage").hide();
+                    $("#lblErrorAlert").show();
+                }
+
+            })
+            .fail(function(err)
+            {
+               document.getElementById('lblErrorMessage').innerHTML = 'Error determining if recommendations or spark job is running - ' + err.responseText;
+            });
+}
+
+window.onload = function () {
+    
+    CheckIfUserHasRecommendations();
+
+    var timer = setTimeout(CheckIfUserHasRecommendations, 7000);
+}
+
+
  </script>
  
   </head>
@@ -235,15 +287,17 @@ function ClearRecommendations()
 
                          <button type="button" class="btn btn-default" id="submitRecommendations" onclick="recommend()" style="border:solid;" >Recommend Businesses</button> 
                          <br>
-                         <div class="alert alert-info fade in" id="HangOnItsCrunchingMessage" style="display:none;">
+                         <div class="alert alert-info fade in" id="HangOnItsCrunchingMessage" <% if (IsRunning) { %> style="display:block" <% } else { %> style="display:none" <% } %>>
                             <strong>Hang on!!</strong> Spark is leveraging data stored in MongoDB to create your recommendations!<br>
                             This may take up to 5 minutes so check out other features and come back to this tab!  When Spark is finished, the View Recommendations button shown below will be enabled.
                         </div>
+                         <div class="alert alert-danger" id="lblErrorAlert" style="display:none">
+                         <strong>Opps!</strong> An error occured while trying to launch the Spark job.  Please try again.
+                         </div> 
                         <br>
                          <button type="button" <% if (!HasResults) { %> class="btn btn-default" <% } else { %> class="btn btn-success" <% } %>  id="ViewRecomendationsButton" onclick="ViewRecomendations()" <% if(!HasResults){ %> disabled <% } %> >VIEW RECOMMENDATIONS</button> 
                             <br>
-                            <br>
-                            <button type="button" class="btn btn-default" id="ClearRecommendationsButton" onclick="ClearRecommendations()">CLEAR RECOMMENDATIONS</button>
+                            <!--<button type="button" class="btn btn-default" id="ClearRecommendationsButton" onclick="ClearRecommendations()">CLEAR RECOMMENDATIONS</button>-->
                             <br>
                             <label id="lblErrorMessage"></label><br>
                             <table id="TableSparkResults" class="TextSearchResultsCSS"/>

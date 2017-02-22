@@ -19,7 +19,47 @@ var connectionString = url.format({
     port: settings.port,
     pathname: settings.database
 });
+//This is the WebAPI that will tell if the View Recommends button should be enabled.  The UI will pole this API every few seconds.
+router.get('/AnyRecommendations', function(req,res,next)
+{
+  var HasRecommendations=0;
+  var IsRunningNow=0;
+  var SessionID=req.session.sessionID;
+  
 
+MongoClient.connect(connectionString, function(err, database) {
+
+    assert.equal(null, err);
+    if(err) throw err;
+
+    db = database;
+
+  var ResultsPresent = db.collection("user_recommendations").find({"userId" : SessionID}).count().then( function(user_rec_count)
+                {
+                     if (user_rec_count>0)
+                     {
+                         HasRecommendations=1;
+                     }
+                   // var SparkJobInProgress = db.collection("spark_progress").find({"userId":SessionID, "state":"running"}).count().then( function(sparkruncount)
+                   var SparkJobInProgress = db.collection("spark_progress").findOne({"userId":SessionID}).then( function(sparkrun)
+                     {
+                         if (sparkrun.state=="error")
+                         {
+                             IsRunningNow=2;
+                         }
+                        if (sparkrun.state=="running")
+                        {
+                            IsRunningNow=1;
+                        }
+                    
+                        res.send({"HasRecommendations":HasRecommendations, "IsRunning":IsRunningNow});
+                        res.end();
+                        db.close();
+                     });
+
+                });
+}); //MongoClient
+});
 /*
 db.user_recommendations.aggregate([ {$match: {'review_stars' : {'$gte' : 3}}}, {$lookup: {from: 'id_names', 'localField': 'businessId', 'foreignField': 'businessId', as: 'business'}}, {$unwind:'$business'}, {$project: {_id:0, userId:1, businessId:1, 'name':'$business.business_name'}}])
 */
@@ -34,8 +74,11 @@ MongoClient.connect(connectionString, function(err, database) {
     db = database;
     var ResultSet=[];
     var HasResults=0;
+    var IsRunning=0;
+    var StatusSet=[];
+    var SessionID=req.session.sessionID;
 
-    var TextSearchResults = db.collection("id_names").find({"business_name" : /pizza/i }).limit(10).toArray().then(function (items) { 
+ var TextSearchResults = db.collection("id_names").aggregate([{"$sample": {"size" : 10}}]).toArray().then(function (items) { 
  
             items.forEach((item, idx, array) => 
             {       
@@ -46,15 +89,28 @@ MongoClient.connect(connectionString, function(err, database) {
             });
 
             //Check to see if there are any results ready from a previous Spark Run, this will need to be updated to pass Session info for multi-user support
-            var ResultsPresent = db.collection("user_recommendations").count().then( function(thecount)
+            var ResultsPresent = db.collection("user_recommendations").find({"userId" : SessionID}).count().then( function(thecount)
                 {
                      if (thecount>0)
                      {
                          HasResults=1;
                      }
-                      db.close();
+                     //Determine if there is a spark job going on for this user
+                     //spark_progress will be used to track how many spark jobs are executed and which ones are currently running for a given user
+                     //state will be "running", "finished", "error"
+                     //It is assumed that only 1 spark job for any 1 SessionID can be running
+                     var SparkJobProgress = db.collection("spark_progress").find({"userId":SessionID, "state":"running"}).count().then( function(runningcount)
+                     {
+                        if (runningcount>0)
+                        {
+                            IsRunning=1;
+                        }
+
+                        db.close();
            
-                        res.render('spark', {ResultSet:ResultSet, HasResults: HasResults} );
+                        res.render('spark', {ResultSet:ResultSet, HasResults: HasResults, IsRunning: IsRunning} );
+                     })
+                     
                 }
             )
 
@@ -75,7 +131,8 @@ MongoClient.connect(connectionString, function(err, database) {
     if(err) throw err;
 
     db = database;
-    var DeleteAllRecommendations = db.collection("user_recommendations").remove( { } ,function (err,doc) {
+    var SessionID=req.session.sessionID;
+    var DeleteAllRecommendations = db.collection("user_recommendations").remove( { userId: SessionID } ,function (err,doc) {
 
         //console.log("Error: " + err);
         res.send({});
@@ -110,34 +167,45 @@ MongoClient.connect(connectionString, function(err, database) {
    
     var DeleteAllResults = db.collection("personal_ratings").remove( { userId: SessionID }).then(function (err,doc) {
 
-    var InsertAllResults= db.collection("personal_ratings").insert(TheRatings).then (function(err, doc){
+    //Clear the user recommendations collection for the given sessionID
+    //var CleanUpRecommendations = db.collection("user_recommendations").remove( { userId: SessionID } );
 
+    var InsertAllResults= db.collection("personal_ratings").insert(TheRatings).then (function(err, doc){
 
         res.send({});
         res.end();
-        db.close();
-
+       
         audit.writeAudit("Kicked off scala job for : " + req.session.user + " with a User ID=" + SessionID,0); 
 
-        exec('sh ~/CodeStaging/SparkReccEngine/submit-scala.sh -h localhost -p 27017 -d yelp -u ' + SessionID + ' > /tmp/spark-submit.log 2>&1' ,function(err,stdout,stderr){
-      if (err)
-      {
-          audit.writeAudit("Error executing Scala job : " + err.message,1);
-      }
-      
-            if (stdout)
-      {
-           audit.writeAudit("Writing stdout from Scala job : " + stdout,0);
-      }
+        var SparkJobProgress = db.collection("spark_progress").update({ "userId" : SessionID},{ $inc: { "times_executed": 1 }, $set: {"state":"running"}},{ upsert: true } ).then(function (err,sparkdoc)
+        {
+                    exec('sh ~/CodeStaging/SparkReccEngine/submit-scala.sh -h ' + settings.host + ' -p ' + settings.port + ' -d ' + settings.database + ' -u ' 
+                    + SessionID + ' > /tmp/spark-submit-$$.log 2>&1' ,function(err,stdout,stderr){
+            
+            var state="stopped";
+            if (err)
+            {
+                audit.writeAudit("Error executing Scala job : " + err.message,1);
+                state="error";
+           
+            }
+            
+                    if (stdout)
+            {
+                audit.writeAudit("Writing stdout from Scala job : " + stdout,0);
+            }
 
-            if (stderr)
-      {
-          audit.writeAudit("Error with stderr : " + stderr,1);
-    
-      }
-      
+                    if (stderr)
+            {
+                audit.writeAudit("Error with stderr : " + stderr,1);
+            
+            }
+                var SparkJobDone = db.collection("spark_progress").update({ "userId" : SessionID},{ $set: {"state":state}},{ upsert: false } );
 
-    });
+                db.close();
+
+            });
+        });
 
         });
         });
@@ -166,7 +234,7 @@ router.get('/GetRecommendations/', function (req,res, next){
 var ResultSet=[];
 
 //Run spark job to compute recommendations
-//exec('sh ~/CodeStaging/SparkReccEngine/submit-scala.sh -h localhost -p 27017 -d yelp > /tmp/spark-submit.log 2>&1' ,function(err,stdout,stderr){
+//exec('sh ~/CodeStaging/SparkReccEngine/submit-scala.sh -h localhost -p 27017 -d yelp > /tmp/spark-submit-$$.log 2>&1' ,function(err,stdout,stderr){
     //  if (err) throw err;
 
 
@@ -178,14 +246,16 @@ var ResultSet=[];
       
           db = database;
       //db.id_names.find({"business_name" : /pizza/i })
-          // Top 20 recommendations with names, with stars greater than or equal to 3
-          var LookupResults = db.collection("user_recommendations").aggregate([
-                    { '$match' : { 'review_stars' : { '$gte' : 2 }}},
+          // Top 15 recommendations with names, with stars greater than or equal to 3 and given SessionID
+         var SessionID=req.session.sessionID;
+         var LookupResults = db.collection("user_recommendations").aggregate([
+                  { '$match' : { 'userId': SessionID , 'review_stars' : { '$gte' : 2 }}},
                     { '$lookup' : {'from': 'id_names', 'localField': 'businessId', 'foreignField': 'businessId', 'as': 'business' }},
                     { '$unwind' : '$business' }, 
                     { '$project' : { '_id':0, 'userId':1, 'businessId':1, 'businessName': '$business.business_name', 'review_stars':1 }},
-                    { '$limit' : 20 }
-                  ]).toArray().then(function (items) { 
+                    { '$sort': {'review_stars': -1, 'businessId': 1}},
+                    { '$limit' : 15 }
+                                      ]).toArray().then(function (items) { 
        
                   items.forEach((item, idx, array) => 
                   {       
@@ -198,7 +268,7 @@ var ResultSet=[];
       
                   });
       
-                  console.log("RESULTS->" + ResultSet);
+                 // console.log("RESULTS->" + ResultSet);
 
                   res.send(ResultSet); // sendStatus(201);
                   res.end();
