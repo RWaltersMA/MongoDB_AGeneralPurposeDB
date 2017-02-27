@@ -55,11 +55,15 @@ MongoClient.connect(connectionString, function(err, database) {
                    // var SparkJobInProgress = db.collection("spark_progress").find({"userId":SessionID, "state":"running"}).count().then( function(sparkruncount)
                    var SparkJobInProgress = db.collection("spark_progress").findOne({"userId":SessionID}).then( function(sparkrun)
                      {
-                         if (sparkrun.state=="error")
+                         if (!sparkrun) // error
                          {
                              IsRunningNow=2;
                          }
-                        if (sparkrun.state=="running")
+                         else if (sparkrun.state=="error")
+                         {
+                             IsRunningNow=2;
+                         }
+                        else if (sparkrun.state=="running")
                         {
                             IsRunningNow=1;
                         }
