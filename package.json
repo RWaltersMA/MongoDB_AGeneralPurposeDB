@@ -9,6 +9,7 @@
   "author": "Rob Walters",
   "license": "ISC",
   "dependencies": {
+    "applicationinsights": "^0.18.0",
     "bluebird": "^3.4.7",
     "body-parser": "^1.16.0",
     "connect-mongo": "^1.3.2",

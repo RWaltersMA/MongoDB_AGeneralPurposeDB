@@ -10,6 +10,8 @@ var MongoStore = require('connect-mongo')(expressSession);
 var url = require('url');
 var router = express.Router();
 
+//var appInsights = require("applicationinsights");
+//appInsights.setup("bb6acade-454a-43e8-8667-10def6f43339").start();
 
 var index = require('./routes/index');
 var textsearch = require('./routes/TextSearch');
@@ -46,8 +48,8 @@ app.use(expressSession({
     secret: 'TheVegetarians',
     store: new MongoStore({
     host: '127.0.0.1',
-    port: '27017',
-    url: 'mongodb://localhost:27017/MyGiantIdeaSessionStore'}),
+    port: '27020',
+    url: 'mongodb://localhost:27020/MyGiantIdeaSessionStore'}),
     resave: false,
     saveUninitialized: false
 }));
