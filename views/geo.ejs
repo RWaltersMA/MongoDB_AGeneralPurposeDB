@@ -57,6 +57,7 @@
             ).fail(function(data)
             {
                $("#loading_gif").hide();
+               console.log('failed->' + data);
                return;
             }); 
      

@@ -20,12 +20,12 @@ module.exports =
 writeAudit: function (audit_text,severity) 
   {
 
-MongoClient.connect(connectionString, function(err, database) {
+MongoClient.connect(connectionString, function(err, client) {
 
     assert.equal(null, err);
     if(err) throw err;
 
-    db = database;
+    db = client.db(settings.database);
     var ResultSet=[];
 
     var TextSearchResults = db.collection("audit").insert({

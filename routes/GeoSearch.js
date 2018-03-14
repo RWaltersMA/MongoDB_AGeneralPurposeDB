@@ -45,9 +45,12 @@ MongoClient.connect(connectionString, function(err, client) {
     //Could also use Aggregation Framework: db.business.aggregate([{$group: {_id:"$city"}}, {$sort:{"_id":1}}])
     //db.business.aggregate([{$match: {"state": SearchCriteria }},{$group: {_id:"$city"}}, {$sort:{"_id":1}}])
 
-    var FacetSearchResults = db.collection("business").aggregate([{$match: { "state":"NV", "city":"Las Vegas"}},{$limit:10},{$group: {_id:"$name"}}, {$sort:{"_id":1}}],function(err, docs) {
-       //var v=docs.sort();
-
+  //  var BusinessListResults = db.collection("business").aggregate([{$match: { "state":"NV", "city":"Las Vegas"}},{$limit:10},{$group: {_id:"$name"}}, {$sort:{"_id":1}}],function(err, docs) {
+  
+     var BusinessListResults = db.collection("business").aggregate(
+         [{$match: { "state":"NV", "city":"Las Vegas"}},{$limit:10},{$group: {_id:"$name"}},{$sort:{"_id":1}}]
+        ).toArray().then(
+    function(docs) {
       
 
         docs.forEach(function (item, index, array) {
@@ -60,7 +63,7 @@ MongoClient.connect(connectionString, function(err, client) {
             res.send(ResultSet);
             res.end();
             client.close();
-            })  
+            })
     })
 })
 
