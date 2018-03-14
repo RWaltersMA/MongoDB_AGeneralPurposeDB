@@ -1,3 +1,4 @@
+var d=require('dotenv').config();
 var express = require('express');
 var app = express()
 var mongodb = require('mongodb');
@@ -6,6 +7,7 @@ var MongoClient = require('mongodb').MongoClient;
 
 var expressSession = require('express-session');
 var MongoStore = require('connect-mongo')(expressSession);
+
 
 var url = require('url');
 var router = express.Router();
@@ -33,7 +35,7 @@ var bodyParser = require('body-parser');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 var db;
- 
+ /*
 var connectionString = url.format({
     protocol: 'mongodb',
     slashes: true,
@@ -41,15 +43,20 @@ var connectionString = url.format({
     port: settings.port,
     pathname: settings.database
 });
-
+var connectionStringSession = url.format({
+  protocol: 'mongodb',
+  slashes: true,
+  hostname: settings.host,
+  port: settings.port,
+  pathname: 'MyGiantIdeaSessionStore'
+});
+*/
 app.use(expressSession({
   
     secret: 'TheVegetarians',
     store: new MongoStore({
-    host: '127.0.0.1',
-    port: '27020',
-    url: 'mongodb://localhost:27020/MyGiantIdeaSessionStore'}),
-    resave: false,
+      url: 'mongodb://' + settings.host +':' + settings.port +'/MyGiantIdeaSessionStore'}),
+      resave: false,
     saveUninitialized: false
 }));
 
