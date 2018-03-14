@@ -37,12 +37,12 @@ var ResultSet=[];
 
 var SearchCriteria=req.body.criteria;
 
-MongoClient.connect(connectionString, function(err, database) {
+MongoClient.connect(connectionString, function(err, client) {
 
     assert.equal(null, err);
     if(err) throw err;
 
-    db = database;
+    db = client.db(settings.database);
 
     var TextSearchResults = db.collection("business").find({
         "$text": {
@@ -62,7 +62,7 @@ MongoClient.connect(connectionString, function(err, database) {
 
             res.send(ResultSet); // sendStatus(201);
             res.end();
-            db.close();
+            client.close();
         })
     .catch(function(e) {
          res.status(500).send(e);

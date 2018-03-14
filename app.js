@@ -17,14 +17,13 @@ var index = require('./routes/index');
 var textsearch = require('./routes/TextSearch');
 var graphsearch = require('./routes/GraphSearch');
 var facetsearch = require('./routes/FacetSearch');
-var sparkintegration = require('./routes/SparkIntegration');
 var geosearch = require('./routes/GeoSearch');
 var constraints = require('./routes/Constraints');
 var views = require('./routes/Views');
 var joins = require('./routes/Joins');
 var reporting = require('./routes/Reporting');
 var welcome=require('./routes/Welcome');
-
+var sparkintegration=require('./routes/SparkIntegration');
 var settings=require('./config/config');  //change monogodb server location here
 
 app.set('views', __dirname + '/views');
@@ -58,9 +57,9 @@ app.use('/', index);
 app.use('/TextSearch', textsearch);
 app.use('/GraphSearch', graphsearch);
 app.use('/FacetSearch', facetsearch);
-app.use('/SparkIntegration', sparkintegration);
 app.use('/GeoSearch', geosearch);
 app.use('/Constraints', constraints);
+app.use('/SparkIntegration', sparkintegration);
 app.use('/Views', views);
 app.use('/Joins', joins);
 app.use('/Reporting',reporting);

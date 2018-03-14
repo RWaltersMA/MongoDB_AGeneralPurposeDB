@@ -38,12 +38,12 @@ var ResultSet=[];
 var CitySearchCriteria=req.body.City;
 var StateSearchCriteria=req.body.State;
 
-MongoClient.connect(connectionString, function(err, database) {
+MongoClient.connect(connectionString, function(err, client) {
 
     assert.equal(null, err);
     if(err) throw err;
 
-    db = database;
+    db = client.db(settings.database);
     
     var JoinSearchResults = db.collection("business").aggregate(
    [
@@ -101,7 +101,7 @@ MongoClient.connect(connectionString, function(err, database) {
 
             res.send(ResultSet); // sendStatus(201);
             res.end();
-            db.close();
+            client.close();
         })
     .catch(function(e) {
             console.log(e);

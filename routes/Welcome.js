@@ -27,12 +27,12 @@ router.post('/', function(req, res, next) {
     return;
    } 
 
-MongoClient.connect(connectionString, function(err, database) {
+MongoClient.connect(connectionString, function(err, client) {
 
     assert.equal(null, err);
     if(err) throw err;
 
-    db = database;
+    db = client.db(settings.database);
     var d = new Date();
 
      //check to see if this user has been here before

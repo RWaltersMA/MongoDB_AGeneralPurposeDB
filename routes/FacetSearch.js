@@ -37,12 +37,12 @@ var ResultSet=[];
 
 var SearchCriteria=req.body.StateID;
 
-MongoClient.connect(connectionString, function(err, database) {
+MongoClient.connect(connectionString, function(err, client) {
 
     assert.equal(null, err);
     if(err) throw err;
 
-    db = database;
+    db = client.db(settings.database);
     //db.runCommand ( { distinct: "business", key: "city", query: { state: "NC"} } )
     //Could also use Aggregation Framework: db.business.aggregate([{$group: {_id:"$city"}}, {$sort:{"_id":1}}])
     //db.business.aggregate([{$match: {"state": SearchCriteria }},{$group: {_id:"$city"}}, {$sort:{"_id":1}}])
@@ -59,7 +59,7 @@ MongoClient.connect(connectionString, function(err, database) {
 
             res.send(ResultSet);
             res.end();
-            db.close();
+            client.close();
             })  
     })
 })
@@ -71,12 +71,12 @@ var ResultSet=[];
 var CitySearchCriteria=req.body.City;
 var StateSearchCriteria=req.body.State;
 
-MongoClient.connect(connectionString, function(err, database) {
+MongoClient.connect(connectionString, function(err, client) {
 
     assert.equal(null, err);
     if(err) throw err;
 
-    db = database;
+    db = client.db(settings.database);
     
     var FacetSearchResults = db.collection("business").aggregate( [
    
@@ -103,7 +103,7 @@ MongoClient.connect(connectionString, function(err, database) {
 
             res.send(ResultSet); // sendStatus(201);
             res.end();
-            db.close();
+            client.close();
         })
     .catch(function(e) {
             console.log(e);

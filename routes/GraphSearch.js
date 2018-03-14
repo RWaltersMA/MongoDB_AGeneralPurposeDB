@@ -30,12 +30,12 @@ router.get('/', function (req,res,next) {
         return;
     }
 
-MongoClient.connect(connectionString, function(err, database) {
+MongoClient.connect(connectionString, function(err, client) {
 
     assert.equal(null, err);
     if(err) throw err;
 
-    db = database;
+    db = client.db(settings.database);
     var ResultSet=[];
 
     var TextSearchResults = db.collection("users").find({
@@ -54,7 +54,7 @@ MongoClient.connect(connectionString, function(err, database) {
 
             //res.send(ResultSet); // sendStatus(201);
            // res.end();
-            db.close();
+            client.close();
             res.render('graph', { ResultSet });
         })
     .catch(function(e) {
@@ -72,12 +72,12 @@ var UserIDToQuery=req.body.UserID;
 var LevelsToQuery=req.body.Levels;
 
 
-MongoClient.connect(connectionString, function(err, database) {
+MongoClient.connect(connectionString, function(err, client) {
 
     assert.equal(null, err);
     if(err) throw err;
 
-    db = database;
+    db = client.db(settings.database);
 
     var TextSearchResults = db.collection("users").aggregate([
         { '$match': {
@@ -112,7 +112,7 @@ MongoClient.connect(connectionString, function(err, database) {
 
             res.send(ResultSet); // sendStatus(201);
             res.end();
-            db.close();
+            client.close();
         })
     .catch(function(e) {
          res.status(500).send(e);
