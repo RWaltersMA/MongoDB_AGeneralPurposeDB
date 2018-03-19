@@ -19,3 +19,6 @@ You will have to create a [.env](.env) file which contains the connection creden
     DB_PASSWORD=webpassword
 
 To run `node app.js`
+
+## Other Setup Tasks
+* The Text Search example requires an index. Create one from the shell using `db.business.createIndex({name:'text'})`
