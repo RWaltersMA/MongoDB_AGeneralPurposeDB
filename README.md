@@ -10,7 +10,7 @@ To install run `npm install`
 You should have a MongoDB instance available and the [Yelp database](https://www.yelp.com/dataset/challenge) loaded.  This demo database is not included on Git due to the size.
 
 ## BEFORE YOU BEGIN
-You will have to create a ".env" file which contains the connection credentials to your local MongoDB instance.  The contents of the file should similar to the following:
+You will have to create a [.env](.env) file which contains the connection credentials to your local MongoDB instance (see [dotenv](https://github.com/motdotla/dotenv)).  The contents of the file should be similar to the following:
 
     DB_HOST=127.0.0.1
     DB_PORT=27020
@@ -18,4 +18,4 @@ You will have to create a ".env" file which contains the connection credentials 
     DB_USERNAME=webuser
     DB_PASSWORD=webpassword
 
-
+To run `node app.js`
