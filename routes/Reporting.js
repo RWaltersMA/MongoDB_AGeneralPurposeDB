@@ -2,6 +2,7 @@ var express = require('express');
 var mysql      = require('mysql2');
 var audit = require('../public/scripts/audit.js');
 var settings=require('../config/config.js');
+var fs=require('fs');
 var router = express.Router();
 
 /*ar pool      =    mysql.createPool({
@@ -14,11 +15,12 @@ var router = express.Router();
     flags: 'PLUGIN_AUTH=mongosql_auth',
     debug    :  false
 });*/
-var pool      =    mysql.createConnection({
-    host     : '127.0.0.1',
+var pool      =    mysql.createPool({ //createConnection({
+    connectionLimit: 10,
+    host     : settings.host,
     port: 3307,
     user: 'rootadmin',
-    password: process.env.ROOT_PASSWORD,
+    password: settings.root_password,
     database : 'yelp',
     ssl      : {
         ca   : fs.readFileSync('/var/MongoSSL/mongodb.pem'),
@@ -29,7 +31,7 @@ var pool      =    mysql.createConnection({
 
       if (pluginName === 'mysql_clear_password') {
       // https://dev.mysql.com/doc/internals/en/clear-text-authentication.html
-      var password = process.env.ROOT_PASSWORD + '\0';
+      var password = settings.root_password + '\0';
       var buffer = Buffer.from(password);
       cb(null, buffer);
     }
@@ -73,8 +75,9 @@ var IsFirst=true;
 var DeliveredFields=false;
 
 
- pool.connect(function(err,connection){
+ pool.getConnection(function(err,connection){
         if (err) {
+            console.log('error - ' + err);
                 res.send( { Error: "Error in connection database" + err } );
                 res.end;
                 return;
