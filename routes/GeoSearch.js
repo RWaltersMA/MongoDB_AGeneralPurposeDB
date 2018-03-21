@@ -10,13 +10,6 @@ var url = require('url');
 
 var settings=require('../config/config.js');  //change monogodb server location here
 var db;
-var connectionString = url.format({
-    protocol: 'mongodb',
-    slashes: true,
-    hostname: settings.host,
-    port: settings.port,
-    pathname: settings.database
-});
 
 router.get('/', function (req,res,next) {
      //If they jumped directly to a route and don't have a sessionID redirect them
@@ -35,7 +28,7 @@ router.post('/QueryBusinessList', function (req,res,next) {
 
 var ResultSet=[];
 
-MongoClient.connect(connectionString, function(err, client) {
+MongoClient.connect(settings.connectionString, function(err, client) {
 
     assert.equal(null, err);
     if(err) throw err;
@@ -73,7 +66,7 @@ var ResultSet=[];
 var BusinessName=req.body.Business;
 var Distance=Number(req.body.Distance);
 
-MongoClient.connect(connectionString, function(err, client) {
+MongoClient.connect(settings.connectionString, function(err, client) {
 
     assert.equal(null, err);
     if(err) throw err;

@@ -6,13 +6,6 @@ var url = require('url');
 
 var settings=require('../../config/config.js');  //change monogodb server location here
 var db;
-var connectionString = url.format({
-    protocol: 'mongodb',
-    slashes: true,
-    hostname: settings.host,
-    port: settings.port,
-    pathname: settings.database
-});
 
 
 module.exports = 
@@ -20,7 +13,7 @@ module.exports =
 writeAudit: function (audit_text,severity) 
   {
 
-MongoClient.connect(connectionString, function(err, client) {
+MongoClient.connect(settings.connectionString, function(err, client) {
 
     assert.equal(null, err);
     if(err) throw err;

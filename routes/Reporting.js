@@ -1,13 +1,17 @@
 var express = require('express');
 var mysql      = require('mysql');
 var audit = require('../public/scripts/audit.js');
+var settings=require('../config/config.js');
 var router = express.Router();
 
 var pool      =    mysql.createPool({
     connectionLimit : 10, //important
     host     : 'localhost',
     port: 3307,
+    user: settings.user + '?source=admin',
+    password: settings.password,
     database : 'yelp',
+    flags: 'PLUGIN_AUTH=mongosql_auth',
     debug    :  false
 });
 
@@ -50,7 +54,7 @@ var DeliveredFields=false;
 
  pool.getConnection(function(err,connection){
         if (err) {
-                res.send( { Error: "Error in connection database" } );
+                res.send( { Error: "Error in connection database" + err } );
                 res.end;
                 return;
                 }  

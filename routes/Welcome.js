@@ -6,13 +6,13 @@ var url = require('url');
 
 var settings=require('../config/config.js');  //change monogodb server location here
 var db; 
-var connectionString = url.format({
+/*var connectionString = url.format({
     protocol: 'mongodb',
     slashes: true,
     hostname: settings.host,
     port: settings.port,
     pathname: settings.database
-});
+});*/
 
 /* .User entered email address and hit continue*/
 router.post('/', function(req, res, next) {
@@ -27,7 +27,7 @@ router.post('/', function(req, res, next) {
     return;
    } 
 
-MongoClient.connect(connectionString, function(err, client) {
+MongoClient.connect(settings.connectionString, function(err, client) {
 
     assert.equal(null, err);
     if(err) throw err;

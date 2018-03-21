@@ -6,7 +6,7 @@ var ObjectID=require('mongodb').ObjectID;
 var MongoClient = require('mongodb').MongoClient;
 
 var expressSession = require('express-session');
-var MongoStore = require('connect-mongo')(expressSession);
+var MongoDBStore = require('connect-mongodb-session')(expressSession);
 
 
 var url = require('url');
@@ -35,27 +35,18 @@ var bodyParser = require('body-parser');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 var db;
- /*
-var connectionString = url.format({
-    protocol: 'mongodb',
-    slashes: true,
-    hostname: settings.host,
-    port: settings.port,
-    pathname: settings.database
-});
-var connectionStringSession = url.format({
-  protocol: 'mongodb',
-  slashes: true,
-  hostname: settings.host,
-  port: settings.port,
-  pathname: 'MyGiantIdeaSessionStore'
-});
-*/
+var MongoSessionURI= 'mongodb://' + encodeURIComponent(settings.username) + ':' + encodeURIComponent(settings.password) + '@' + settings.host +':' + settings.port
+
+
 app.use(expressSession({
   
     secret: 'TheVegetarians',
-    store: new MongoStore({
-      url: 'mongodb://' + settings.host +':' + settings.port +'/MyGiantIdeaSessionStore'}),
+    store: new MongoDBStore( {
+      uri: MongoSessionURI, //'mongodb://$' + settings.username + ':' + settings.password + '@' + settings.host +':' + settings.port, // +'/MyGiantIdeaSessionStore',
+      databaseName: 'MyGiantIdeaSessionStore',
+      collection: 'mySessions'
+    }),
+      //url: 'mongodb://' + settings.username + ':' + settings.password + '@' + settings.host +':' + settings.port +'/MyGiantIdeaSessionStore'}),
       resave: false,
     saveUninitialized: false
 }));

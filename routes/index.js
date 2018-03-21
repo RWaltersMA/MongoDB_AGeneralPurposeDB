@@ -6,13 +6,6 @@ var assert=require('assert');
 
 var settings=require('../config/config.js');  //change monogodb server location here
 var db; 
-var connectionString = url.format({
-    protocol: 'mongodb',
-    slashes: true,
-    hostname: settings.host,
-    port: settings.port,
-    pathname: settings.database
-});
 
 
 /* GET home page. */
@@ -22,7 +15,7 @@ router.get('/', function(req, res, next) {
 
         //A user exists, update the visitors collection
 
-        MongoClient.connect(connectionString, function(err, client) {
+        MongoClient.connect(settings.connectionString, function(err, client) {
 
             assert.equal(null, err);
             if(err) throw err;
