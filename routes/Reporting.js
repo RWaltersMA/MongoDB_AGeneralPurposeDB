@@ -1,10 +1,10 @@
 var express = require('express');
-var mysql      = require('mysql');
+var mysql      = require('mysql2');
 var audit = require('../public/scripts/audit.js');
 var settings=require('../config/config.js');
 var router = express.Router();
 
-var pool      =    mysql.createPool({
+/*ar pool      =    mysql.createPool({
     connectionLimit : 10, //important
     host     : 'localhost',
     port: 3307,
@@ -13,6 +13,27 @@ var pool      =    mysql.createPool({
     database : 'yelp',
     flags: 'PLUGIN_AUTH=mongosql_auth',
     debug    :  false
+});*/
+var pool      =    mysql.createConnection({
+    host     : '127.0.0.1',
+    port: 3307,
+    user: 'rootadmin',
+    password: 'J3#aMc!*z(rajduvbq!!',
+    database : 'yelp',
+    ssl      : {
+        ca   : fs.readFileSync('/var/MongoSSL/mongodb.pem'),
+        key  : fs.readFileSync('/var/MongoSSL/client-stripped.key'),
+        cert : fs.readFileSync('/var/MongoSSL/client.crt')
+    },
+    authSwitchHandler: function ({pluginName, pluginData}, cb) {
+
+      if (pluginName === 'mysql_clear_password') {
+      // https://dev.mysql.com/doc/internals/en/clear-text-authentication.html
+      var password = 'J3#aMc!*z(rajduvbq!!\0';
+      var buffer = Buffer.from(password);
+      cb(null, buffer);
+    }
+}
 });
 
 /* GET home page. */
@@ -52,21 +73,15 @@ var IsFirst=true;
 var DeliveredFields=false;
 
 
- pool.getConnection(function(err,connection){
+ pool.connect(function(err,connection){
         if (err) {
                 res.send( { Error: "Error in connection database" + err } );
                 res.end;
                 return;
                 }  
 
-       var query=connection.query({sql: SQLQuery, timeout: 40000});
-       query
-  .on('error', function(err) {
-      res.send( { Error: " " + err });
-      res.end;
-      return;
-    // Handle error, an 'end' event will be emitted after this as well
-  })
+       var query=pool.query({sql: SQLQuery, timeout: 40000})
+      
   .on('fields', function(fields) {
     // the field packets for the rows to follow
     // We only want to push the field headers once, so let's check to see if they've been sent yet
