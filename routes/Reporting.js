@@ -18,7 +18,7 @@ var pool      =    mysql.createConnection({
     host     : '127.0.0.1',
     port: 3307,
     user: 'rootadmin',
-    password: 'J3#aMc!*z(rajduvbq!!',
+    password: process.env.ROOT_PASSWORD,
     database : 'yelp',
     ssl      : {
         ca   : fs.readFileSync('/var/MongoSSL/mongodb.pem'),
@@ -29,7 +29,7 @@ var pool      =    mysql.createConnection({
 
       if (pluginName === 'mysql_clear_password') {
       // https://dev.mysql.com/doc/internals/en/clear-text-authentication.html
-      var password = 'J3#aMc!*z(rajduvbq!!\0';
+      var password = process.env.ROOT_PASSWORD + '\0';
       var buffer = Buffer.from(password);
       cb(null, buffer);
     }
