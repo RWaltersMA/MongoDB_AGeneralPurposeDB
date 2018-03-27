@@ -10,11 +10,13 @@ You should have a MongoDB instance available and the [Yelp database](https://www
 
 Create a [.env](.env) file which contains the connection credentials to your local MongoDB instance (see [dotenv](https://github.com/motdotla/dotenv)).  The contents of the file should be similar to the following:
 
+```
     DB_HOST=127.0.0.1
     DB_PORT=27017
     DB_NAME=yelp
     DB_USERNAME=webuser
     DB_PASSWORD=webpassword
+```
 
 To run `node app.js`
 
