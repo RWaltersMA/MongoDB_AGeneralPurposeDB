@@ -25,38 +25,9 @@
 
     <div class="container">  
     <div class="row">
-    <div class="col-sm-3 col-md-3 col-lg-3">
 
-    <div class="sidebar">
-      <div class="well">   
-       <div class="list-group">
-          <a href="/" class="list-group-item list-group-item-info">MongoDB<br/><I>A General Purpose Database</I></a>
-       
-       </div>
-        <div class="list-group">
-           <a href="#" class="list-group-item list-group-item-success">Advanced Search</a>
-           <a href="/FacetSearch" class="list-group-item">Faceted Search</a>
-            <a href="/TextSearch" class="list-group-item">Text Search</a>
-            <a href="/GraphSearch" class="list-group-item">Graph Queries</a>
-            <a href="/GeoSearch" class="list-group-item">Geo-spatial Search</a>
-          </div>
-
-          <div class="list-group">
-          <a href="#" class="list-group-item list-group-item-success">Data Analytics</a>
-            <a href="/SparkIntegration" class="list-group-item active">Spark Integration</a>
-            <a href="/Reporting" class="list-group-item">Reporting Tools</a>
-          </div>
-          <div class="list-group">
-          <a href="#" class="list-group-item list-group-item-success">Relational-like</a>
-            <a href="/Constraints" class="list-group-item">Constraints</a>
-            <a href="/Views" class="list-group-item">Views</a>
-             <a href="/Joins" class="list-group-item">Joins</a>
-          </div>
-       
-       
-       </div>
-      </div> 
-      </div> <!--col-sm-6-->
+      <% var active='spark'; %>
+      <% include ./partials/sidebar %>
 
       <div class="col-sm-9 col-md-9 col-lg-9">
       <div class="content">
