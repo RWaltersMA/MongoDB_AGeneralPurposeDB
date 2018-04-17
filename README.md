@@ -6,17 +6,17 @@ The code behind a website that demonstrates MongoDB is a general purpose databas
 
 * [Getting Started](#gs)
 
-* [Known Issues & Limitations](#known_issues)
+* [Known Issues & Limitations](#issues)
 
-* [Contacts](#contacts)
+* [Contacts](#contact)
 
-* [Disclaimer](#disclaimer)
+* [Disclaimer](#disclaim)
 
-## Introduction <a id="intro"></a>
-
-## Getting Started <a id="gs"></a>
-
-### Running Locally
+Introduction <a id="intro"></a>
+-------------------------------
+Getting Started <a id="gs"></a>
+-------------------------------
+## Running Locally
 
 To install locally run `npm install`
 
@@ -39,21 +39,25 @@ To run `node app.js`
 * The Text Search example requires an index. Create one from the shell using `db.business.createIndex({name:'text'})`
 
 
-## Known Issues & Limitations <a id="known_issues"></a>
-
+Known Issues & Limitations<a id="issues"></a>
+---------------------------------------------
 
 List of issues, Limitations, and to-dos.
 
-All issues and limitations are in the
-[Issues](https://github.com/RWaltersMA/MongoDB_AGeneralPurposeDB/issues?state=open) part of this repo.
+All issues and limitations have moved to the
+[Issues](https://github.com/RWaltersMA/MongoDB_AGeneralPurposeDB/issues?q=is%3Aopen) part of this repo.
 
-## Contacts <a id="contacts"></a>
+Contacts <a id="contact"></a>
+-----------------------------
+
 For technical questions, issues or just comments please post in the
-[Issues](https://github.com/RWaltersMA/MongoDB_AGeneralPurposeDB/issues?state=open) section on GitHub.
+[Issues](https://github.com/RWaltersMA/MongoDB_AGeneralPurposeDB/issues?q=is%3Aopen) section on GitHub.
 
-## Disclaimer <a id="disclaimer"></a>
+Disclaimer<a id="disclaim"></a>
+-------------------------------
+
 This software is not supported by [MongoDB, Inc.](http://mongodb.com)
 under any of their commercial support subscriptions or otherwise.
 Any usage of MongoDB_AGeneralPurposeDB is at your own risk.
 Bug reports, feature requests and questions can be posted in the
-[Issues](https://github.com/RWaltersMA/MongoDB_AGeneralPurposeDB/issues?state=open) section on GitHub.
+[Issues](https://github.com/RWaltersMA/MongoDB_AGeneralPurposeDB/issues?q=is%3Aopen) section on GitHub.
