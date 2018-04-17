@@ -30,16 +30,16 @@ router.get('/', function(req, res, next) {
                 if (err)
                 {
                     req.session.destroy();
-                    res.render('welcome', { title: 'MongoDB - General purpose database for GIANT IDEAS' });
+                    res.render('welcome');
                     return;
                 }
-                res.render('index', { title: 'MongoDB - General purpose database for GIANT IDEAS' });
+                res.render('index');
 
             });
             
             });
         } else {
-            res.render('welcome', { title: 'MongoDB - General purpose database for GIANT IDEAS' });
+            res.render('welcome');
         }
 
 });
