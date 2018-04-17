@@ -38,7 +38,7 @@ Text Search example requires an index.  Create one from the shell using:
 
 `db.business.createIndex({name:'text'})`
 
-GraphLookup needs a single field index.  Create one from the shell using:  
+GraphLookup benefits greatly from a single field index.  Create one from the shell using:  
 
 `db.users.createIndex({user_id:1})`
 
