@@ -19,8 +19,17 @@ MongoClient.connect(connectionString, function (err, db) {
     if (err) throw err;
     var dbo = db.db("yelp");
 
-    dbo.collection("business").find({ "location": { $exists: true } })
-    .project({"_id":1, longitude:1, latitude:1})
+    dbo.collection("business").find(
+        { $and: [
+            { 
+                "longitude": { $exists: true }, 
+                "latitude": {$exists:true} 
+            },
+            {
+                "latitude":{$ne:null}, 
+                "longitude":{$ne:null}
+            }]})
+    .project({"_id":1, "longitude":1, "latitude":1})
     .forEach(function (document) 
             {       
                 console.log(document);
