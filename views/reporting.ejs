@@ -1,255 +1,260 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    
-    <title><%= title %></title>
+<% include ./partials/header %>
 
-    <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-
-    <!-- Optional theme -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
-    <link rel="stylesheet" href="css/mystyle.css">
-  </head>
   <body>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-    <script src="scripts/util.js"></script>
-<script>
- $(document).ready(function() {
+    <script>
+      $(document).ready(function () {
 
-    
 
-     var DRDLDocument="schema:~X- db: yelp~X~1tables:~X~1- table: business~X~1~1collection: business~X~1~1pipeline: []~X~1~1columns:~X~1- Name: _id~X~1~1MongoType: bson.ObjectId~X~1~1SqlName: _id~X~1~1SqlType: varchar~X~1- Name: attributes.Accepts Credit Cards~X~1~1MongoType: bool~X~1~1SqlName: attributes.Accepts Credit Cards~X~1~1SqlType: boolean~X~1- Name: attributes.Accepts Insurance~X~1~1MongoType: bool~X~1~1SqlName: attributes.Accepts Insurance~X~1~1SqlType: boolean~X~1- Name: attributes.Ages Allowed~X~1~1MongoType: string~X~1~1SqlName: attributes.Ages Allowed~X~1~1SqlType: varchar~X~1- Name: attributes.Alcohol~X~1~1MongoType: string~X~1~1SqlName: attributes.Alcohol~X~1~1SqlType: varchar~X~1- Name: attributes.Dogs Allowed~X~1~1MongoType: bool~X~1~1SqlName: attributes.Dogs Allowed~X~1~1SqlType: boolean~X~1- Name: attributes.Drive-Thru~X~1~1MongoType: bool~X~1~1SqlName: attributes.Drive-Thru~X~1~1SqlType: boolean~X~1- Name: attributes.Good for Kids~X~1~1MongoType: bool~X~1~1SqlName: attributes.Good for Kids~X~1~1SqlType: boolean~X~1- Name: attributes.Price Range~X~1~1MongoType: int~X~1~1SqlName: attributes.Price Range~X~1~1SqlType: int~X~1- Name: attributes.Take-out~X~1~1MongoType: bool~X~1~1SqlName: attributes.Take-out~X~1~1SqlType: boolean~X~1- Name: attributes.Takes Reservations~X~1~1MongoType: bool~X~1~1SqlName: attributes.Takes Reservations~X~1~1SqlType: boolean~X~1- Name: business_id~X~1~1MongoType: string~X~1~1SqlName: business_id~X~1~1SqlType: varchar~X~1- Name: city~X~1~1MongoType: string~X~1~1SqlName: city~X~1~1SqlType: varchar~X~1- Name: full_address~X~1MongoType: string~X~1~1SqlName: full_address~X~1~1SqlType: varchar~X~1- Name: name~X~1~1MongoType: string~X~1~1SqlName: name~X~1~1SqlType: varchar~X~1- Name: open~X~1~1MongoType: bool~X~1~1SqlName: open~X~1~1SqlType: boolean~X~1- Name: review_count~X~1~1MongoType: int~X~1~1SqlName: review_count~X~1~1SqlType: int~X~1- Name: stars~X~1~1MongoType: float64~X~1~1SqlName: stars~X~1~1SqlType: float64~X~1- Name: state~X~1~1MongoType: string~X~1~1SqlName: state~X~1~1SqlType: varchar~X~1- Name: type~X~1~1MongoType: string~X~1~1SqlName: type~X~1~1SqlType: varchar~X- table: business_categories~Xcollection: business~X~1pipeline:~X~1- $unwind:~X~1~1includeArrayIndex: categories_idx~X~1~1~1path: $categories~X~1~1columns:~X~1- Name: _id~X~1~1MongoType: bson.ObjectId~X~1~1SqlName: _id~X~1~1SqlType: varchar~X~1- Name: categories~X~1~1MongoType: string~X~1~1SqlName: categories~X~1~1SqlType: varchar~X~1- Name: categories_idx~X~1~1MongoType: int~X~1~1SqlName: categories_idx~X~1~1SqlType: int~X~1- table: business_neighborhoods~X~1collection: business~X~1pipeline:~X~1~1- $unwind:~X~1~1~1includeArrayIndex: neighborhoods_idx~X~1~1~1path: $neighborhoods~X~1columns:~X~1- Name: _id~X~1~1MongoType: bson.ObjectId~X~1~1SqlName: _id~X~1~1SqlType: varchar~X~1- Name: neighborhoods~X~1~1MongoType: string~X~1~1SqlName: neighborhoods~X~1~1SqlType: varchar~X~1- Name: neighborhoods_idx~X~1~1MongoType: int~X~1~1SqlName: neighborhoods_idx~X~1~1SqlType: int~X~1- table: reviews~X~1collection: reviews~X~1pipeline: []~X~1columns:~X~1- Name: _id~X~1~1MongoType: bson.ObjectId~X~1~1SqlName: _id~X~1~1SqlType: varchar~X~1- Name: business_id~X~1~1MongoType: string~X~1~1SqlName: business_id~X~1~1SqlType: varchar~X~1- Name: date~X~1~1MongoType: string~X~1~1SqlName: date~X~1~1SqlType: varchar~X~1- Name: review_id~X~1~1MongoType: string~X~1~1SqlName: review_id~X~1~1SqlType: varchar~X~1- Name: stars~X~1~1MongoType: int~X~1~1SqlName: stars~X~1~1SqlType: int~X~1- Name: text~X~1~1MongoType: string~X~1~1SqlName: text~X~1~1SqlType: varchar~X~1- Name: type~X~1~1MongoType: string~X~1~1SqlName: type~X~1~1SqlType: varchar~X~1- Name: user_id~X~1~1MongoType: string~X~1SqlName: user_id~X~1~1SqlType: varchar~X~1- Name: votes.cool~X~1~1MongoType: int~X~1~1SqlName: votes.cool~X~1~1SqlType: int~X~1- Name: votes.funny~X~1~1MongoType: int~X~1~1SqlName: votes.funny~X~1~1SqlType: int~X~1- Name: votes.useful~X~1~1MongoType: int~X~1~1SqlName: votes.useful~X~1~1SqlType: int~X~1- table: users~X~1collection: users~X~1pipeline: []~X~1columns:~X~1- Name: _id~X~1~1MongoType: bson.ObjectId~X~1~1SqlName: _id~X~1~1SqlType: varchar~X~1- Name: average_stars~X~1~1MongoType: float64~X~1~1SqlName: average_stars~X~1~1SqlType: float64~X~1- Name: fans~X~1~1MongoType: int~X~1~1SqlName: fans~X~1~1SqlType: int~X~1- Name: name~X~1~1MongoType: string~X~1~1SqlName: name~X~1~1SqlType: varchar~X~1- Name: review_count~X~1~1MongoType: int~X~1~1SqlName: review_count~X~1~1SqlType: int~X~1- Name: type~X~1~1MongoType: string~X~1~1SqlName: type~X~1~1SqlType: varchar~X~1- Name: user_id~X~1~1MongoType: string~X~1~1SqlName: user_id~X~1~1SqlType: varchar";
 
-    $('#divDRDL').append(syntaxHighlight(DRDLDocument));
- });
+        var DRDLDocument =
+          "schema:~X- db: yelp~X~1tables:~X~1- table: business~X~1~1collection: business~X~1~1pipeline: []~X~1~1columns:~X~1- Name: _id~X~1~1MongoType: bson.ObjectId~X~1~1SqlName: _id~X~1~1SqlType: varchar~X~1- Name: attributes.Accepts Credit Cards~X~1~1MongoType: bool~X~1~1SqlName: attributes.Accepts Credit Cards~X~1~1SqlType: boolean~X~1- Name: attributes.Accepts Insurance~X~1~1MongoType: bool~X~1~1SqlName: attributes.Accepts Insurance~X~1~1SqlType: boolean~X~1- Name: attributes.Ages Allowed~X~1~1MongoType: string~X~1~1SqlName: attributes.Ages Allowed~X~1~1SqlType: varchar~X~1- Name: attributes.Alcohol~X~1~1MongoType: string~X~1~1SqlName: attributes.Alcohol~X~1~1SqlType: varchar~X~1- Name: attributes.Dogs Allowed~X~1~1MongoType: bool~X~1~1SqlName: attributes.Dogs Allowed~X~1~1SqlType: boolean~X~1- Name: attributes.Drive-Thru~X~1~1MongoType: bool~X~1~1SqlName: attributes.Drive-Thru~X~1~1SqlType: boolean~X~1- Name: attributes.Good for Kids~X~1~1MongoType: bool~X~1~1SqlName: attributes.Good for Kids~X~1~1SqlType: boolean~X~1- Name: attributes.Price Range~X~1~1MongoType: int~X~1~1SqlName: attributes.Price Range~X~1~1SqlType: int~X~1- Name: attributes.Take-out~X~1~1MongoType: bool~X~1~1SqlName: attributes.Take-out~X~1~1SqlType: boolean~X~1- Name: attributes.Takes Reservations~X~1~1MongoType: bool~X~1~1SqlName: attributes.Takes Reservations~X~1~1SqlType: boolean~X~1- Name: business_id~X~1~1MongoType: string~X~1~1SqlName: business_id~X~1~1SqlType: varchar~X~1- Name: city~X~1~1MongoType: string~X~1~1SqlName: city~X~1~1SqlType: varchar~X~1- Name: full_address~X~1MongoType: string~X~1~1SqlName: full_address~X~1~1SqlType: varchar~X~1- Name: name~X~1~1MongoType: string~X~1~1SqlName: name~X~1~1SqlType: varchar~X~1- Name: open~X~1~1MongoType: bool~X~1~1SqlName: open~X~1~1SqlType: boolean~X~1- Name: review_count~X~1~1MongoType: int~X~1~1SqlName: review_count~X~1~1SqlType: int~X~1- Name: stars~X~1~1MongoType: float64~X~1~1SqlName: stars~X~1~1SqlType: float64~X~1- Name: state~X~1~1MongoType: string~X~1~1SqlName: state~X~1~1SqlType: varchar~X~1- Name: type~X~1~1MongoType: string~X~1~1SqlName: type~X~1~1SqlType: varchar~X- table: business_categories~Xcollection: business~X~1pipeline:~X~1- $unwind:~X~1~1includeArrayIndex: categories_idx~X~1~1~1path: $categories~X~1~1columns:~X~1- Name: _id~X~1~1MongoType: bson.ObjectId~X~1~1SqlName: _id~X~1~1SqlType: varchar~X~1- Name: categories~X~1~1MongoType: string~X~1~1SqlName: categories~X~1~1SqlType: varchar~X~1- Name: categories_idx~X~1~1MongoType: int~X~1~1SqlName: categories_idx~X~1~1SqlType: int~X~1- table: business_neighborhoods~X~1collection: business~X~1pipeline:~X~1~1- $unwind:~X~1~1~1includeArrayIndex: neighborhoods_idx~X~1~1~1path: $neighborhoods~X~1columns:~X~1- Name: _id~X~1~1MongoType: bson.ObjectId~X~1~1SqlName: _id~X~1~1SqlType: varchar~X~1- Name: neighborhoods~X~1~1MongoType: string~X~1~1SqlName: neighborhoods~X~1~1SqlType: varchar~X~1- Name: neighborhoods_idx~X~1~1MongoType: int~X~1~1SqlName: neighborhoods_idx~X~1~1SqlType: int~X~1- table: reviews~X~1collection: reviews~X~1pipeline: []~X~1columns:~X~1- Name: _id~X~1~1MongoType: bson.ObjectId~X~1~1SqlName: _id~X~1~1SqlType: varchar~X~1- Name: business_id~X~1~1MongoType: string~X~1~1SqlName: business_id~X~1~1SqlType: varchar~X~1- Name: date~X~1~1MongoType: string~X~1~1SqlName: date~X~1~1SqlType: varchar~X~1- Name: review_id~X~1~1MongoType: string~X~1~1SqlName: review_id~X~1~1SqlType: varchar~X~1- Name: stars~X~1~1MongoType: int~X~1~1SqlName: stars~X~1~1SqlType: int~X~1- Name: text~X~1~1MongoType: string~X~1~1SqlName: text~X~1~1SqlType: varchar~X~1- Name: type~X~1~1MongoType: string~X~1~1SqlName: type~X~1~1SqlType: varchar~X~1- Name: user_id~X~1~1MongoType: string~X~1SqlName: user_id~X~1~1SqlType: varchar~X~1- Name: votes.cool~X~1~1MongoType: int~X~1~1SqlName: votes.cool~X~1~1SqlType: int~X~1- Name: votes.funny~X~1~1MongoType: int~X~1~1SqlName: votes.funny~X~1~1SqlType: int~X~1- Name: votes.useful~X~1~1MongoType: int~X~1~1SqlName: votes.useful~X~1~1SqlType: int~X~1- table: users~X~1collection: users~X~1pipeline: []~X~1columns:~X~1- Name: _id~X~1~1MongoType: bson.ObjectId~X~1~1SqlName: _id~X~1~1SqlType: varchar~X~1- Name: average_stars~X~1~1MongoType: float64~X~1~1SqlName: average_stars~X~1~1SqlType: float64~X~1- Name: fans~X~1~1MongoType: int~X~1~1SqlName: fans~X~1~1SqlType: int~X~1- Name: name~X~1~1MongoType: string~X~1~1SqlName: name~X~1~1SqlType: varchar~X~1- Name: review_count~X~1~1MongoType: int~X~1~1SqlName: review_count~X~1~1SqlType: int~X~1- Name: type~X~1~1MongoType: string~X~1~1SqlName: type~X~1~1SqlType: varchar~X~1- Name: user_id~X~1~1MongoType: string~X~1~1SqlName: user_id~X~1~1SqlType: varchar";
 
-function PredefinedSQLQuery(val)
-{
-  if (val=="0")
-  {
-     $('#inputQuery').val("");
-     return;
-  }
-  if (val=="1")  // Query for users > 200 reviews
-  {
-    $('#inputQuery').val("SELECT name, review_count from users where review_count > 100");
-  }
-  if (val=="2")
-  {
-    $('#inputQuery').val("SELECT table_name FROM information_schema.tables WHERE table_schema='yelp'");
-  }
-  if (val=="3")
-  {
-    $('#inputQuery').val("select business.name as business_name, reviews.text as review_text from users INNER JOIN reviews on users.user_id = reviews.user_id INNER JOIN business on business.business_id=reviews.business_id WHERE users.name='Jeremy'");
-  }
-  
-}
- function ExecuteSQLQuery()
- {
-        var SQLQuery=$('#inputQuery').val();
+        $('#divDRDL').append(syntaxHighlight(DRDLDocument));
+      });
+
+      function PredefinedSQLQuery(val) {
+        if (val == "0") {
+          $('#inputQuery').val("");
+          return;
+        }
+        if (val == "1") // Query for users > 200 reviews
+        {
+          $('#inputQuery').val("SELECT name, review_count from users where review_count > 100");
+        }
+        if (val == "2") {
+          $('#inputQuery').val("SELECT table_name FROM information_schema.tables WHERE table_schema='yelp'");
+        }
+        if (val == "3") {
+          $('#inputQuery').val(
+            "select business.name as business_name, reviews.text as review_text from users INNER JOIN reviews on users.user_id = reviews.user_id INNER JOIN business on business.business_id=reviews.business_id WHERE users.name='Jeremy'"
+          );
+        }
+
+      }
+
+      function ExecuteSQLQuery() {
+        var SQLQuery = $('#inputQuery').val();
         if (SQLQuery.length < 5) return;
 
         $('#Loading').show();
         $('#SQLResults').empty();
-    
-          var table = document.getElementById("SQLResults");
 
-          var iTotalRecords=0; // Future use maybe display number of records if we ever removed the limit
-  
-          try {
-    
+        var table = document.getElementById("SQLResults");
+
+        var iTotalRecords = 0; // Future use maybe display number of records if we ever removed the limit
+
+        try {
+
           var xhr = new XMLHttpRequest();
           xhr.open('POST', '/Reporting/QuerySQL', true);
           xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 
           xhr.previous_text = '';
-           xhr.onerror = function(err) { console.log("[XHR] Fatal Error." + err); };
-            xhr.onreadystatechange = function() 
-            {
-                try
-                {
-                    if (xhr.readyState ==4 )
-                    { 
-                        //May not need the below originally get for streaming from server but doesn't work well in this scenario
-                        var new_response = xhr.responseText.substring(xhr.previous_text.length);                     
-                        if (new_response.length==0) return; // No more data to present
+          xhr.onerror = function (err) {
+            console.log("[XHR] Fatal Error." + err);
+          };
+          xhr.onreadystatechange = function () {
+            try {
+              if (xhr.readyState == 4) {
+                //May not need the below originally get for streaming from server but doesn't work well in this scenario
+                var new_response = xhr.responseText.substring(xhr.previous_text.length);
+                if (new_response.length == 0) return; // No more data to present
 
-                       var v=JSON.parse(new_response);  // This is where the whole partial download breaks down
-                      
-                         if(v.hasOwnProperty('Error')) {
-                            var row = table.insertRow(0);
-                          row.insertCell(0).innerHTML='<b>' + v.Error + '</b>';
-                          return;
-                         }
-                      iTotalRecords+=v.length;
+                var v = JSON.parse(new_response); // This is where the whole partial download breaks down
 
-                      for (var iRow=0;iRow<v.length;iRow++)
-                      {
-                         var row = table.insertRow(0);
-                      
-                            if(v[iRow].hasOwnProperty('QueryResults')){
-                               var iColumn=0;
-   
-                                for(var property in v[iRow].QueryResults) {
-                                 
-                                      row.insertCell(iColumn).innerHTML=v[iRow].QueryResults[property];
-                                      iColumn++;
-                                  }
-                            }
-                            if(v[iRow].hasOwnProperty('Fields')){
-                              
-                                var thead = document.createElement('thead');
-                                thead.setAttribute("style", "background-color:lightblue;color:black");
-                                table.appendChild(thead);
-                                for (var i=0;i<v[iRow].Fields.length;i++) {
-                                  
-                                  thead.appendChild(document.createElement("th")).
-                                  appendChild(document.createTextNode(v[iRow].Fields[i]));
-          
-                                }
-                            }
+                if (v.hasOwnProperty('Error')) {
+                  var row = table.insertRow(0);
+                  row.insertCell(0).innerHTML = '<b>' + v.Error + '</b>';
+                  return;
+                }
+                iTotalRecords += v.length;
 
+                for (var iRow = 0; iRow < v.length; iRow++) {
+                  var row = table.insertRow(0);
 
-                      }
-                     
-                        xhr.previous_text = xhr.responseText;
+                  if (v[iRow].hasOwnProperty('QueryResults')) {
+                    var iColumn = 0;
+
+                    for (var property in v[iRow].QueryResults) {
+
+                      row.insertCell(iColumn).innerHTML = v[iRow].QueryResults[property];
+                      iColumn++;
                     }
+                  }
+                  if (v[iRow].hasOwnProperty('Fields')) {
+
+                    var thead = document.createElement('thead');
+                    thead.setAttribute("style", "background-color:lightblue;color:black");
+                    table.appendChild(thead);
+                    for (var i = 0; i < v[iRow].Fields.length; i++) {
+
+                      thead.appendChild(document.createElement("th")).
+                      appendChild(document.createTextNode(v[iRow].Fields[i]));
+
+                    }
+                  }
+
+
                 }
-                catch (e)
-                {
-                    console.log("<b>[XHR] Exception: " + e + "</b>");
-                      $("#Loading").hide();
-                }
-                finally{
-                  $("#Loading").hide();
-             //      $('#NumberOfRecordsLabel').html("<b>Returned " + iTotalRecords + " records</b>");
-                }
-            };   
-             xhr.send('SQLQuery=' + SQLQuery); 
-              
+
+                xhr.previous_text = xhr.responseText;
+              }
+            } catch (e) {
+              console.log("<b>[XHR] Exception: " + e + "</b>");
+              $("#Loading").hide();
+            } finally {
+              $("#Loading").hide();
+              //      $('#NumberOfRecordsLabel').html("<b>Returned " + iTotalRecords + " records</b>");
+            }
+          };
+          xhr.send('SQLQuery=' + SQLQuery);
+
+        } catch (e) {
+          $("#Loading").hide();
+          var table = document.getElementById("SQLResults");
+          var row = table.insertRow(0);
+          row.insertCell(0).innerHTML = '<b> Exception: ' + e + '</b>';
         }
-        catch (e)
-        {
-            $("#Loading").hide();
-            var table = document.getElementById("SQLResults");
-             var row = table.insertRow(0);
-             row.insertCell(0).innerHTML='<b> Exception: ' + e + '</b>';
-        }
-       
- }
 
-</script>
+      }
+    </script>
 
-<nav class="navbar navbar-inverse">
-  <div class="container">
-    <div class="navbar-header">
-        <a class="navbar-brand" href="#"><img class="MongoImage" src="images/mongodb_logo3.png"></a>
-    </div>
-  </div>
-</nav>
+    <nav class="navbar navbar-inverse">
+      <div class="container">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#">
+            <img class="MongoImage" src="images/mongodb_logo3.png">
+          </a>
+        </div>
+      </div>
+    </nav>
 
-  <div class="container">  
-  <div class="row">
+    <div class="container">
+      <div class="row">
 
-    <% var active='reporting'; %>
-    <% include ./partials/sidebar %>
+        <% var active='reporting'; %>
+          <% include ./partials/sidebar %>
 
-      <div class="col-sm-9 col-md-9 col-lg-9">
-      <div class="content">
-        <div class="hero-unit">
-            <h3>MongoDB speaks the SQL Language</h3>
-            <p>Many customers use popular reporting tools like Tableau and Qlik to build reports.  These business intelligence tools connect to datasources like excel files, relational databases and text files.  Today these tools don't speak natively to MongoDB so you may think you need to move the data to a relational database before building reports.  With MongoDB 3.4 moving data out of MongoDB in order to leverage these reporting tools is unnecessary.  In fact you can issue read-only SQL queries against a MongoDB using the MongoDB BI Connector.</p>
-            <h3>How does the BI Connector work?</h3>
-            <p>Since reporting tools speak SQL and MongoDB speaks the Mongo Query Language we need an intermediate service to translate the SQL to Mongo statement and any JSON results from Mongo to relational datasets.  This is the job of the MongoSQLD service (a.k.a the BI Connector).</p>
-             <div class="row">
+            <div class="col-sm-9 col-md-9 col-lg-9">
+              <div class="content">
+                <div class="hero-unit">
+                  <h3>MongoDB speaks the SQL Language</h3>
+                  <p>Many customers use popular reporting tools like Tableau and Qlik to build reports. These business intelligence
+                    tools connect to datasources like excel files, relational databases and text files. Today these tools
+                    don't speak natively to MongoDB so you may think you need to move the data to a relational database before
+                    building reports. With MongoDB 3.4 moving data out of MongoDB in order to leverage these reporting tools
+                    is unnecessary. In fact you can issue read-only SQL queries against a MongoDB using the MongoDB BI Connector.</p>
+                  <h3>How does the BI Connector work?</h3>
+                  <p>Since reporting tools speak SQL and MongoDB speaks the Mongo Query Language we need an intermediate service
+                    to translate the SQL to Mongo statement and any JSON results from Mongo to relational datasets. This
+                    is the job of the MongoSQLD service (a.k.a the BI Connector).</p>
+                  <div class="row">
                     <div class="col-sm-12">
-                          <img style="width:100%" src="images/biconnector.png">
-                    </div>
-                    <div class="col-sm-12">
-                    <p><I>Figure: Data flow from BI reporting tool to MongoDB and back leveraging the MongoSQLD service</I></p>
+                      <img style="width:100%" src="images/biconnector.png">
                     </div>
                     <div class="col-sm-12">
-                    <p>Before the MongoSQLD service is ready to be used it must first know how to map the relational columns and data types with the MongoDB fields and data types for the given MongoDB database.  While this mapping file, called the DRDL file, could be written from scratch there is a  command line tool called <b>mongodrdl</b> that creates one for you. You can then tweak this file as neccessary to suit your specific needs.  In the following scenario you are connected to the business review database in MongoDB via the BI Connector.  To view the DRDL file that was created for the database click the "View DRDL" button.</p>
-                    <button id="ButtonViewDRDL" class="btn btn-primary" data-toggle="modal" data-target="#ShowDRDL">View DRDL file used for this example</button>
-                    <p>When the mongosqld service (a.k.a BI Connector) is started it is passed the location of the MongoDB database as well as the DRDL file.  The service then listens on a port and recieves SQL queries from clients.  To the BI reporting tools they connect and issue SQL queries just like they do on other relational databases like MySQL and Oracle.</p>
-                       <p><a class="btn primary large" href="https://docs.mongodb.com/bi-connector/master/" target="_">Learn more about the BI Connector &raquo;</a></p>
-                    
+                      <p>
+                        <I>Figure: Data flow from BI reporting tool to MongoDB and back leveraging the MongoSQLD service</I>
+                      </p>
                     </div>
-            </div>
-           
-            
-            <div class="well">
-            <div class="row">
-                <div class="col-sm-12">
-                    <h4>Scenario: Issue SQL queries directly to MongoDB</h4>
-                    <br>
-                    <p>In this scenario you can issue ad-hoc SQL statements directly to the MongoDB database via the BI Connector.  If your SQL statement skills are a little rusty you may select a pre-defined query from the list below:</p>
-                    <label for="PredefinedSQLToQuery">Select a pre-defined SQL query to execute:</label>
-                    <select class="form-control" id="PredefinedSQLToQuery" required onchange="PredefinedSQLQuery(this.value)">
-                    <option value="0" >-- Select a query ---</option>
-                    <option value="1" >Users who reviewed more than 100 businesses</option>
-                    <option value="2" >List tables (metadata query)</option>
-                    <option value="3">Jeremy's restaurant reviews (join query)</option>
-                    
-                    </select>
-                    <p>or type your own SELECT statement to execute against MongoDB:</p>
-                    <label for="inputSearch">SQL statement: </label>
-                    <div class="input-group">
-                      <textarea id="inputQuery" placeholder="Enter SQL Query (i.e. SELECT * FROM business)..." class="form-control" rows=5></textarea>
-                      <span class="input-group-addon">LIMIT 20</span>
+                    <div class="col-sm-12">
+                      <p>Before the MongoSQLD service is ready to be used it must first know how to map the relational columns
+                        and data types with the MongoDB fields and data types for the given MongoDB database. While this
+                        mapping file, called the DRDL file, could be written from scratch there is a command line tool called
+                        <b>mongodrdl</b> that creates one for you. You can then tweak this file as neccessary to suit your specific
+                        needs. In the following scenario you are connected to the business review database in MongoDB via
+                        the BI Connector. To view the DRDL file that was created for the database click the "View DRDL" button.</p>
+                      <button id="ButtonViewDRDL" class="btn btn-primary" data-toggle="modal" data-target="#ShowDRDL">View DRDL file used for this example</button>
+                      <p>When the mongosqld service (a.k.a BI Connector) is started it is passed the location of the MongoDB
+                        database as well as the DRDL file. The service then listens on a port and recieves SQL queries from
+                        clients. To the BI reporting tools they connect and issue SQL queries just like they do on other
+                        relational databases like MySQL and Oracle.</p>
+                      <p>
+                        <a class="btn primary large" href="https://docs.mongodb.com/bi-connector/master/" target="_">Learn more about the BI Connector &raquo;</a>
+                      </p>
+
                     </div>
-                </div>
-            </div> <!-- row -->
-            <div class="row">
-                <div class="col-sm-12">
-                  <button id="ExecuteQueryButton" class="btn btn-primary" onclick="ExecuteSQLQuery()">Execute SQL Query</button>
-                </div>
-            </div>
-      
-        <div id="Loading" style="display:none">
-                        <img src="/images/white-loading.gif" style="width:40px;height:40px;">
-            </div>
-            <br>
-            <div id="NumberOfRecordsLabel"></div>
-            <br>
-            <div class="row">
-                    <div class="panel panel-default">
-                        <div class="panel-body" style="height: 300px;overflow: auto">
-                            <table id="SQLResults" class="TextSearchResultsCSS"/>
+                  </div>
+
+
+                  <div class="well">
+                    <div class="row">
+                      <div class="col-sm-12">
+                        <h4>Scenario: Issue SQL queries directly to MongoDB</h4>
+                        <br>
+                        <p>In this scenario you can issue ad-hoc SQL statements directly to the MongoDB database via the BI
+                          Connector. If your SQL statement skills are a little rusty you may select a pre-defined query from
+                          the list below:</p>
+                        <label for="PredefinedSQLToQuery">Select a pre-defined SQL query to execute:</label>
+                        <select class="form-control" id="PredefinedSQLToQuery" required onchange="PredefinedSQLQuery(this.value)">
+                          <option value="0">-- Select a query ---</option>
+                          <option value="1">Users who reviewed more than 100 businesses</option>
+                          <option value="2">List tables (metadata query)</option>
+                          <option value="3">Jeremy's restaurant reviews (join query)</option>
+
+                        </select>
+                        <p>or type your own SELECT statement to execute against MongoDB:</p>
+                        <label for="inputSearch">SQL statement: </label>
+                        <div class="input-group">
+                          <textarea id="inputQuery" placeholder="Enter SQL Query (i.e. SELECT * FROM business)..." class="form-control" rows=5></textarea>
+                          <span class="input-group-addon">LIMIT 20</span>
                         </div>
+                      </div>
                     </div>
-                
-          </div> <!-- row -->
-          </div> <!--well-->
-      
-   
-        </div> <!-- HERO -->
-      </div> <!-- content -->
-      </div> <!-- col-sm-6 -->
-      </div> <!-- row -->
-      </div> <!-- container-->
-               <!--Show Query Dialog-->
-                <div class="modal fade" id="ShowDRDL" role="dialog">
-                <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Show DRDL file</h4>
+                    <!-- row -->
+                    <div class="row">
+                      <div class="col-sm-12">
+                        <button id="ExecuteQueryButton" class="btn btn-primary" onclick="ExecuteSQLQuery()">Execute SQL Query</button>
+                      </div>
                     </div>
-                    <div class="modal-body">
-                    <p>This is a sample DRDL file used to map relational tables with MongoDB collections:</p>
-                     <div id="divDRDL" class="well" style="height: 300px;overflow: auto"></div>
+
+                    <div id="Loading" style="display:none">
+                      <img src="/images/white-loading.gif" style="width:40px;height:40px;">
                     </div>
-                    <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <br>
+                    <div id="NumberOfRecordsLabel"></div>
+                    <br>
+                    <div class="row">
+                      <div class="panel panel-default">
+                        <div class="panel-body" style="height: 300px;overflow: auto">
+                          <table id="SQLResults" class="TextSearchResultsCSS" />
+                        </div>
+                      </div>
+
                     </div>
+                    <!-- row -->
+                  </div>
+                  <!--well-->
+
+
                 </div>
-                </div>
-                </div>    
+                <!-- HERO -->
+              </div>
+              <!-- content -->
+            </div>
+            <!-- col-sm-6 -->
+      </div>
+      <!-- row -->
+    </div>
+    <!-- container-->
+    <!--Show Query Dialog-->
+    <div class="modal fade" id="ShowDRDL" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Show DRDL file</h4>
+          </div>
+          <div class="modal-body">
+            <p>This is a sample DRDL file used to map relational tables with MongoDB collections:</p>
+            <div id="divDRDL" class="well" style="height: 300px;overflow: auto"></div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </body>
-</html>
+
+  </html>

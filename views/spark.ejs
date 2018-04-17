@@ -1,58 +1,64 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    
-    <title>MongoDB - General purpose database for GIANT IDEAS</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
-    <link rel="stylesheet" href="css/mystyle.css">
-  </head>
+<% include ./partials/header %>
+
   <body>
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-
     <nav class="navbar navbar-inverse">
-    <div class="container">
+      <div class="container">
         <div class="navbar-header">
-            <a class="navbar-brand" href="#"><img class="MongoImage" src="images/mongodb_logo3.png"></a>
+          <a class="navbar-brand" href="#">
+            <img class="MongoImage" src="images/mongodb_logo3.png">
+          </a>
         </div>
-    </div>
+      </div>
     </nav>
 
-    <div class="container">  
-    <div class="row">
+    <div class="container">
+      <div class="row">
 
-      <% var active='spark'; %>
-      <% include ./partials/sidebar %>
+        <% var active='spark'; %>
+          <% include ./partials/sidebar %>
 
-      <div class="col-sm-9 col-md-9 col-lg-9">
-      <div class="content">
-        <div class="hero-group">
-            <h2>Spark Integration</h2>
-           <p>MongoDB offers a high performance connector for Apache Spark. The connector exposes all of Spark’s libraries, including Python, R, Scala and Java. MongoDB data is materialized as DataFrames and Datasets for analysis with machine learning, graph, streaming, and SQL APIs.</p>
-          
-            <div class="row">
+            <div class="col-sm-9 col-md-9 col-lg-9">
+              <div class="content">
+                <div class="hero-group">
+                  <h2>Spark Integration</h2>
+                  <p>MongoDB offers a high performance connector for Apache Spark. The connector exposes all of Spark’s libraries,
+                    including Python, R, Scala and Java. MongoDB data is materialized as DataFrames and Datasets for analysis
+                    with machine learning, graph, streaming, and SQL APIs.</p>
+
+                  <div class="row">
                     <div class="col-sm-12">
-                          <img style="width:100%" src="images/spark.png">
+                      <img style="width:100%" src="images/spark.png">
                     </div>
+                  </div>
+                  <p>The MongoDB Connector for Apache Spark can take advantage of MongoDB’s aggregation pipeline and secondary
+                    indexes to extract, filter, and process only the range of data it needs – for example, analyzing all
+                    customers located in a specific geography. This is very different from simple NoSQL datastores that do
+                    not support either secondary indexes or in-database aggregations. In these cases, Spark would need to
+                    extract all data based on a simple primary key, even if only a subset of that data is required for the
+                    Spark process. This means more processing overhead, more hardware, and longer time-to-insight for data
+                    scientists and engineers. To maximize performance across large, distributed data sets, the MongoDB Connector
+                    for Apache Spark can co-locate Resilient Distributed Datasets (RDDs) with the source MongoDB node, thereby
+                    minimizing data movement across the cluster and reducing latency.</p>
+                  <br>
+                  <p>For more information check out this deep dive webinar:
+                    <br>
+                    <br>
+                    <a href="https://www.mongodb.com/presentations/webinar/introducing-the-spark-connector-for-mongodb-emea">Webinar: Introducing the Spark Connector for MongoDB</a>
+
+
+
+                </div>
+                <!--hero-->
+              </div>
+              <!--content-->
             </div>
-            <p>The MongoDB Connector for Apache Spark can take advantage of MongoDB’s aggregation pipeline and secondary indexes to extract, filter, and process only the range of data it needs – for example, analyzing all customers located in a specific geography. This is very different from simple NoSQL datastores that do not support either secondary indexes or in-database aggregations. In these cases, Spark would need to extract all data based on a simple primary key, even if only a subset of that data is required for the Spark process. This means more processing overhead, more hardware, and longer time-to-insight for data scientists and engineers. To maximize performance across large, distributed data sets, the MongoDB Connector for Apache Spark can co-locate Resilient Distributed Datasets (RDDs) with the source MongoDB node, thereby minimizing data movement across the cluster and reducing latency.</p>
-            <br>
-            <p>For more information check out this deep dive webinar:<br><br>
-            <a href="https://www.mongodb.com/presentations/webinar/introducing-the-spark-connector-for-mongodb-emea">Webinar: Introducing the Spark Connector for MongoDB</a>
-            
+            <!-- col-sm -->
 
+      </div>
+      <!--row-->
+    </div>
+    <!--container-->
 
-        </div> <!--hero-->
-    </div> <!--content-->
-    </div> <!-- col-sm -->
-
-    </div> <!--row-->
-    </div> <!--container-->
-    
   </body>
-</html>
+
+  </html>
