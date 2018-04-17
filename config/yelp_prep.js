@@ -19,7 +19,7 @@ MongoClient.connect(connectionString, function (err, db) {
     if (err) throw err;
     var dbo = db.db("yelp");
 
-    dbo.collection("business").find({ "location": { $exists: false } })
+    dbo.collection("business").find({ "location": { $exists: true } })
     .project({"_id":1, longitude:1, latitude:1})
     .forEach(function (document) 
             {       
@@ -28,7 +28,7 @@ MongoClient.connect(connectionString, function (err, db) {
                     { $set: 
                         {
                             "location.type": "Point",
-                            "location.coordinates":[document.latitude,document.longitude]
+                            "location.coordinates":[document.longitude,document.latitude]
                         }
                     });
                 });
