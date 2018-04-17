@@ -60,4 +60,4 @@ This software is not supported by [MongoDB, Inc.](http://mongodb.com)
 under any of their commercial support subscriptions or otherwise.
 Any usage of MongoDB_AGeneralPurposeDB is at your own risk.
 Bug reports, feature requests and questions can be posted in the
-[Issues](./issues?state=open) section on GitHub.
+[Issues](/issues) section on GitHub.
