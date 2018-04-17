@@ -16,8 +16,6 @@ The code behind a website that demonstrates MongoDB is a general purpose databas
 
 ## Getting Started <a id="gs"></a>
 
-### Running Locally
-
 To install locally run `npm install`
 
 You should have a MongoDB instance available and the [Yelp database](https://www.yelp.com/dataset/challenge) loaded.  This demo database is not included in this repository due to the size.
@@ -34,10 +32,21 @@ Create a [.env](.env) file which contains the connection credentials to your loc
 
 To run `node app.js`
 
-### Other Setup Tasks
+### Creating Indexes and Other Setup Tasks
 
-* The Text Search example requires an index. Create one from the shell using `db.business.createIndex({name:'text'})`
+* Indexes:  
+Text Search example requires an index.  Create one from the shell using:
+`db.business.createIndex({name:'text'})`
 
+GraphLookup needs a single field index.  Create one from the shell using:
+`db.users.createIndex({user_id:1})`
+
+For Geospatial queries to work, a schema change is needed.  A special `2dsphere` index needs an object that adheres to the [GeoJSON](http://geojson.org/) standard.  For this you will need to execute our helper script that will copy the `longitude` and `latitude` fields into an object called `location`.  Inside `location` we will have a `type: "Point"` and an array called `coordinates` with the `longitude` and `latitude` as the only 2 elements.
+
+`node config/yelp_prep.js`
+
+This will run against all 174K docs under the `business` collection.  Once this completes you can now create the 2dsphere index.  Create one from the shell using:
+`db.business.createIndex({location:'2dsphere'})`
 
 ## Known Issues & Limitations<a id="issues"></a>
 
