@@ -1,15 +1,3 @@
-/* from pymongo import MongoClient
-
-conn = MongoClient()
-db = conn.yelp
-coll = db.business
-
-for doc in coll.find():
- coord = [doc['longitude'], doc['latitude']]
- location = { 'type': 'Point', 'coordinates': coord }
- coll.update({'_id':doc['_id']}, {'$set': { 'location': location }})
-db.business.createIndex({'location': '2dsphere'}) */
-
 var MongoClient = require('mongodb').MongoClient;
 var ObjectId = require('mongodb').ObjectId;
 
