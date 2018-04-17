@@ -6,7 +6,7 @@ The code behind a website that demonstrates MongoDB is a general purpose databas
 
 * [Getting Started](#gs)
 
-* [Known Issues & Limitations](#issues)
+* [Known Issues & Limitations](#known_issues)
 
 * [Contacts](#contact)
 
@@ -39,7 +39,7 @@ To run `node app.js`
 * The Text Search example requires an index. Create one from the shell using `db.business.createIndex({name:'text'})`
 
 
-## Known Issues & Limitations<a id="issues"></a>
+## Known Issues & Limitations <a id="known_issues"></a>
 
 
 List of issues, Limitations, and to-dos.
