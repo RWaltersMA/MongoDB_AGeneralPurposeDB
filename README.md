@@ -45,13 +45,13 @@ Known Issues & Limitations<a id="issues"></a>
 List of issues, Limitations, and to-dos.
 
 All issues and limitations have moved to the
-[Issues](/issues?state=open) part of this repo.
+[Issues](https://github.com/RWaltersMA/MongoDB_AGeneralPurposeDB/issues?state=open) part of this repo.
 
 Contacts <a id="contact"></a>
 -----------------------------
 
 For technical questions, issues or just comments please post in the
-[Issues](/issues?state=open) section on GitHub.
+[Issues](https://github.com/RWaltersMA/MongoDB_AGeneralPurposeDB/issues?state=open) section on GitHub.
 
 Disclaimer<a id="disclaim"></a>
 -------------------------------
@@ -60,4 +60,4 @@ This software is not supported by [MongoDB, Inc.](http://mongodb.com)
 under any of their commercial support subscriptions or otherwise.
 Any usage of MongoDB_AGeneralPurposeDB is at your own risk.
 Bug reports, feature requests and questions can be posted in the
-[Issues](issues?state=open) section on GitHub.
+[Issues](https://github.com/RWaltersMA/MongoDB_AGeneralPurposeDB/issues?state=open) section on GitHub.
