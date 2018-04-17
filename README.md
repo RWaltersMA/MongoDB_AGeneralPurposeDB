@@ -45,19 +45,31 @@ To run `node app.js`
 List of issues, Limitations, and to-dos.
 
 All issues and limitations have moved to the
+<<<<<<< HEAD
 [Issues](https://github.com/RWaltersMA/MongoDB_AGeneralPurposeDB/issues?q=is%3Aopen) part of this repo.
 
 ## Contacts <a id="contact"></a>
+=======
+[Issues](https://github.com/RWaltersMA/MongoDB_AGeneralPurposeDB/issues?state=open) part of this repo.
+>>>>>>> f5c8239f921c0277b50ade88f115112794819d34
 
 
 For technical questions, issues or just comments please post in the
+<<<<<<< HEAD
 [Issues](https://github.com/RWaltersMA/MongoDB_AGeneralPurposeDB/issues?q=is%3Aopen) section on GitHub.
 
 ## Disclaimer<a id="disclaim"></a>
+=======
+[Issues](https://github.com/RWaltersMA/MongoDB_AGeneralPurposeDB/issues?state=open) section on GitHub.
+>>>>>>> f5c8239f921c0277b50ade88f115112794819d34
 
 
 This software is not supported by [MongoDB, Inc.](http://mongodb.com)
 under any of their commercial support subscriptions or otherwise.
 Any usage of MongoDB_AGeneralPurposeDB is at your own risk.
 Bug reports, feature requests and questions can be posted in the
+<<<<<<< HEAD
 [Issues](https://github.com/RWaltersMA/MongoDB_AGeneralPurposeDB/issues?q=is%3Aopen) section on GitHub.
+=======
+[Issues](https://github.com/RWaltersMA/MongoDB_AGeneralPurposeDB/issues?state=open) section on GitHub.
+>>>>>>> f5c8239f921c0277b50ade88f115112794819d34
