@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    
+    <title><%= title %></title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/mystyle.css">
+  </head>
+  <body>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+<script>
+function displayTime() {
+    var str = "";
+
+    var currentTime = new Date()
+    var hours = currentTime.getHours()
+    var minutes = currentTime.getMinutes()
+    var seconds = currentTime.getSeconds()
+
+    if (minutes < 10) {
+        minutes = "0" + minutes
+    }
+    if (seconds < 10) {
+        seconds = "0" + seconds
+    }
+    str += hours + ":" + minutes + ":" + seconds + " ";
+    if(hours > 11){
+        str += "PM"
+    } else {
+        str += "AM"
+    }
+    return str;
+}
+function MongoCommand(command)
+{
+          $.ajax({
+            url: "/changestreams/" + command,
+            method: 'POST',
+            processData: false
+            
+            }).done(function(data)
+            {  
+                 $('#StatusMessage').html(displayTime() + 'Data inserted');
+            })
+            .fail(function (err)
+            {
+              console.log("fail=" + JSON.stringify(err));
+              $('#StatusMessage').html('Error inserting data : ' + err.responseText);
+           
+            });
+
+}
+
+function ListenToMongo()
+{
+    var lastResponseLength = false;
+    $('#ResultsGrid').empty();
+    $('#ResultsGrid').append('<div><p><b>' + displayTime() + ' Listening to stream...</b></p></div>');
+
+    var oReq = new XMLHttpRequest();
+    oReq.addEventListener("error", function(e) {
+  console.log("error: " +JSON.stringify(e));
+});
+    oReq.onreadystatechange = function(doc)
+    {
+        
+        if (this.readyState >= 3) 
+        {
+
+            if (this.responseText.length==0)
+            {
+                $('#ResultsGrid').append('<div>' + displayTime() + ' Ended stream</div>');
+               /* $('#MyListenButton').prop('disabled', false);
+                $('#MyInsert').prop('disabled', true);
+                $('#MyUpdate').prop('disabled', true);
+                $('#MyDelete').prop('disabled', true);*/
+                
+            }
+            else{
+                /*Each event comes with all the changes so we should only show the new stuff*/
+                var progressResponse;
+                var response = this.responseText;
+                if(lastResponseLength === false)
+                {
+                    progressResponse = response;
+                    lastResponseLength = response.length;
+                }
+                else
+                {
+                    progressResponse = response.substring(lastResponseLength);
+                    lastResponseLength = response.length;
+                }
+
+                $('#ResultsGrid').append('<div>' + displayTime() + ' ' + progressResponse + '</div><br>');
+                
+            }
+        }
+        
+       
+    }
+    oReq.open("get", "/changestreams/poll", true);
+    oReq.setRequestHeader('Cache-Control', 'no-cache');
+    oReq.setRequestHeader( 'pragma', 'no-cache' );
+    oReq.send();
+   /* $('#MyListenButton').prop('disabled', true);
+    $('#MyInsert').prop('disabled', false);
+    $('#MyUpdate').prop('disabled', false);
+    $('#MyDelete').prop('disabled', false);*/
+}
+</script>
+
+<nav class="navbar navbar-inverse">
+  <div class="container">
+    <div class="navbar-header">
+        <a class="navbar-brand" href="#"><img class="MongoImage" src="images/mongodb_logo3.png"></a>
+    </div>
+  </div>
+</nav>
+
+  <div class="container">  
+  <div class="row">
+
+    <% var active='changestreams'; %>
+    <% include ./partials/sidebar %>
+
+      <div class="col-sm-9 col-md-9 col-lg-9">
+        <div class="content">
+        <div class="hero-group">
+            <h2>Tracking Data Changes</h2>
+            <p>Some applications want to take action based on changes to data.  The concept is known as change data capture and support for change data capture within MongoDB arises from a feature called Change Streams.</p>
+            <p>Change streams allow applications to access real-time data changes without the complexity and risk of tailing the oplog. Applications can use change streams to subscribe to all data changes on a collection and immediately react to them.</p>
+            <p>Ready to check out Change Streams?  In this example you will open a stream to a collection called, "Inventory".  To keep things simple once you start listening to changes you can insert, update and remove documents in this collection.</p>
+         
+        </div>
+
+        </div> <!--content-->
+         <div class="content">
+            <div class="panel panel-primary">
+            <div class="panel-heading">Actions</div>
+            <div class="panel-body">
+            <div class="btn-group">
+                <button type="button" class="btn btn-success" id="MyListenButton" onclick="ListenToMongo()">Capture Stream</button>
+            </div>
+            <div class="btn-group">
+                <button type="button" class="btn btn-primary" id="MyInsert" onclick="MongoCommand('insert')">Insert document</button>
+            </div>
+            <div class="btn-group">
+                <button type="button" class="btn btn-primary" id="MyUpdate" onclick="MongoCommand('update')">Update document</button>
+            </div>
+            <div class="btn-group">
+                <button type="button" class="btn btn-primary" id="MyDelete" onclick="MongoCommand('delete')">Delete document</button>
+            </div>
+        </div>
+        </div>
+        </div>
+         
+            <div class="panel panel-info">
+            <div class="panel-heading">Stream Status</div>
+            <div class="panel-body">
+                <div id="StatusMessage"></div>
+            </div>
+            </div>
+            </div>
+        </div> <!--content-->
+      </div> <!--colsm-->
+
+    </div><!-- row -->
+    </div> <!--container-->
+  </body>
+  </html>

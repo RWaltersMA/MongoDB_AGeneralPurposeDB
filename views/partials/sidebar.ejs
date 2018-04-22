@@ -10,17 +10,20 @@
 
             </div>
             <div class="list-group">
-                <a href="#" class="list-group-item list-group-item-success">Advanced Search</a>
-                <a href="/FacetSearch" class="list-group-item <%= ((active === 'facet') ? 'active' : '') %>" </a>Faceted Search</a>
+                <!--Versatile - Supports a wide variety of data models and queries -->
+                <a href="#" class="list-group-item list-group-item-success">Versatile</a>
+                <a href="/FacetSearch" class="list-group-item <%= ((active === 'facet') ? 'active' : '') %>">Faceted Search</a>
                 <a href="/TextSearch" class="list-group-item <%= ((active === 'text') ? 'active' : '') %>">Text Search</a>
                 <a href="/GraphSearch" class="list-group-item <%= ((active === 'graph') ? 'active' : '') %>">Graph Queries</a>
                 <a href="/GeoSearch" class="list-group-item <%= ((active === 'geo') ? 'active' : '') %>">Geo-spatial Search</a>
+                <a href="/AggFramework" class="list-group-item <%= ((active === 'agg') ? 'active' : '') %>">Aggregation Framework</a>
             </div>
 
             <div class="list-group">
                 <a href="#" class="list-group-item list-group-item-success">Data Analytics</a>
                 <a href="/SparkIntegration" class="list-group-item <%= ((active === 'spark') ? 'active' : '') %>">Spark Integration</a>
                 <a href="/Reporting" class="list-group-item <%= ((active === 'reporting') ? 'active' : '') %>">Reporting Tools</a>
+                <a href="/ChangeStreams" class="list-group-item <%= ((active === 'changestreams') ? 'active' : '') %>">Tracking Changes</a>
             </div>
             <div class="list-group">
                 <a href="#" class="list-group-item list-group-item-success">Relational-like</a>
