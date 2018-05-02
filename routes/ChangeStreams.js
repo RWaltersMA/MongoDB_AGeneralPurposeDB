@@ -41,11 +41,11 @@ router.get('/poll', function (req,res)
           });
 
           
-         console.log('here');
+       //  console.log('here');
          
       });
 
-        console.log('leaving');
+      //  console.log('leaving');
 
 });
 
