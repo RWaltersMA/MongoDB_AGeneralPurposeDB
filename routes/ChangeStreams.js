@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var settings=require('../config/config.js');  //change monogodb server location here
-
+var jsonPrettyHtml = require('json-pretty-html').default;
 
 function getRandomInt(max) {
     return Math.floor(Math.random() * Math.floor(max));
@@ -20,7 +20,7 @@ router.get('/', function(req, res, next) {
           res.render('changestreams', { title: 'MongoDB - General purpose database for GIANT IDEAS' });
      
 });
-router.get('/poll', function (req,res)
+router.get('/poll', function (req,res, next)
 {
 
     res.writeHead(200, { "Content-Type": "text/event-stream",
@@ -29,30 +29,36 @@ router.get('/poll', function (req,res)
     var a=0;
 
     var MongoClient = require('mongodb').MongoClient;
-    MongoClient.connect(connectionString)
+    MongoClient.connect(settings.connectionString)
      .then(function(client){
        let db = client.db('MyStore')
+
+       res.write('Stream opened on inventory collection');
        
        // specific table for any change
        let change_streams = db.collection('inventory').watch()
 
-          change_streams.on('change', function(change){        
-            res.write(JSON.stringify(change));
+          change_streams.on('change', function(change){ 
+            //  if (err)
+             // console.log('err=' + JSON.stringify(err));     
+             console.log(change);
+             
+            res.write(jsonPrettyHtml(change));//  JSON.stringify(change));
           });
 
           
-       //  console.log('here');
+         //console.log('here');
          
       });
 
-      //  console.log('leaving');
+       //console.log('leaving');
 
 });
 
 router.post('/update', function (req,res)
 {
     var MongoClient = require('mongodb').MongoClient;
-    MongoClient.connect(connectionString)
+    MongoClient.connect(settings.connectionString)
      .then(function(client){
          
             let db = client.db('MyStore')
@@ -76,11 +82,12 @@ router.post('/insert', function (req,res)
 {
 
     var MongoClient = require('mongodb').MongoClient;
-    MongoClient.connect(connectionString)
+    MongoClient.connect(settings.connectionString)
      .then(function(client){
          
             let db = client.db('MyStore')
-            var InsertDB=db.collection('inventory').insert({ "SKU" : getRandomInt(100000), "InventoryCount" : getRandomInt(10)}).then(function (err)
+            var newdoc={ "SKU" : getRandomInt(100000), "InventoryCount" : getRandomInt(10)};
+            var InsertDB=db.collection('inventory').insert(newdoc).then(function (err)
             {
             
                 if (err.result.ok!=1)
@@ -89,8 +96,8 @@ router.post('/insert', function (req,res)
                     res.end();
                 }
                 else{
-                    
-                    res.sendStatus(200);
+                    res.send(200,'Inserted document:<br>' + jsonPrettyHtml(newdoc));
+                    //res.sendStatus(200);
                     res.end();
                     return;
                 }

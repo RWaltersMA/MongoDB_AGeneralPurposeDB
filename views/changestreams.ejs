@@ -16,6 +16,7 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
 <script>
+//var AlternateRowColorState=false;
 function displayTime() {
     var str = "";
 
@@ -38,6 +39,14 @@ function displayTime() {
     }
     return str;
 }
+function getcolorbackground(command)
+{
+     var background;
+     
+     if (command=="insert") return "<div style=\"background-color: #55FF66;\">";
+     if (command=="delete") return "<div style=\"background-color: #FF6666;\">";
+     if (command=="update") return "<div style=\"background-color: #F3EEDD;\">";
+}
 function MongoCommand(command)
 {
           $.ajax({
@@ -47,7 +56,7 @@ function MongoCommand(command)
             
             }).done(function(data)
             {  
-                 $('#StatusMessage').html(displayTime() + 'Data inserted');
+                $('#ResultsGrid').append(getcolorbackground(command) + displayTime() + ' ' + data + '</div>');
             })
             .fail(function (err)
             {
@@ -57,34 +66,36 @@ function MongoCommand(command)
             });
 
 }
-
+function set(control,state)
+{
+    document.getElementById(control).disabled = state;
+}
 function ListenToMongo()
 {
     var lastResponseLength = false;
     $('#ResultsGrid').empty();
-    $('#ResultsGrid').append('<div><p><b>' + displayTime() + ' Listening to stream...</b></p></div>');
+    $('#ResultsGrid').append('<div><p><b>' + displayTime() + ' Opening stream...</b></p></div>');
 
     var oReq = new XMLHttpRequest();
     oReq.addEventListener("error", function(e) {
-  console.log("error: " +JSON.stringify(e));
+  $('#ResultsGrid').append('<div>Error : ' + JSON.stringify(e) + '</div>');
 });
     oReq.onreadystatechange = function(doc)
     {
-        
+       
         if (this.readyState >= 3) 
         {
 
             if (this.responseText.length==0)
             {
                 $('#ResultsGrid').append('<div>' + displayTime() + ' Ended stream</div>');
-               /* $('#MyListenButton').prop('disabled', false);
-                $('#MyInsert').prop('disabled', true);
-                $('#MyUpdate').prop('disabled', true);
-                $('#MyDelete').prop('disabled', true);*/
-                
+                set("MyListenButton",false);
+                set("MyInsert",true);
+                set("MyUpdate",true);
+                set("MyDelete",true);          
             }
             else{
-                /*Each event comes with all the changes so we should only show the new stuff*/
+                //Each event comes with all the changes so we should only show the new stuff
                 var progressResponse;
                 var response = this.responseText;
                 if(lastResponseLength === false)
@@ -98,21 +109,22 @@ function ListenToMongo()
                     lastResponseLength = response.length;
                 }
 
-                $('#ResultsGrid').append('<div>' + displayTime() + ' ' + progressResponse + '</div><br>');
+                $('#ResultsGrid').append('<div>' + displayTime() + ' Change Stream Event Response:<br><br> ' + progressResponse + '</div><br>');
                 
             }
         }
         
        
     }
-    oReq.open("get", "/changestreams/poll", true);
+    oReq.open("get", "/ChangeStreams/poll", true);
     oReq.setRequestHeader('Cache-Control', 'no-cache');
     oReq.setRequestHeader( 'pragma', 'no-cache' );
     oReq.send();
-   /* $('#MyListenButton').prop('disabled', true);
-    $('#MyInsert').prop('disabled', false);
-    $('#MyUpdate').prop('disabled', false);
-    $('#MyDelete').prop('disabled', false);*/
+    set("MyListenButton",true);
+    set("MyInsert",false);
+    set("MyUpdate",false);
+    set("MyDelete",false);    
+  
 }
 </script>
 
@@ -149,13 +161,13 @@ function ListenToMongo()
                 <button type="button" class="btn btn-success" id="MyListenButton" onclick="ListenToMongo()">Capture Stream</button>
             </div>
             <div class="btn-group">
-                <button type="button" class="btn btn-primary" id="MyInsert" onclick="MongoCommand('insert')">Insert document</button>
+                <button type="button" class="btn disabled" style="background-color: #55FF66;" id="MyInsert" onclick="MongoCommand('insert')">Insert document</button>
             </div>
             <div class="btn-group">
-                <button type="button" class="btn btn-primary" id="MyUpdate" onclick="MongoCommand('update')">Update document</button>
+                <button type="button" class="btn disabled" style="background-color: #F3EEDD;" id="MyUpdate" onclick="MongoCommand('update')">Update document</button>
             </div>
             <div class="btn-group">
-                <button type="button" class="btn btn-primary" id="MyDelete" onclick="MongoCommand('delete')">Delete document</button>
+                <button type="button" class="btn disabled" style="background-color: #FF6666;" id="MyDelete" onclick="MongoCommand('delete')">Delete document</button>
             </div>
         </div>
         </div>
@@ -163,8 +175,8 @@ function ListenToMongo()
          
             <div class="panel panel-info">
             <div class="panel-heading">Stream Status</div>
-            <div class="panel-body">
-                <div id="StatusMessage"></div>
+            <div class="panel-body scrollable-panel">
+                <div id="ResultsGrid" ></div>
             </div>
             </div>
             </div>
