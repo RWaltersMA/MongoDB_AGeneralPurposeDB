@@ -17,6 +17,10 @@
 
 <script>
 //var AlternateRowColorState=false;
+window.onload = function () {
+    ListenToMongo();
+}
+
 function displayTime() {
     var str = "";
 
@@ -68,7 +72,8 @@ function MongoCommand(command)
 }
 function set(control,state)
 {
-    document.getElementById(control).disabled = state;
+   document.getElementById(control).style.display=state; 
+    //document.getElementById(control). = state;
 }
 function ListenToMongo()
 {
@@ -89,10 +94,6 @@ function ListenToMongo()
             if (this.responseText.length==0)
             {
                 $('#ResultsGrid').append('<div>' + displayTime() + ' Ended stream</div>');
-                set("MyListenButton",false);
-                set("MyInsert",true);
-                set("MyUpdate",true);
-                set("MyDelete",true);          
             }
             else{
                 //Each event comes with all the changes so we should only show the new stuff
@@ -120,10 +121,6 @@ function ListenToMongo()
     oReq.setRequestHeader('Cache-Control', 'no-cache');
     oReq.setRequestHeader( 'pragma', 'no-cache' );
     oReq.send();
-    set("MyListenButton",true);
-    set("MyInsert",false);
-    set("MyUpdate",false);
-    set("MyDelete",false);    
   
 }
 </script>
@@ -158,16 +155,13 @@ function ListenToMongo()
             <div class="panel-heading">Actions</div>
             <div class="panel-body">
             <div class="btn-group">
-                <button type="button" class="btn btn-success" id="MyListenButton" onclick="ListenToMongo()">Capture Stream</button>
+                <button type="button" class="btn" style="background-color: #55FF66;" id="MyInsert" onclick="MongoCommand('insert')">Insert document</button>
             </div>
             <div class="btn-group">
-                <button type="button" class="btn disabled" style="background-color: #55FF66;" id="MyInsert" onclick="MongoCommand('insert')">Insert document</button>
+                <button type="button" class="btn" style="background-color: #F3EEDD;" id="MyUpdate" onclick="MongoCommand('update')">Update document</button>
             </div>
             <div class="btn-group">
-                <button type="button" class="btn disabled" style="background-color: #F3EEDD;" id="MyUpdate" onclick="MongoCommand('update')">Update document</button>
-            </div>
-            <div class="btn-group">
-                <button type="button" class="btn disabled" style="background-color: #FF6666;" id="MyDelete" onclick="MongoCommand('delete')">Delete document</button>
+                <button type="button" class="btn" style="background-color: #FF6666;" id="MyDelete" onclick="MongoCommand('delete')">Delete document</button>
             </div>
         </div>
         </div>

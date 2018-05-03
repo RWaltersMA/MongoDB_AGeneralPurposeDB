@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var settings=require('../config/config.js');  //change monogodb server location here
 var jsonPrettyHtml = require('json-pretty-html').default;
+var ObjectID = require('mongodb').ObjectID;
 
 function getRandomInt(max) {
     return Math.floor(Math.random() * Math.floor(max));
@@ -35,39 +36,71 @@ router.get('/poll', function (req,res, next)
 
        res.write('Stream opened on inventory collection');
        
-       // specific table for any change
-       let change_streams = db.collection('inventory').watch()
+       let change_streams = db.collection('inventory').watch({ fullDocument: 'updateLookup' })
 
-          change_streams.on('change', function(change){ 
-            //  if (err)
-             // console.log('err=' + JSON.stringify(err));     
-             console.log(change);
-             
-            res.write(jsonPrettyHtml(change));//  JSON.stringify(change));
+          change_streams.on('change', function(change){              
+            res.write(jsonPrettyHtml(change));
           });
-
-          
-         //console.log('here');
          
       });
 
-       //console.log('leaving');
+});
 
+
+router.post('/delete', function (req,res)
+{
+    
+    var MongoClient = require('mongodb').MongoClient;
+    MongoClient.connect(settings.connectionString)
+     .then(function(client){
+         
+            let db = client.db('MyStore');
+            db.collection('inventory').findOne({}, function(err,doc) {
+
+                if (doc==null)
+                {
+                    res.send(200,'No more documents to remove.');
+                    res.end();
+                    return; 
+                }
+                var o={ "_id" : ObjectID(doc._id) };
+
+                db.collection('inventory').removeOne({ "_id": ObjectID(doc._id)}, function (err,obj)
+                {
+                    res.send(200,'Removed ' + obj.result.n + ' document');   
+                    res.end();
+                    return;
+                })
+            })
+            })
+            
+        
 });
 
 router.post('/update', function (req,res)
 {
+    
     var MongoClient = require('mongodb').MongoClient;
     MongoClient.connect(settings.connectionString)
      .then(function(client){
          
             let db = client.db('MyStore')
             var InsertDB=db.collection('inventory').findOne({}, function(err,doc) {
-                var o=new ObjectID(doc._id);
-
-                db.collection('inventory').updateOne({ "_id" : o}, { $set: { "InventoryCount" : getRandomInt(100)}}, function (err)
+                if (doc==null)
+                {
+                    res.send(200,'No documents left to update, insert some!');
+                    res.end();
+                    return; 
+                }
+    
+                var o={ "_id" : ObjectID(doc._id) };
+                var i=getRandomInt(100);
+                
+                db.collection('inventory').updateOne({ "_id": ObjectID(doc._id)}, { $set: { "InventoryCount" : i}}, function (err,results)
             {
-                res.sendStatus(200);
+               console.log(results);
+                res.send(200,'Updating ' + jsonPrettyHtml(o ) + 'setting InventoryCount = ' + i);
+               
                 res.end();
                 return;
             })

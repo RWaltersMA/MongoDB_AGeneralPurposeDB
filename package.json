@@ -4,6 +4,7 @@
   "description": "Website to showcase MongoDB as a general purpose database!",
   "main": "app.js",
   "scripts": {
+    "debug": "node --nolazy --inspect-brk=9229 app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Rob Walters",
