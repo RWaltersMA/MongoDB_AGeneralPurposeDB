@@ -98,7 +98,7 @@ router.post('/update', function (req,res)
                 
                 db.collection('inventory').updateOne({ "_id": ObjectID(doc._id)}, { $set: { "InventoryCount" : i}}, function (err,results)
             {
-               console.log(results);
+               
                 res.send(200,'Updating ' + jsonPrettyHtml(o ) + 'setting InventoryCount = ' + i);
                
                 res.end();
@@ -130,7 +130,6 @@ router.post('/insert', function (req,res)
                 }
                 else{
                     res.send(200,'Inserted document:<br>' + jsonPrettyHtml(newdoc));
-                    //res.sendStatus(200);
                     res.end();
                     return;
                 }
