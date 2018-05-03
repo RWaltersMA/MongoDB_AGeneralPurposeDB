@@ -1,310 +1,307 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    
-    <title><%= title %></title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
-    <link rel="stylesheet" href="css/mystyle.css">
-  </head>
+<% include ./partials/header %>
+
   <body>
- 
+
 
     <script>
-    function UpdateShowQuery(Scenario2)
-    {
-             var Query="db.createCollection(\"contacts\",<br>&nbsp;&nbsp;&nbsp;{ validator: { $and: [ { \"name\":<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{     \"$exists\": true   }}, {  \"current_customer\": {     \"$type\": 8   } } ] } } ) ";
-             document.getElementById('lblTextSampleSource').innerHTML=Query;
+      function UpdateShowQuery(Scenario2) {
+        var Query =
+          "db.createCollection(\"contacts\",<br>&nbsp;&nbsp;&nbsp;{ validator: { $and: [ { \"name\":<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{     \"$exists\": true   }}, {  \"current_customer\": {     \"$type\": 8   } } ] } } ) ";
+        document.getElementById('lblTextSampleSource').innerHTML = Query;
 
-    }
-    function AutoFill(Scenario)
-    {
-      if (Scenario=='name')
-      {
-        $('#FieldNameTextBox').prop('value','name');
-        $("#FieldNameRuleDropdown").prop('selectedIndex', 1);
       }
-      if (Scenario=='current_customer')
-      {
-        $('#FieldNameTextBoxScenario2').prop('value','current_customer');
-         $("#FieldNameRuleDropdownScenario2").prop('selectedIndex', 3);
-         RuleChange('FieldNameRuleDropdownScenario2');
-         $('#Scenario2TypeDropdown').prop('selectedIndex',6)
-      }
-    }
-    function RuleChange(Id)
-    {
 
-      //display/hide the third column rule specific items
-      if (Id=='FieldNameRuleDropdownScenario2')
-      {
-        //Check to see which option was selected:
-        if ($('#FieldNameRuleDropdownScenario2').val()=="3")
-        {
+      function AutoFill(Scenario) {
+        if (Scenario == 'name') {
+          $('#FieldNameTextBox').prop('value', 'name');
+          $("#FieldNameRuleDropdown").prop('selectedIndex', 1);
+        }
+        if (Scenario == 'current_customer') {
+          $('#FieldNameTextBoxScenario2').prop('value', 'current_customer');
+          $("#FieldNameRuleDropdownScenario2").prop('selectedIndex', 3);
+          RuleChange('FieldNameRuleDropdownScenario2');
+          $('#Scenario2TypeDropdown').prop('selectedIndex', 6)
+        }
+      }
+
+      function RuleChange(Id) {
+
+        //display/hide the third column rule specific items
+        if (Id == 'FieldNameRuleDropdownScenario2') {
+          //Check to see which option was selected:
+          if ($('#FieldNameRuleDropdownScenario2').val() == "3") {
             $('#ColumnNameScenario2').empty();
             $('#ColumnNameScenario2').prepend('<b>BSON Type</b>');
             $('#FieldNameVariableRuleColumnScenario2').empty();
-            var RuleList="<select class='form-control' id='Scenario2TypeDropdown'><option>Double</option><<option>String</option> <option>Object</optipon><option>Binary Data</option><option>Undefined</option><option>ObjectId</option><option value='B'>Boolean</option>";
-            RuleList+="<option>Date</option><option>Null</option><option>Regular Expression</option><option>DBPointer</option><option>Javascript</option><option>Symbol</option><option>32-bit Integer</option>";
-            RuleList+="<option>Timestamp</option><option>64-bit Integer</option><option>Min Key</option><option>Max Key</option></select>";
+            var RuleList =
+              "<select class='form-control' id='Scenario2TypeDropdown'><option>Double</option><<option>String</option> <option>Object</optipon><option>Binary Data</option><option>Undefined</option><option>ObjectId</option><option value='B'>Boolean</option>";
+            RuleList +=
+              "<option>Date</option><option>Null</option><option>Regular Expression</option><option>DBPointer</option><option>Javascript</option><option>Symbol</option><option>32-bit Integer</option>";
+            RuleList +=
+              "<option>Timestamp</option><option>64-bit Integer</option><option>Min Key</option><option>Max Key</option></select>";
             $('#FieldNameVariableRuleColumnScenario2').prepend(RuleList);
+          } else {
+            $('#ColumnNameScenario2').empty();
+            $('#FieldNameVariableRuleColumnScenario2').empty();
+          }
         }
-        else{
-           $('#ColumnNameScenario2').empty();
-           $('#FieldNameVariableRuleColumnScenario2').empty();
-        }
-      }
-      return;
-    }
-function CheckValidationRules(Rule)
-{
-
-  
-  if (Rule=='name')
-  {
-        $('#FieldNameValidateFieldFailure').hide();
-        $('#FieldNameValidateRuleFailure').hide();
-        $('#FieldNameValidateSuccess').hide();
-
-      if ($('#FieldNameTextBox').val().toLowerCase()!="name")
-      {
-        $('#FieldNameValidateFieldFailure').show();
         return;
       }
 
-      if ($('#FieldNameRuleDropdown').val()!="1")
-      {
-        $("#FieldNameValidateRuleFailure").show();
-        return;
-      }
+      function CheckValidationRules(Rule) {
 
-      $('#FieldNameValidateSuccess').show();
-  }
-   if (Rule=='current_customer')
-  {
-        $('#FieldNameValidateFieldFailureScenario2').hide();
-        $('#FieldNameValidateRuleFailureScenario2').hide();
-        $('#FieldNameValidateSuccessScenario2').hide();
-        $('#FieldNameValidateRuleBadTypeFailureScenario2').hide();
-      
-      if ($('#FieldNameTextBoxScenario2').val().toLowerCase()!="current_customer")
-      {
-        $('#FieldNameValidateFieldFailureScenario2').show();
-        return;
-      }
 
-      if ($('#FieldNameRuleDropdownScenario2').val()=="3")
-      {
-        //Check if its the right data type
-        if ($('#Scenario2TypeDropdown').val()=='B')
-        {
-          $('#FieldNameValidateSuccessScenario2').show();
-          return;
+        if (Rule == 'name') {
+          $('#FieldNameValidateFieldFailure').hide();
+          $('#FieldNameValidateRuleFailure').hide();
+          $('#FieldNameValidateSuccess').hide();
+
+          if ($('#FieldNameTextBox').val().toLowerCase() != "name") {
+            $('#FieldNameValidateFieldFailure').show();
+            return;
+          }
+
+          if ($('#FieldNameRuleDropdown').val() != "1") {
+            $("#FieldNameValidateRuleFailure").show();
+            return;
+          }
+
+          $('#FieldNameValidateSuccess').show();
         }
-        else
-        {
-          $('#FieldNameValidateRuleBadTypeFailureScenario2').show();
-          return;
+        if (Rule == 'current_customer') {
+          $('#FieldNameValidateFieldFailureScenario2').hide();
+          $('#FieldNameValidateRuleFailureScenario2').hide();
+          $('#FieldNameValidateSuccessScenario2').hide();
+          $('#FieldNameValidateRuleBadTypeFailureScenario2').hide();
+
+          if ($('#FieldNameTextBoxScenario2').val().toLowerCase() != "current_customer") {
+            $('#FieldNameValidateFieldFailureScenario2').show();
+            return;
+          }
+
+          if ($('#FieldNameRuleDropdownScenario2').val() == "3") {
+            //Check if its the right data type
+            if ($('#Scenario2TypeDropdown').val() == 'B') {
+              $('#FieldNameValidateSuccessScenario2').show();
+              return;
+            } else {
+              $('#FieldNameValidateRuleBadTypeFailureScenario2').show();
+              return;
+            }
+          } else {
+            $('#FieldNameValidateRuleFailureScenario2').show();
+          }
         }
       }
-      else
-      {
-          $('#FieldNameValidateRuleFailureScenario2').show();
-      }
-  }
-}
-   
     </script>
-     
-  </head>
-  <body>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<% include ./partials/navbar %>
 
-<nav class="navbar navbar-inverse">
-  <div class="container">
-    <div class="navbar-header">
-        <a class="navbar-brand" href="#"><img class="MongoImage" src="images/mongodb_logo3.png"></a>
-    </div>
-  </div>
-</nav>
+      <div class="container">
+        <div class="row">
 
-  <div class="container">  
-  <div class="row">
+          <% var active='constraints'; %>
+            <% include ./partials/sidebar %>
 
-    <% var active='constraints'; %>
-    <% include ./partials/sidebar %>
+              <div class="col-sm-9 col-md-9 col-lg-9">
+                <div class="content">
+                  <div class="hero-group">
+                    <h2>Validation Rules</h2>
+                    <p>MongoDB is famous for making it easy to insert, query and manage unstructured data. This schema-less
+                      design dramatically reduces application development time. With this freedom comes some responsibility.
+                      For example, if you are using MongoDB as a data repository for a data warehouse you may be inserting
+                      data from all sorts of different schemas. Although this process is seamless to get data into MongoDB
+                      your applications may require some fields to always be present or confirm to a certain mask. To define
+                      these constraints on data MongoDB has a feature defined at the collection level called
+                      <b>validation rules</b>.</p>
+                    <p>Consider the scenario where you have a customer collection that needs to contain these fields:
+                      <br>
+                      <code>name, current_customer</code>. In the first scenario we want to set up a validation rule that requires
+                      any document that is inserted or updated must contain the 'name' field. In the second scenario we want
+                      to define a validation rule to require the current_customer field to only contain boolean values.
+                      <br>
+                    </p>
 
-      <div class="col-sm-9 col-md-9 col-lg-9">
-      <div class="content">
-        <div class="hero-group">
-            <h2>Validation Rules</h2>
-            <p>MongoDB is famous for making it easy to insert, query and manage unstructured data.  This schema-less design dramatically reduces application development time.  With this freedom comes some responsibility.  For example, if you are using MongoDB as a data repository for a data warehouse you may be inserting data from all sorts of different schemas.  Although this process is seamless to get data into MongoDB your applications may require some fields to always be present or confirm to a certain mask.  To define these constraints on data MongoDB has a feature defined at the collection level called <b>validation rules</b>.</p>
-            <p>Consider the scenario where you have a customer collection that needs to contain these fields:<br><code>name, current_customer</code>.  In the first scenario we want to set up a validation rule that requires any document that is inserted or updated must contain the 'name' field.  In the second scenario we want to define a validation rule to require the current_customer field to only contain boolean values.<br></p>
-            
-            <p>In the fields below you build out the validation rules to support the scenario requirements.  You can optionally view the MongoDB statement that would enable the validation rule in the database.</p>
-            <div class="form-group">
-                  <div class="well">
-                  
-                  <!--Scenario 1: Name must exist -->
+                    <p>In the fields below you build out the validation rules to support the scenario requirements. You can
+                      optionally view the MongoDB statement that would enable the validation rule in the database.</p>
+                    <div class="form-group">
+                      <div class="well">
 
-                  <H4>Scenario: 'Name' field must always exist</H4>
-                  <p>Directions: Create a valiation rule for the name field that ensures it always exists in the document.</p>
-                  <div class="row">
-                    <div class="col-sm-4">
-                      <label for="FieldNameTextBox">Field Name: </label>
+                        <!--Scenario 1: Name must exist -->
+
+                        <H4>Scenario: 'Name' field must always exist</H4>
+                        <p>Directions: Create a valiation rule for the name field that ensures it always exists in the document.</p>
+                        <div class="row">
+                          <div class="col-sm-4">
+                            <label for="FieldNameTextBox">Field Name: </label>
+                          </div>
+                          <div class="col-sm-8">
+                            <label for="FieldNameTextBox">Rule:</label>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-sm-4">
+                            <input type="text" class="form-control" id="FieldNameTextBox" placeholder="Enter field name">
+                          </div>
+                          <div class="col-sm-4">
+                            <select class="form-control" id="FieldNameRuleDropdown" onchange="RuleChange(this.id)">
+                              <option value="0">--- Select a valiation rule ---</option>
+                              <option value="1">Exists</option>
+                              <option value="2">Must Not Exist</option>
+                              <option value="3">Type</option>
+                              <option value="4">Range</option>
+                              <option value="5">RangeEx</option>
+                            </select>
+                          </div>
+                          <div class="col-sm-4" id="FieldNameVariableRuleColumn">&nbsp;</div>
+                        </div>
+                        <!-- row -->
+
+                        <div class="row">
+                          <div class="col-sm-12">
+                            <a class="btn primary" onclick="AutoFill('name')">Need help? Auto-fill in answer &raquo;</a>
+                          </div>
+                        </div>
+
+                        <div class="row">
+                          <div class="col-sm-12">
+                            <button class="btn primary" onclick="CheckValidationRules('name')" type="button">Check Validation Rule</button>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-sm-12">
+                            <div class="alert alert-success" id="FieldNameValidateSuccess" style="display:none">
+                              <strong>Success!</strong> The 'Exists' rule ensures the Name field exists.
+                            </div>
+                            <div class="alert alert-danger" id="FieldNameValidateFieldFailure" style="display:none">
+                              <strong>Opps!</strong> The field name is not correct, try again.
+                            </div>
+                            <div class="alert alert-danger" id="FieldNameValidateRuleFailure" style="display:none">
+                              <strong>Opps!</strong> Choose a different rule.
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <!-- Well -->
+                      <br>
+                      <!-- END OF SCENARIO -->
+
+
+                      <!--Scenario 2: Current customer / boolean data type -->
+                      <div class="well">
+                        <H4>Scenario: 'current_customer' field data type must be boolean</H4>
+                        <p>Directions: Create a valiation rule for the current_customer field that ensures it will only accept
+                          boolean values.</p>
+                        <div class="row">
+                          <div class="col-sm-4">
+                            <label for="FieldNameTextBoxScenario2">Field Name: </label>
+                          </div>
+                          <div class="col-sm-4">
+                            <label for="FieldNameTextBoxScenario2">Rule:</label>
+                          </div>
+                          <div class="col-sm-4" id="ColumnNameScenario2">
+                            &nbsp;
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-sm-4">
+                            <input type="text" class="form-control" id="FieldNameTextBoxScenario2" placeholder="Enter field name">
+                          </div>
+                          <div class="col-sm-4">
+                            <select class="form-control" id="FieldNameRuleDropdownScenario2" onchange="RuleChange(this.id)">
+                              <option value="0">--- Select a valiation rule ---</option>
+                              <option value="1">Exists</option>
+                              <option value="2">Must Not Exist</option>
+                              <option value="3">Type</option>
+                              <option value="4">Range</option>
+                              <option value="5">RangeEx</option>
+                            </select>
+                          </div>
+                          <div class="col-sm-4" id="FieldNameVariableRuleColumnScenario2">&nbsp;</div>
+                        </div>
+                        <!-- row -->
+
+                        <div class="row">
+                          <div class="col-sm-12">
+                            <a class="btn primary" onclick="AutoFill('current_customer')">Need help? Auto-fill in answer &raquo;</a>
+                          </div>
+                        </div>
+
+                        <div class="row">
+                          <div class="col-sm-12">
+                            <button class="btn primary" onclick="CheckValidationRules('current_customer')" type="button">Check Validation Rule</button>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-sm-12">
+                            <div class="alert alert-success" id="FieldNameValidateSuccessScenario2" style="display:none">
+                              <strong>Success!</strong> The 'Type' rule ensures data inserted and updated is of a specific data type.
+                            </div>
+                            <div class="alert alert-danger" id="FieldNameValidateFieldFailureScenario2" style="display:none">
+                              <strong>Opps!</strong> The field name is not correct, try again.
+                            </div>
+                            <div class="alert alert-danger" id="FieldNameValidateRuleFailureScenario2" style="display:none">
+                              <strong>Opps!</strong> Choose a different rule.
+                            </div>
+                            <div class="alert alert-danger" id="FieldNameValidateRuleBadTypeFailureScenario2" style="display:none">
+                              <strong>Opps!</strong> This BSON type will not work for this scenario, choose another.
+                            </div>
+                          </div>
+                        </div>
+                        <!-- END OF SCENARIO -->
+                        <!--Show Query Dialog-->
+                        <div class="modal fade" id="ShowQuery" role="dialog">
+                          <div class="modal-dialog">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                <h4 class="modal-title">Show Query</h4>
+                              </div>
+                              <div class="modal-body">
+                                <p>This is some sample code that shows the query executed against MongoDB.</p>
+                                <label id="lblTextSampleSource" class="text-danger"></label>
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+
+                      </div>
+                      <!-- Well -->
+                      <br>
+                      <br>
+                      <div class="row">
+                        <div class="col-sm-12">
+                          <button type="button" class="btn btn-link" id="NameShowCodeButton" data-toggle="modal" data-target="#ShowQuery" onclick="UpdateShowQuery('current_customer')">Show MongoDB Create Validation Rule Statement</button>
+                          <br>
+                          <br>
+                          <br>
+                          <p>When an insert or update occurs and violated these validation rules, the caller will receieve and
+                            error similar to this one:
+                            <br>
+                            <code>WriteResult({
+                              <br>&nbsp;&nbsp;"nInserted": 0,
+                              <br>&nbsp;&nbsp;"writeError": {
+                              <br>&nbsp;&nbsp;&nbsp;&nbsp;"code": 121,
+                              <br>&nbsp;&nbsp;&nbsp;&nbsp;"errmsg": "Document failed validation"
+                              <br>&nbsp;&nbsp;}
+                              <br>})</code>
+                        </div>
+                      </div>
                     </div>
-                    <div class="col-sm-8">
-                    <label for="FieldNameTextBox">Rule:</label>
-                    </div>
+                    <!-- form group -->
                   </div>
-                  <div class="row">
-                    <div class="col-sm-4">
-                      <input type="text" class="form-control" id="FieldNameTextBox" placeholder="Enter field name" >
-                    </div>
-                     <div class="col-sm-4">
-                       <select class="form-control" id="FieldNameRuleDropdown" onchange="RuleChange(this.id)">
-                          <option value="0">--- Select a valiation rule ---</option>
-                           <option value="1">Exists</option>
-                            <option value="2">Must Not Exist</option>
-                            <option value="3">Type</option>
-                            <option value="4">Range</option>
-                            <option value="5">RangeEx</option>
-                       </select>
-                     </div>
-                     <div class="col-sm-4" id="FieldNameVariableRuleColumn">&nbsp;</div>
-                  </div> <!-- row -->
+                  <!--hero-->
+                </div>
+                <!--content-->
+              </div>
+              <!-- col-sm -->
 
-                  <div class="row">
-                    <div class="col-sm-12">
-                    <a class="btn primary" onclick="AutoFill('name')">Need help?  Auto-fill in answer  &raquo;</a>
-                    </div>
-                  </div>
-
-                  <div class="row">
-                    <div class="col-sm-12">
-                    <button class="btn primary" onclick="CheckValidationRules('name')" type="button">Check Validation Rule</button>
-                    </div>
-                  </div>
-                  <div class="row">  
-                    <div class="col-sm-12">
-                        <div class="alert alert-success" id="FieldNameValidateSuccess" style="display:none">
-                          <strong>Success!</strong> The 'Exists' rule ensures the Name field exists.
-                        </div>
-                        <div class="alert alert-danger" id="FieldNameValidateFieldFailure" style="display:none">
-                          <strong>Opps!</strong> The field name is not correct, try again.
-                        </div>
-                        <div class="alert alert-danger" id="FieldNameValidateRuleFailure" style="display:none">
-                          <strong>Opps!</strong> Choose a different rule.
-                        </div>
-                    </div>
-                  </div>
-                  </div> <!-- Well -->
-                  <br>
-                  <!-- END OF SCENARIO -->
-
-
-                  <!--Scenario 2: Current customer / boolean data type -->
-                  <div class="well">
-                  <H4>Scenario: 'current_customer' field data type must be boolean</H4>
-                  <p>Directions: Create a valiation rule for the current_customer field that ensures it will only accept boolean values.</p>
-                  <div class="row">
-                    <div class="col-sm-4">
-                      <label for="FieldNameTextBoxScenario2">Field Name: </label>
-                    </div>
-                    <div class="col-sm-4">
-                    <label for="FieldNameTextBoxScenario2">Rule:</label>
-                    </div>
-                    <div class="col-sm-4" id="ColumnNameScenario2">
-                    &nbsp;
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-sm-4">
-                      <input type="text" class="form-control" id="FieldNameTextBoxScenario2" placeholder="Enter field name" >
-                    </div>
-                     <div class="col-sm-4">
-                       <select class="form-control" id="FieldNameRuleDropdownScenario2" onchange="RuleChange(this.id)">
-                          <option value="0">--- Select a valiation rule ---</option>
-                           <option value="1">Exists</option>
-                            <option value="2">Must Not Exist</option>
-                            <option value="3">Type</option>
-                            <option value="4">Range</option>
-                            <option value="5">RangeEx</option>
-                       </select>
-                     </div>
-                     <div class="col-sm-4" id="FieldNameVariableRuleColumnScenario2">&nbsp;</div>
-                  </div> <!-- row -->
-
-                  <div class="row">
-                    <div class="col-sm-12">
-                    <a class="btn primary" onclick="AutoFill('current_customer')">Need help?  Auto-fill in answer  &raquo;</a>
-                    </div>
-                  </div>
-
-                  <div class="row">
-                    <div class="col-sm-12">
-                    <button class="btn primary" onclick="CheckValidationRules('current_customer')" type="button">Check Validation Rule</button>
-                    </div>
-                  </div>
-                  <div class="row">  
-                    <div class="col-sm-12">
-                        <div class="alert alert-success" id="FieldNameValidateSuccessScenario2" style="display:none">
-                          <strong>Success!</strong> The 'Type' rule ensures data inserted and updated is of a specific data type.
-                        </div>
-                        <div class="alert alert-danger" id="FieldNameValidateFieldFailureScenario2" style="display:none">
-                          <strong>Opps!</strong> The field name is not correct, try again.
-                        </div>
-                        <div class="alert alert-danger" id="FieldNameValidateRuleFailureScenario2" style="display:none">
-                          <strong>Opps!</strong> Choose a different rule.
-                        </div>
-                         <div class="alert alert-danger" id="FieldNameValidateRuleBadTypeFailureScenario2" style="display:none">
-                          <strong>Opps!</strong> This BSON type will not work for this scenario, choose another.
-                        </div>
-                    </div>
-                  </div>
-                  <!-- END OF SCENARIO -->
-                <!--Show Query Dialog-->
-                    <div class="modal fade" id="ShowQuery" role="dialog">
-                    <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Show Query</h4>
-                        </div>
-                        <div class="modal-body">
-                        <p>This is some sample code that shows the query executed against MongoDB.</p>
-                        <label id="lblTextSampleSource" class="text-danger"></label>
-                        </div>
-                        <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        </div>
-                    </div>
-                    </div>
-                    </div>  
-
-                  
-                  </div> <!-- Well -->
-                  <br>
-                  <br>
-                  <div class="row">  
-                    <div class="col-sm-12">
-                      <button type="button" class="btn btn-link" id="NameShowCodeButton" data-toggle="modal" data-target="#ShowQuery" onclick="UpdateShowQuery('current_customer')">Show MongoDB Create Validation Rule Statement</button>
-                      <br><br><br>
-                      <p>When an insert or update occurs and violated these validation rules, the caller will receieve and error similar to this one:<br>
-                      <code>WriteResult({<br>&nbsp;&nbsp;"nInserted": 0,<br>&nbsp;&nbsp;"writeError": {<br>&nbsp;&nbsp;&nbsp;&nbsp;"code": 121,<br>&nbsp;&nbsp;&nbsp;&nbsp;"errmsg": "Document failed validation"<br>&nbsp;&nbsp;}<br>})</code>
-                    </div>
-                  </div>
-                  </div> <!-- form group -->
-        </div> <!--hero-->
-        </div> <!--content-->
-        </div> <!-- col-sm -->
-
-    </div> <!--row-->
-    </div> <!--container-->
-  </body>
-</html>
+        </div>
+        <!--row-->
+      </div>
+      <!--container-->
+<% include ./partials/footer %>

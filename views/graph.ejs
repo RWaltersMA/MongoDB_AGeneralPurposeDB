@@ -1,204 +1,199 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    
-    <title>MongoDB - General purpose database for GIANT IDEAS</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
-    <link rel="stylesheet" href="css/mystyle.css">
-  </head>
-  <body>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-    <script src="scripts/util.js"></script>
- <script>
+<% include ./partials/header %>
 
-     function handleGraphSearch() {
+  <body>
+    <script>
+      function handleGraphSearch() {
         //Prevent the form from trying to post itself again
         event.preventDefault();
-        if ($( "#UserToQuery" ).val()=="0")
-        {
-           $('#MissingUserMessage').show();
-           return;
+        if ($("#UserToQuery").val() == "0") {
+          $('#MissingUserMessage').show();
+          return;
         }
         $('#MissingUserMessage').hide();
 
         var UserIDToQuery = $('#UserToQuery').val();
         var LevelsToQuery = $('#LevelsToQuery').val();
 
-         $("#GraphSearchButton").prop('disabled', true);
-         $("#Loading").show();
-        
+        $("#GraphSearchButton").prop('disabled', true);
+        $("#Loading").show();
+
         //Use AJAX and submit the form data to the server
         $.ajax({
-            url: "/GraphSearch",
-           // headers: headers,  use this for special header info like security auth
-            method: 'POST',
-             data: JSON.stringify({ UserID: UserIDToQuery, Levels: LevelsToQuery}),
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            // This prevents JQuery from trying to append the form as a querystring
-            processData: false,
-        
-         }).done(function(data)
-            {
-               
-                $("#GraphSearchButton").prop('disabled', false);
-                $("#Loading").hide();
-                $('#ShowQueryDIV').show();
-                $('#TableGraphResults').empty();
+          url: "/GraphSearch",
+          // headers: headers,  use this for special header info like security auth
+          method: 'POST',
+          data: JSON.stringify({
+            UserID: UserIDToQuery,
+            Levels: LevelsToQuery
+          }),
+          contentType: "application/json; charset=utf-8",
+          dataType: "json",
+          // This prevents JQuery from trying to append the form as a querystring
+          processData: false,
 
-                var TotalNumberOfFriends=Number(data[0].network.length);
+        }).done(function (data) {
 
-                document.getElementById('lblTextResults').innerHTML = "Query returned " + (TotalNumberOfFriends -1)+ " documents";
+          $("#GraphSearchButton").prop('disabled', false);
+          $("#Loading").hide();
+          $('#ShowQueryDIV').show();
+          $('#TableGraphResults').empty();
 
-                var table = document.getElementById("TableGraphResults");
-                //console.log(table);
-                
-                var ArrayHeader = ["Level","Name"];
-                var thead = document.createElement('thead');
-                thead.setAttribute("style", "background-color:lightblue;color:black;");
-                      
-                table.appendChild(thead);
+          var TotalNumberOfFriends = Number(data[0].network.length);
 
-                for(var i=0;i<ArrayHeader.length;i++){
-                    thead.appendChild(document.createElement("th")).
-                    appendChild(document.createTextNode(ArrayHeader[i]));
+          document.getElementById('lblTextResults').innerHTML = "Query returned " + (TotalNumberOfFriends - 1) +
+            " documents";
+
+          var table = document.getElementById("TableGraphResults");
+          //console.log(table);
+
+          var ArrayHeader = ["Level", "Name"];
+          var thead = document.createElement('thead');
+          thead.setAttribute("style", "background-color:lightblue;color:black;");
+
+          table.appendChild(thead);
+
+          for (var i = 0; i < ArrayHeader.length; i++) {
+            thead.appendChild(document.createElement("th")).
+            appendChild(document.createTextNode(ArrayHeader[i]));
+          }
+          //Determine max depth - embarassing bit of code here I can't seem to sort the results of the Graoh so I need to get the deepest level and then I will enumerate each level
+          var MaxDepth = Number(0);
+          for (j = 0; j <= TotalNumberOfFriends; j++) {
+            if (Number(data[0].depth[j]) > MaxDepth) MaxDepth = Number(data[0].depth[j]);
+          }
+
+          //Start at Level 1, list all the names, then Level 2, list the names, etc.. 
+          //For some reason when the web page is written out is in reverse order so we'll start with the higher level and go to 1
+          for (j = MaxDepth; j >= 1; j--) {
+
+            for (i = 0; i < TotalNumberOfFriends; i++) {
+
+              if (typeof data[0].network[i] != 'undefined' || data[0].network[i]) {
+                if (Number(data[0].depth[i]) == j) {
+                  var row = table.insertRow(0);
+                  row.insertCell(0).innerHTML = "Level " + j;
+                  row.insertCell(1).innerHTML = data[0].network[i];
+
                 }
-                //Determine max depth - embarassing bit of code here I can't seem to sort the results of the Graoh so I need to get the deepest level and then I will enumerate each level
-                var MaxDepth=Number(0);
-               for (j=0;j<=TotalNumberOfFriends;j++)
-               {
-                  if (Number(data[0].depth[j])>MaxDepth) MaxDepth=Number(data[0].depth[j]);
-               }
-      
-               //Start at Level 1, list all the names, then Level 2, list the names, etc.. 
-               //For some reason when the web page is written out is in reverse order so we'll start with the higher level and go to 1
-               for (j=MaxDepth;j>=1;j--)
-               {
-              
-                for (i=0;i<TotalNumberOfFriends;i++)
-                {
-                  
-                    if (typeof data[0].network[i] != 'undefined' || data[0].network[i])
-                    { 
-                      if (Number(data[0].depth[i])==j)
-                      {
-                      var row = table.insertRow(0);
-                      row.insertCell(0).innerHTML="Level " + j;
-                      row.insertCell(1).innerHTML=data[0].network[i];
-                   
-                      }
-                    }
-                    
-                }
-               }
+              }
+
+            }
+          }
 
 
-                 var Query="This aggregation query first uses the $match aggregation to limit the size of the input document to a specific user.  The next stage in the pipeline is the $graphLookup.  Here options describe which collection to use, the value to recurrively match against, and other options such as a level or depth of the query.  The $project aggregation describes which fields to return in the query.  Optimal performance is achieved using this aggregation since the results are obtained from a single query.~X~Xdb.users.aggregate([~X~1{ $match:~X~1~1{ user_id: \"E_DJ1nTDPt9Qk2abWFTefQ\"} },~X~1{ $graphLookup:~X~1~1{ from: \"user\",~X~1~1~1startWith: [ user_id ],~X~1~1~1connectFromField: \"friends\",~X~1~1~1connectToField: \"user_id\",~X~1~1~1as: \"socialNetwork\",~X~1~1~1maxDepth: 2,~X~1~1~1depthField: \"depth\" } },~X~1~1{ $project:~X~1~1~1{ _id:0, name: 1, \"Network\":\"$socialNetwork.name\",~X~1~1~1~1\"Depth\":\"$socialNetwork.depth\"} }~X~1])";
-                $('#divTextSampleSource').empty();
-                 $('#divTextSampleSource').append(syntaxHighlight(Query));
-
-            
-            }).fail(function(data)
-            {
-               $("#Loading").hide();
-               $("#GraphSearchButton").prop('disabled', false);
-               document.getElementById('lblTextResults').innerHTML = 'Unable to query data source, please try again later. Error: ' + data.responseText ;
-  
-            }); 
-
-    };
-     
-</script>
+          var Query =
+            "This aggregation query first uses the $match aggregation to limit the size of the input document to a specific user.  The next stage in the pipeline is the $graphLookup.  Here options describe which collection to use, the value to recurrively match against, and other options such as a level or depth of the query.  The $project aggregation describes which fields to return in the query.  Optimal performance is achieved using this aggregation since the results are obtained from a single query.~X~Xdb.users.aggregate([~X~1{ $match:~X~1~1{ user_id: \"E_DJ1nTDPt9Qk2abWFTefQ\"} },~X~1{ $graphLookup:~X~1~1{ from: \"user\",~X~1~1~1startWith: [ user_id ],~X~1~1~1connectFromField: \"friends\",~X~1~1~1connectToField: \"user_id\",~X~1~1~1as: \"socialNetwork\",~X~1~1~1maxDepth: 2,~X~1~1~1depthField: \"depth\" } },~X~1~1{ $project:~X~1~1~1{ _id:0, name: 1, \"Network\":\"$socialNetwork.name\",~X~1~1~1~1\"Depth\":\"$socialNetwork.depth\"} }~X~1])";
+          $('#divTextSampleSource').empty();
+          $('#divTextSampleSource').append(syntaxHighlight(Query));
 
 
-<nav class="navbar navbar-inverse">
-  <div class="container">
-    <div class="navbar-header">
-        <a class="navbar-brand" href="#"><img class="MongoImage" src="images/mongodb_logo3.png"></a>
-    </div>
-  </div>
-</nav>
+        }).fail(function (data) {
+          $("#Loading").hide();
+          $("#GraphSearchButton").prop('disabled', false);
+          document.getElementById('lblTextResults').innerHTML =
+            'Unable to query data source, please try again later. Error: ' + data.responseText;
 
-  <div class="container">  
-  <div class="row">
+        });
 
-    <% var active='graph'; %>
-    <% include ./partials/sidebar %>
-      
-      <div class="col-sm-9 col-md-9 col-lg-9">
-      <div class="content">
-        <div class="hero-unit">
-            <h1>Graph Queries</h1>
-            <p>Graph theory has established itself as an important mathematical tool in a wide variety of subjects including operational research, fraud detection, and social networking to name a few.  MongoDB provides native graph query capabilties eliminated the need to leverage third party solutions!</p>
-            <p>Not sure what a graph query is?  Imagine you have a list of users and these users have friends.  What if you wanted to find a list of someone's 2nd degree connections i.e. this person's friends of friends.  This is possible without graph queries but would require lots of round trip queries to a database.  With MongoDB $graphLookup aggregation function users can quickly obtain answers to these queries with one query to the server dramatically improving application performance!
-            <p>To see graph queries in action, specify a user from the list below and select how many levels of connections you wish to query.</p>
-            <p><a class="btn primary large" href="https://docs.mongodb.com/manual/reference/operator/aggregation/graphLookup/" target="_">Learn more about $graphLookup aggregation &raquo;</a></p>
-        </div>
-        <label for="UserToQuery">Select a user to query their friends:</label>
-        <select class="form-control" id="UserToQuery" required>
-          <option value="0">--Choose a user--</option>
-            <% ResultSet.forEach(function (item) { %>
-            <option value='<%= item.user_id %>'> <%= item.name %> (<%= item.friends.length %> friends)</option>
-            <% }) %>
-       
-          </select>
-          <div class="alert alert-danger fade in" id="MissingUserMessage" style="display:none;">
-            <strong>Opps!</strong> Please choose a user to query.
-          </div>
-    
-          <label for="LevelsDeep">How many levels deep (i.e. friends of friends..) to query?</label>
-           <select class="form-control" id="LevelsToQuery" required>
-            <option value="1">1</option>
-            <option value="2" selected="true">2</option>
-           </select>
+      };
+    </script>
 
-           <br>
-           <button type="submit" class="btn btn-default" id="GraphSearchButton" onclick="handleGraphSearch()" style="border:solid;" >Query Names</button>&nbsp;&nbsp; 
-           <div id="Loading" style="display:none">
-             <img src="/images/white-loading.gif" id="loading_gif" style="width:40px;height:40px;">
-           </div>
-           <div id="ShowQueryDIV" style="display: none">
-              <p>Interested in knowing what the MongoDB query would be?   <button type="button" class="btn btn-link" id="TextSearchShowCodeButton" data-toggle="modal" data-target="#ShowQuery">Show Query</button><br>
-            </div>
-          
-           <br>
-            <!--Show Query Dialog-->
+
+<% include ./partials/navbar %>
+
+    <div class="container">
+      <div class="row">
+
+        <% var active='graph'; %>
+          <% include ./partials/sidebar %>
+
+            <div class="col-sm-9 col-md-9 col-lg-9">
+              <div class="content">
+                <div class="hero-unit">
+                  <h1>Graph Queries</h1>
+                  <p>Graph theory has established itself as an important mathematical tool in a wide variety of subjects including
+                    operational research, fraud detection, and social networking to name a few. MongoDB provides native graph
+                    query capabilties eliminated the need to leverage third party solutions!</p>
+                  <p>Not sure what a graph query is? Imagine you have a list of users and these users have friends. What if
+                    you wanted to find a list of someone's 2nd degree connections i.e. this person's friends of friends.
+                    This is possible without graph queries but would require lots of round trip queries to a database. With
+                    MongoDB $graphLookup aggregation function users can quickly obtain answers to these queries with one
+                    query to the server dramatically improving application performance!
+                    <p>To see graph queries in action, specify a user from the list below and select how many levels of connections
+                      you wish to query.</p>
+                    <p>
+                      <a class="btn primary large" href="https://docs.mongodb.com/manual/reference/operator/aggregation/graphLookup/"
+                        target="_">Learn more about $graphLookup aggregation &raquo;</a>
+                    </p>
+                </div>
+                <label for="UserToQuery">Select a user to query their friends:</label>
+                <select class="form-control" id="UserToQuery" required>
+                  <option value="0">--Choose a user--</option>
+                  <% ResultSet.forEach(function (item) { %>
+                    <option value='<%= item.user_id %>'>
+                      <%= item.name %> (
+                        <%= item.friends.length %> friends)</option>
+                    <% }) %>
+
+                </select>
+                <div class="alert alert-danger fade in" id="MissingUserMessage" style="display:none;">
+                  <strong>Opps!</strong> Please choose a user to query.
+                </div>
+
+                <label for="LevelsDeep">How many levels deep (i.e. friends of friends..) to query?</label>
+                <select class="form-control" id="LevelsToQuery" required>
+                  <option value="1">1</option>
+                  <option value="2" selected="true">2</option>
+                </select>
+
+                <br>
+                <button type="submit" class="btn btn-default" id="GraphSearchButton" onclick="handleGraphSearch()" style="border:solid;">Query Names</button>&nbsp;&nbsp;
+                <div id="Loading" style="display:none">
+                  <img src="/images/white-loading.gif" id="loading_gif" style="width:40px;height:40px;">
+                </div>
+                <div id="ShowQueryDIV" style="display: none">
+                  <p>Interested in knowing what the MongoDB query would be?
+                    <button type="button" class="btn btn-link" id="TextSearchShowCodeButton"
+                      data-toggle="modal" data-target="#ShowQuery">Show Query</button>
+                    <br>
+                </div>
+
+                <br>
+                <!--Show Query Dialog-->
                 <div class="modal fade" id="ShowQuery" role="dialog">
-                <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Show Query</h4>
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Show Query</h4>
+                      </div>
+                      <div class="modal-body">
+                        <div id="divTextSampleSource"></div>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                      </div>
                     </div>
-                    <div class="modal-body">
-                      <div id="divTextSampleSource"></div>
-                    </div>
-                    <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    </div>
+                  </div>
                 </div>
-                </div>
-                </div>    
 
-           <label id="lblTextResults"></label>
+                <label id="lblTextResults"></label>
 
-            <div class="content-fluid">
-            <div class="panel panel-default">
-            <div class="panel-body" style="height: 300px;overflow: auto">
-                    <table id="TableGraphResults" class="TextSearchResultsCSS"/>
+                <div class="content-fluid">
+                  <div class="panel panel-default">
+                    <div class="panel-body" style="height: 300px;overflow: auto">
+                      <table id="TableGraphResults" class="TextSearchResultsCSS" />
+                    </div>
+                  </div>
                 </div>
+
+              </div>
+              <!-- content -->
             </div>
-            </div>
+            <!-- col-sm-6 -->
+      </div>
+      <!-- row -->
+    </div>
+    <!-- container-->
 
-      </div> <!-- content -->
-      </div> <!-- col-sm-6 -->
-      </div> <!-- row -->
-      </div> <!-- container-->
-    
-  </body>
-</html>
+<% include ./partials/footer %>

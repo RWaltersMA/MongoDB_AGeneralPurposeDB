@@ -1,258 +1,256 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    
-    <title>MongoDB - General purpose database for GIANT IDEAS</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
-    <link rel="stylesheet" href="css/mystyle.css">
-    <style>
-       #map {
-        height: 400px;
-        width: 100%;
-       }
-    </style>
-  </head>
-  <body>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-    <script src="scripts/util.js"></script>
- <script>
- 
-    function QueryBusinessList() {
+<% include ./partials/header %>
 
-        //If we loaded the list don't do it again
-        if ($('#BusinessToQuery').children('option').length>1) return;
+    <body>
 
-        $("#loading_gif").show();
-          $.ajax({
-            url: "/GeoSearch/QueryBusinessList",
-           // headers: headers,  use this for special header info like security auth
-            method: 'POST',
-            data:  JSON.stringify({ }),
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            // This prevents JQuery from trying to append the form as a querystring
-            processData: false,
-        
-         }).done(function(data)
-            {
-                   //Get rid of spinning circle
-                   $("#loading_gif").hide();
+        <script>
+            function QueryBusinessList() {
 
-                   //Clear the drop down
-                   $("#BusinessToQuery").find('option').remove().end();
+                //If we loaded the list don't do it again
+                if ($('#BusinessToQuery').children('option').length > 1) return;
 
-                    $.each(data, function(key, value) { 
+                $("#loading_gif").show();
+                $.ajax({
+                    url: "/GeoSearch/QueryBusinessList",
+                    // headers: headers,  use this for special header info like security auth
+                    method: 'POST',
+                    data: JSON.stringify({}),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    // This prevents JQuery from trying to append the form as a querystring
+                    processData: false,
+
+                }).done(function (data) {
+                    //Get rid of spinning circle
+                    $("#loading_gif").hide();
+
+                    //Clear the drop down
+                    $("#BusinessToQuery").find('option').remove().end();
+
+                    $.each(data, function (key, value) {
                         $('#BusinessToQuery')
-                            .append($('<option>', { key : value.Business })
-                            .text(value.Business)); 
-                        
+                            .append($('<option>', {
+                                    key: value.Business
+                                })
+                                .text(value.Business));
+
                     });
 
+                }).fail(function (data) {
+                    $("#loading_gif").hide();
+                    console.log('failed->' + data);
+                    return;
+                });
+
             }
-            ).fail(function(data)
-            {
-               $("#loading_gif").hide();
-               console.log('failed->' + data);
-               return;
-            }); 
-     
-    }
-     function handleGeoSearch() {
-        //Prevent the form from trying to post itself again
-        event.preventDefault();
-        if ($( "#BusinessToQuery" ).val()=="0")
-        {
-           $('#MissingBusinessMessage').show();
-           return;
-        }
-        $('#MissingBusinessMessage').hide();
 
-        var BusinessNameToQuery = $('#BusinessToQuery').val();
-        var DistanceToQuery=$('#MetersFromSource').val();
-
-         $("#GeoSearchButton").prop('disabled', true);
-        
-        //Use AJAX and submit the form data to the server
-        $.ajax({
-            url: "/GeoSearch",
-           // headers: headers,  use this for special header info like security auth
-            method: 'POST',
-            data: JSON.stringify({ Business: BusinessNameToQuery, Distance: DistanceToQuery}), //V2.0 pass City/State
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            // This prevents JQuery from trying to append the form as a querystring
-            processData: false,
-        
-         }).done(function(data)
-            {
-              
-                //Clear results DIV
-              
-                $("#GeoSearchButton").prop('disabled', false);
-                $('#TableGeoResults').empty();
-                $('#ShowQueryDIV').show();
-                var table = document.getElementById("TableGeoResults");
-
-                if (data.length==0)
-                {
-                   var row = table.insertRow(0);
-                   row.insertCell(0).innerHTML="No results for the given query.";
+            function handleGeoSearch() {
+                //Prevent the form from trying to post itself again
+                event.preventDefault();
+                if ($("#BusinessToQuery").val() == "0") {
+                    $('#MissingBusinessMessage').show();
+                    return;
                 }
-                else
-                {
-               //Define the header of the results table
-                var ArrayHeader = ["Business Name","Distance from origin"];
-                var thead = document.createElement('thead');
+                $('#MissingBusinessMessage').hide();
 
-                table.appendChild(thead);
+                var BusinessNameToQuery = $('#BusinessToQuery').val();
+                var DistanceToQuery = $('#MetersFromSource').val();
 
-               for(var i=0;i<ArrayHeader.length;i++){
-                    thead.appendChild(document.createElement("th")).
-                    appendChild(document.createTextNode(ArrayHeader[i]));
-                }
-               
-                var uluru = {lat: data[0].BusinessCoord[1], lng: data[0].BusinessCoord[0]};
-                var map = new google.maps.Map(document.getElementById('map'), {
-                        zoom: 15,
-                        center: uluru
-                        });
-                        for (var i=data.length-1;i>=0;i--)
-                    //          for (var i=0:i<data.length;i>=0;i--)
-                        {
-                            var myLatLng = {lat: data[i].BusinessCoord[1], lng: data[i].BusinessCoord[0]};
-                                         
-                            var marker = new google.maps.Marker({
-                                position: myLatLng,
-                                label: data[i].BusinessName,
-                                map: map
+                $("#GeoSearchButton").prop('disabled', true);
+
+                //Use AJAX and submit the form data to the server
+                $.ajax({
+                        url: "/GeoSearch",
+                        // headers: headers,  use this for special header info like security auth
+                        method: 'POST',
+                        data: JSON.stringify({
+                            Business: BusinessNameToQuery,
+                            Distance: DistanceToQuery
+                        }), //V2.0 pass City/State
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        // This prevents JQuery from trying to append the form as a querystring
+                        processData: false,
+
+                    }).done(function (data) {
+
+                        //Clear results DIV
+
+                        $("#GeoSearchButton").prop('disabled', false);
+                        $('#TableGeoResults').empty();
+                        $('#ShowQueryDIV').show();
+                        var table = document.getElementById("TableGeoResults");
+
+                        if (data.length == 0) {
+                            var row = table.insertRow(0);
+                            row.insertCell(0).innerHTML = "No results for the given query.";
+                        } else {
+                            //Define the header of the results table
+                            var ArrayHeader = ["Business Name", "Distance from origin (meters)"];
+                            var thead = document.createElement('thead');
+
+                            table.appendChild(thead);
+
+                            for (var i = 0; i < ArrayHeader.length; i++) {
+                                thead.appendChild(document.createElement("th")).
+                                appendChild(document.createTextNode(ArrayHeader[i]));
+                            }
+
+                            var uluru = {
+                                lat: data[0].BusinessCoord[1],
+                                lng: data[0].BusinessCoord[0]
+                            };
+                            var map = new google.maps.Map(document.getElementById('map'), {
+                                zoom: 15,
+                                center: uluru
                             });
-             
-                          var row = table.insertRow(0);
-                          row.insertCell(0).innerHTML=data[i].BusinessName;
-                          row.insertCell(1).innerHTML=data[i].DistanceToBusiness.toFixed(2);
-               
+                            for (var i = data.length - 1; i >= 0; i--)
+                            //          for (var i=0:i<data.length;i>=0;i--)
+                            {
+                                var myLatLng = {
+                                    lat: data[i].BusinessCoord[1],
+                                    lng: data[i].BusinessCoord[0]
+                                };
+
+                                var marker = new google.maps.Marker({
+                                    position: myLatLng,
+                                    label: data[i].BusinessName,
+                                    map: map
+                                });
+
+                                var row = table.insertRow(0);
+                                row.insertCell(0).innerHTML = data[i].BusinessName;
+                                row.insertCell(1).innerHTML = data[i].DistanceToBusiness.toFixed(2);
+
+                            }
+
                         }
-                          
-                }
-                var Query="MongoDB has native support for querying geometries that lay within, intersect, and promixal to GeoJSON coordinates.  Geospaital indexes enhance these queries and provide individual query performance.  In this example the $geoNear aggregation operator is used to determine the list of documents that are within a specified distance from the point coordinates specified.  Notice the parameters provided include distance as well as whether to do the calculation as spherical or planar.~X~Xdb.business.aggregate([~X{~X~1$geoNear: {~X~1~1near: { type: \"Point\",~X~1~1~1coordinates: [ coord.longitude,coord.latitude  ] },~X~1~1~1distanceField: \"dist.calculated\",~X~1~1~1maxDistance: " + DistanceToQuery + ",~X~1~1~1query: { },~X~1~1~1includeLocs: \"dist.location\",~X~1~1~1num: 10,~X~1~1~1spherical: true~X~1~1~1}~X~1~1},~X~1{ $project: { name:1, dist:1 }}~X}~X])";
-                $('#lblQueryExample').empty();
-                $('#lblQueryExample').append(syntaxHighlight(Query));
+                        var Query =
+                            "MongoDB has native support for querying geometries that lay within, intersect, and promixal to GeoJSON coordinates.  Geospaital indexes enhance these queries and provide individual query performance.  In this example the $geoNear aggregation operator is used to determine the list of documents that are within a specified distance from the point coordinates specified.  Notice the parameters provided include distance as well as whether to do the calculation as spherical or planar.~X~Xdb.business.aggregate([~X{~X~1$geoNear: {~X~1~1near: { type: \"Point\",~X~1~1~1coordinates: [ coord.longitude,coord.latitude  ] },~X~1~1~1distanceField: \"dist.calculated\",~X~1~1~1maxDistance: " +
+                            DistanceToQuery +
+                            ",~X~1~1~1query: { },~X~1~1~1includeLocs: \"dist.location\",~X~1~1~1num: 10,~X~1~1~1spherical: true~X~1~1~1}~X~1~1},~X~1{ $project: { name:1, dist:1 }}~X}~X])";
+                        $('#lblQueryExample').empty();
+                        $('#lblQueryExample').append(syntaxHighlight(Query));
 
-         }) //done()
-                            
-            .fail(function(data)
-            {
-               $("#GeoSearchButton").prop('disabled', false);
-               document.getElementById('lblTextResults').innerHTML = 'Unable to query data source, please try again later. Error: ' + data.responseText ;
-            
-            }); 
+                    }) //done()
 
-    };
-    function initMap() {
-        var uluru = {lat: 36.01169, lng: -115.1758}; // 36.01169  -115.1758
-        var map = new google.maps.Map(document.getElementById('map'), {
-          zoom: 10,
-          center: uluru
-        });
-        var marker = new google.maps.Marker({
-          position: uluru,
-          map: map
-        });
-      }
+                    .fail(function (data) {
+                        $("#GeoSearchButton").prop('disabled', false);
+                        document.getElementById('lblTextResults').innerHTML =
+                            'Unable to query data source, please try again later. Error: ' + data.responseText;
 
-      //As soon as we load the page, query for the business list
-   $(document).ready(QueryBusinessList);
- 
-</script>
-<script async defer
-src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAlcTazO9PgfR_LcG9JPe4eoHPPsCBpOls&callback=initMap">
-</script>
+                    });
 
-<nav class="navbar navbar-inverse">
-  <div class="container">
-    <div class="navbar-header">
-        <a class="navbar-brand" href="#"><img class="MongoImage" src="images/mongodb_logo3.png"></a>
-    </div>
-  </div>
-</nav>
+            };
 
-  <div class="container">  
-  <div class="row">
+            function initMap() {
+                var uluru = {
+                    lat: 36.01169,
+                    lng: -115.1758
+                }; // 36.01169  -115.1758
+                var map = new google.maps.Map(document.getElementById('map'), {
+                    zoom: 10,
+                    center: uluru
+                });
+                var marker = new google.maps.Marker({
+                    position: uluru,
+                    map: map
+                });
+            }
 
-    <% var active='geo'; %>
-    <% include ./partials/sidebar %>
-      
-      <div class="col-sm-9 col-md-9 col-lg-9">
-      <div class="content">
-        <div class="hero-unit">
-            <h1>Geospatial Queries</h1>
-            <p>MongoDB natively understands Geospatial data allowing you to perform advanced functions like distance from and intersection queries.  This native query capability in combination of geospatial indexing support makes MongoDB a first choice for any geospatial application.</p>
-            <p>Want to kick the tires?  Below is a list of businesses in the Las Vegas, Nevada area.  Pick a business and then choose a distance.  The query will return a list of businesses within the specified distance you provided.</p>
-            <p><a class="btn primary large" href="https://www.mongodb.com/blog/post/geospatial-performance-improvements-in-mongodb-3-2" target="_">Learn more about geospaital in MongoDB &raquo;</a></p>
+            //As soon as we load the page, query for the business list
+            $(document).ready(QueryBusinessList);
+        </script>
+        <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAlcTazO9PgfR_LcG9JPe4eoHPPsCBpOls&callback=initMap">
+        </script>
+
+<% include ./partials/navbar %>
+
+        <div class="container">
+            <div class="row">
+
+                <% var active='geo'; %>
+                    <% include ./partials/sidebar %>
+
+                        <div class="col-sm-9 col-md-9 col-lg-9">
+                            <div class="content">
+                                <div class="hero-unit">
+                                    <h1>Geospatial Queries</h1>
+                                    <p>MongoDB natively understands Geospatial data allowing you to perform advanced functions
+                                        like distance from and intersection queries. This native query capability in combination
+                                        of geospatial indexing support makes MongoDB a first choice for any geospatial application.</p>
+                                    <p>Want to kick the tires? Below is a list of businesses in the Las Vegas, Nevada area.
+                                        Pick a business and then choose a distance. The query will return a list of businesses
+                                        within the specified distance you provided.</p>
+                                    <p>
+                                        <a class="btn primary large" href="https://www.mongodb.com/blog/post/geospatial-performance-improvements-in-mongodb-3-2"
+                                            target="_">Learn more about geospaital in MongoDB &raquo;</a>
+                                    </p>
+                                </div>
+                                <label for="BusinessToQuery">Select a business:</label>
+                                <select class="form-control" id="BusinessToQuery" required onchange="QueryBusinessList()">
+                                    <option value="0">--- Select a business ---</option>
+                                </select>
+                                <div class="alert alert-danger fade in" id="MissingBusinessMessage" style="display:none;">
+                                    <strong>Opps!</strong> Please choose a business.
+                                </div>
+                                <label for="MetersFromSource">Find 10 businesses within this distance:</label>
+                                <div class="input-group">
+                                    <input id="MetersFromSource" type="text" class="form-control" name="MetersFromSource" placeholder="Enter distance in meters"
+                                        value="1000">
+                                    <span class="input-group-addon">meters</span>
+                                </div>
+
+                                <br>
+                                <div id="ShowQueryDIV" style="display: none">
+                                    <p>Interested in knowing what the MongoDB query would be?
+                                        <button type="button" class="btn btn-link"
+                                            id="TextSearchShowCodeButton" data-toggle="modal" data-target="#ShowQuery">Show Query</button>
+                                        <br>
+                                </div>
+                                <div>
+                                    <button type="submit" class="btn btn-default" id="GeoSearchButton" onclick="handleGeoSearch()" style="border:solid;">Find Businesses</button>&nbsp;&nbsp;
+                                    <img src="/images/white-loading.gif" id="loading_gif" style="display: none;width:40px;height:40px;">
+                                </div>
+                                <br>
+                                <!--Show Query Dialog-->
+                                <div class="modal fade" id="ShowQuery" role="dialog">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                <h4 class="modal-title">Show Query</h4>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div id="lblQueryExample"></div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <label id="lblTextResults"></label>
+
+                                <div class="content-fluid">
+                                    <div class="panel panel-default">
+                                        <div class="panel-body" style="height: 800px;overflow: auto" id="GeoResultsDIV">
+                                            <table id="TableGeoResults" class="TextSearchResultsCSS" />
+                                            <br>
+                                            <div id="map"></div>
+                                            <br>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <!-- content -->
+                        </div>
+                        <!-- col-sm-6 -->
+            </div>
+            <!-- row -->
         </div>
-        <label for="BusinessToQuery">Select a business:</label>
-        <select class="form-control" id="BusinessToQuery" required onchange="QueryBusinessList()">
-            <option value="0">--- Select a business ---</option>
-           </select>
-            <div class="alert alert-danger fade in" id="MissingBusinessMessage" style="display:none;">
-                <strong>Opps!</strong> Please choose a business.
-            </div>
-           <label for="MetersFromSource">Find 10 businesses within this distance:</label>
-            <div class="input-group">
-                <input id="MetersFromSource" type="text" class="form-control" name="MetersFromSource" placeholder="Enter distance in meters" value="1000">
-                <span class="input-group-addon">meters</span>
-            </div>
-            
-           <br>
-           <div id="ShowQueryDIV" style="display: none">
-              <p>Interested in knowing what the MongoDB query would be?   <button type="button" class="btn btn-link" id="TextSearchShowCodeButton" data-toggle="modal" data-target="#ShowQuery">Show Query</button><br>
-           </div>
-          <div>
-           <button type="submit" class="btn btn-default" id="GeoSearchButton" onclick="handleGeoSearch()" style="border:solid;" >Find Businesses</button>&nbsp;&nbsp; 
-           <img src="/images/white-loading.gif" id="loading_gif" style="display: none;width:40px;height:40px;" >
-           </div>
-           <br>
-            <!--Show Query Dialog-->
-                <div class="modal fade" id="ShowQuery" role="dialog">
-                <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Show Query</h4>
-                    </div>
-                    <div class="modal-body">
-                    <div id="lblQueryExample"></div>
-                    </div>
-                    <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    </div>
-                </div>
-                </div>
-                </div>    
+        <!-- container-->
 
-           <label id="lblTextResults"></label>
-
-            <div class="content-fluid">
-            <div class="panel panel-default">
-            <div class="panel-body" style="height: 800px;overflow: auto" id="GeoResultsDIV">
-            <table id="TableGeoResults" class="TextSearchResultsCSS"/>
-            <br>
-            <div id="map"></div>
-            <br>
-           
-                </div>
-            </div>
-            </div>
-
-      </div> <!-- content -->
-      </div> <!-- col-sm-6 -->
-      </div> <!-- row -->
-      </div> <!-- container-->
-    
-  </body>
-</html>
+<% include ./partials/footer %>

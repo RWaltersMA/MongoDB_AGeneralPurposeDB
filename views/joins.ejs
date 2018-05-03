@@ -1,225 +1,227 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    
-    <title><%= title %></title>
+<% include ./partials/header %>
 
-    <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-
-    <!-- Optional theme -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
-    <link rel="stylesheet" href="css/mystyle.css">
-  </head>
   <body>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-    <script src="scripts/util.js"></script>
-<script>
-   function QueryCityList(val) {
+
+    <script>
+      function QueryCityList(val) {
         //Ajax post and receive city list
         //**TODO CHANGE TO /Joins/QueryCityList and filter CIty list to those that have data for Pizza restaurants!!
 
-        if ($( "#StateToQuery" ).val()=="0") return;
+        if ($("#StateToQuery").val() == "0") return;
 
         $("#loading_gif").show();
-          $.ajax({
-            url: "/FacetSearch/QueryCityList",
-           // headers: headers,  use this for special header info like security auth
-            method: 'POST',
-             data: JSON.stringify({ StateID: val }),
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            // This prevents JQuery from trying to append the form as a querystring
-            processData: false,
-        
-         }).done(function(data)
-            {
-                   //Get rid of spinning circle
-                   $("#loading_gif").hide();
+        $.ajax({
+          url: "/FacetSearch/QueryCityList",
+          // headers: headers,  use this for special header info like security auth
+          method: 'POST',
+          data: JSON.stringify({
+            StateID: val
+          }),
+          contentType: "application/json; charset=utf-8",
+          dataType: "json",
+          // This prevents JQuery from trying to append the form as a querystring
+          processData: false,
 
-                   //Clear the drop down
-                   $("#CityToQueryDropdown").find('option').remove().end();
+        }).done(function (data) {
+          //Get rid of spinning circle
+          $("#loading_gif").hide();
 
-                   //enumerate the drop down
-                   $.each(data, function(key, value) { 
-                        $('#CityToQueryDropdown')
-                            .append($('<option>', { key : value.City })
-                            .text(value.City)); 
-                    });
-            }
-            ).fail(function(data)
-            {
-               $("#loading_gif").hide();
-               return;
-            }); 
+          //Clear the drop down
+          $("#CityToQueryDropdown").find('option').remove().end();
 
-         $("#CityToQueryDropdown").prop('disabled', false);
-     
-    }
+          //enumerate the drop down
+          $.each(data, function (key, value) {
+            $('#CityToQueryDropdown')
+              .append($('<option>', {
+                  key: value.City
+                })
+                .text(value.City));
+          });
+        }).fail(function (data) {
+          $("#loading_gif").hide();
+          return;
+        });
+
+        $("#CityToQueryDropdown").prop('disabled', false);
+
+      }
+
       function handleJoin() {
         //Prevent the form from trying to post itself again
         event.preventDefault();
-        if ($( "#CityToQueryDropdown" ).val()=="0")
-        {
-           $('#MissingCityMessage').show();
-           return;
+        if ($("#CityToQueryDropdown").val() == "0") {
+          $('#MissingCityMessage').show();
+          return;
         }
         $('#MissingCityMessage').hide();
 
         var CityToQuery = $('#CityToQueryDropdown').val();
         var StateToQuery = $('#StateToQuery').val();
 
-         $("#JoinButton").prop('disabled', true);
-         $("#loading_gif").show();
-        
+        $("#JoinButton").prop('disabled', true);
+        $("#loading_gif").show();
+
         //Use AJAX and submit the form data to the server
         $.ajax({
             url: "/Joins",
-           // headers: headers,  use this for special header info like security auth
+            // headers: headers,  use this for special header info like security auth
             method: 'POST',
-             data: JSON.stringify({ City: CityToQuery, State: StateToQuery}),
+            data: JSON.stringify({
+              City: CityToQuery,
+              State: StateToQuery
+            }),
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             // This prevents JQuery from trying to append the form as a querystring
             processData: false,
-        
-         }).done(function(data)
-            {
-              
-                //Clear results DIV
-                $("#JoinResultsDIV").empty();
-                $("#JoinButton").prop('disabled', false);
-                $("#loading_gif").hide();
-                $("#ShowDisplayQuery").show();
 
-               var Summary="";
-               if (data.length==0)
-               {
-                    $("#JoinResultsDIV").append('<div class="panel panel-warning"><div class="panel-heading"><b>There are no Pizza restaurant reviews for this city and state, please choose another.</b></div></div>');
-                    return;
-               } 
-                 for (var i=0;i<data.length;i++)
-                {
-                 
-                    Summary="";
+          }).done(function (data) {
 
-                     // console.log("=>" + data[i]["item"].reviews.length);
+            //Clear results DIV
+            $("#JoinResultsDIV").empty();
+            $("#JoinButton").prop('disabled', false);
+            $("#loading_gif").hide();
+            $("#ShowDisplayQuery").show();
 
-                      for (var x=0;x<data[i]["item"].reviews.length;x++)
-                      {
-                          Summary+="<p><I>\"" + data[i]["item"].reviews[x].text + "\"</I></p><br><br><br>";
-                      }
-                    $("#JoinResultsDIV").append('<div class="panel panel-info"><div class="panel-heading"><b>' + data[i]["item"].name + '</b><br>' + data[i]["item"].full_address + '</div><div class="panel-body">Stars : ' + data[i]["item"].stars + Summary + '</div></div>');
+            var Summary = "";
+            if (data.length == 0) {
+              $("#JoinResultsDIV").append(
+                '<div class="panel panel-warning"><div class="panel-heading"><b>There are no Pizza restaurant reviews for this city and state, please choose another.</b></div></div>'
+              );
+              return;
+            }
+            for (var i = 0; i < data.length; i++) {
 
-                }
-                 var Query="db.business.aggregate([~X~1{ \"$match\" :~X~1~1{ \"state\" : \"NC\",\"city\" : \"Charlotte\",\"categories\" : { \"$in\" : [ \"Pizza\" ] } } },~X~1{ \"$sort\" : { \"stars\" : 1 } },~X~1{ \"$limit\" : 5 },~X~1{ \"$lookup\" :~X~1~1{ \"from\" : \"reviews\",\"localField\" : \"business_id\", \"foreignField\" : \"business_id\", \"as\" : \"reviews\" } },~X~1{ \"$project\" : { \"name\" : 1, \"full_address\" : 1, \"stars\" : 1, \"reviews.text\" : 1 } }~X])";
-                
-                 $('#lblJoinSampleSource').empty();
-                $('#lblJoinSampleSource').append(syntaxHighlight(Query));
-      
-         }) //done()
-                            
-            .fail(function(data)
-            {
-                $("#loading_gif").hide();
-               $("#JoinButton").prop('disabled', false);
-              document.getElementById('lblTextResults').innerHTML = 'Unable to query data source, please try again later. Error: ' + data.responseText ;
-  
-            
-            }); 
+              Summary = "";
 
-    };
-     
- </script>
+              // console.log("=>" + data[i]["item"].reviews.length);
 
-<nav class="navbar navbar-inverse">
-  <div class="container">
-    <div class="navbar-header">
-        <a class="navbar-brand" href="#"><img class="MongoImage" src="images/mongodb_logo3.png"></a>
+              for (var x = 0; x < data[i]["item"].reviews.length; x++) {
+                Summary += "<p><I>\"" + data[i]["item"].reviews[x].text + "\"</I></p><br><br><br>";
+              }
+              $("#JoinResultsDIV").append('<div class="panel panel-info"><div class="panel-heading"><b>' + data[i][
+                  "item"
+                ].name + '</b><br>' + data[i]["item"].full_address + '</div><div class="panel-body">Stars : ' +
+                data[i]["item"].stars + Summary + '</div></div>');
+
+            }
+            var Query =
+              "db.business.aggregate([~X~1{ \"$match\" :~X~1~1{ \"state\" : \"NC\",\"city\" : \"Charlotte\",\"categories\" : { \"$in\" : [ \"Pizza\" ] } } },~X~1{ \"$sort\" : { \"stars\" : 1 } },~X~1{ \"$limit\" : 5 },~X~1{ \"$lookup\" :~X~1~1{ \"from\" : \"reviews\",\"localField\" : \"business_id\", \"foreignField\" : \"business_id\", \"as\" : \"reviews\" } },~X~1{ \"$project\" : { \"name\" : 1, \"full_address\" : 1, \"stars\" : 1, \"reviews.text\" : 1 } }~X])";
+
+            $('#lblJoinSampleSource').empty();
+            $('#lblJoinSampleSource').append(syntaxHighlight(Query));
+
+          }) //done()
+
+          .fail(function (data) {
+            $("#loading_gif").hide();
+            $("#JoinButton").prop('disabled', false);
+            document.getElementById('lblTextResults').innerHTML =
+              'Unable to query data source, please try again later. Error: ' + data.responseText;
+
+
+          });
+
+      };
+    </script>
+
+<% include ./partials/navbar %>
+
+    <div class="container">
+      <div class="row">
+
+        <% var active='joins'; %>
+          <% include ./partials/sidebar %>
+
+            <div class="col-sm-9 col-md-9 col-lg-9">
+              <div class="content">
+                <div class="hero-unit">
+                  <h3>Joins</h3>
+                  <p>Coming from a relational database background to a document oriented model is a lot more than just a rename
+                    of some core concepts like referring to "Collections" instead of "Tables". The big win with document
+                    oriented databases is the focus on denormalizing your data and leveraging document structures like arrays
+                    and subdocuments to yield superior performance when compared with traditional relational databases. However,
+                    even with this change of data architecture there exists on occasion the need to separate data into different
+                    collections.</p>
+                  <p>In our business reviews databases there are two collections: "business" and "reviews". The reviews collection
+                    stores a document for each user review of a businesses_id. This business_id is present in the business
+                    collection and identifies a specific business. Suppose we want to query the 5 worst pizza businesses
+                    and their corresponding user reviews. In a relational world we would perform a left outer join of these
+                    two "tables" since not all businesses will have reviews but we would want the list of businesses returned
+                    regardless. In MongoDB, we use the aggregation framework and an operator called, "$lookup" to reference
+                    another collection effectively doing a left outer join of that collection.</p>
+                  <p>
+                    <a class="btn primary large" href="https://docs.mongodb.com/manual/reference/operator/aggregation/lookup/"
+                      target="_">Learn more about $lookup operator &raquo;</a>
+                  </p>
+                  <p>To query the 5 worst pizza places chose a state and city from the list below:</p>
+                  <label for="StateToQuery">Select a state:</label>
+                  <select class="form-control" id="StateToQuery" required onchange="QueryCityList(this.value)">
+                    <option value="0" selected="true">-- Select a state --</option>
+                    <option value="AZ">Arizona</option>
+                    <option value="IL">Illinois</option>
+                    <option value="NC">North Carolina</option>
+                    <option value="PA">Pennsylvania</option>
+                    <option value="TX">Texas</option>
+                  </select>
+
+                  <label for="CityToQuery">Select a city:</label>
+                  <select class="form-control" id="CityToQueryDropdown" required disabled>
+                    <option value="0">--- ---</option>
+                  </select>
+                  <div class="alert alert-danger fade in" id="MissingCityMessage" style="display:none;">
+                    <strong>Opps!</strong> Please choose a city and state from the drop down boxes above.
+                  </div>
+                  <br>
+                  <div>
+                    <button type="submit" class="btn btn-default" id="JoinButton" onclick="handleJoin()" style="border:solid;">Query 5 worst pizza restaurants</button>&nbsp;&nbsp;
+                    <img src="/images/white-loading.gif" id="loading_gif" style="display: none;width:40px;height:40px;">
+                  </div>
+                  <div id="ShowDisplayQuery" style="display: none">
+                    <p>Interested in knowing what the MongoDB query would be?
+                      <button type="button" class="btn btn-link" id="JoinShowCodeButton"
+                        data-toggle="modal" data-target="#ShowQuery">Show Query</button>
+                      <br>
+                  </div>
+                  <br>
+                  <!--Show Query Dialog-->
+                  <div class="modal fade" id="ShowQuery" role="dialog">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <button type="button" class="close" data-dismiss="modal">&times;</button>
+                          <h4 class="modal-title">Show Query</h4>
+                        </div>
+                        <div class="modal-body">
+                          <div id="lblJoinSampleSource"></div>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <label id="lblTextResults"></label>
+
+                  <div class="content-fluid">
+                    <div class="panel-group" id="accordion">
+                      <div class="panel panel-default">
+                        <div style="height: 300px;overflow: auto" id="JoinResultsDIV">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+
+                </div>
+              </div>
+              <!-- content -->
+            </div>
+            <!-- col-sm-6 -->
+      </div>
+      <!-- row -->
     </div>
-  </div>
-</nav>
+    <!-- container-->
 
-  <div class="container">  
-  <div class="row">
-
-    <% var active='joins'; %>
-    <% include ./partials/sidebar %>
-      
-      <div class="col-sm-9 col-md-9 col-lg-9">
-      <div class="content">
-        <div class="hero-unit">
-           <h3>Joins</h3>
-           <p>Coming from a relational database background to a document oriented model is a lot more than just a rename of some core concepts like referring to "Collections" instead of "Tables".  The big win with document oriented databases is the focus on denormalizing your data and leveraging document structures like arrays and subdocuments to yield superior performance when compared with traditional relational databases.
-However, even with this change of data architecture there exists on occasion the need to separate data into different collections.</p>
-            <p>In our business reviews databases there are two collections: "business" and "reviews".  The reviews collection stores a document for each user review of a businesses_id.  This business_id is present in the business collection and identifies a specific business.  Suppose we want to query the 5 worst pizza businesses and their corresponding user reviews.  In a relational world we would perform a left outer join of these two "tables" since not all businesses will have reviews but we would want the list of businesses returned regardless.  In MongoDB, we use the aggregation framework and an operator called, "$lookup" to reference another collection effectively doing a left outer join of that collection.</p>
-             <p><a class="btn primary large" href="https://docs.mongodb.com/manual/reference/operator/aggregation/lookup/" target="_">Learn more about $lookup operator &raquo;</a></p>
-           <p>To query the 5 worst pizza places chose a state and city from the list below:</p>
-        <label for="StateToQuery">Select a state:</label>
-        <select class="form-control" id="StateToQuery" required onchange="QueryCityList(this.value)">
-          <option value="0" selected="true">-- Select a state --</option>
-            <option value="AZ">Arizona</option>
-              <option value="IL">Illinois</option>
-              <option value="NC">North Carolina</option>
-              <option value="PA">Pennsylvania</option>
-              <option value="TX">Texas</option>
-           </select>
-     
-        <label for="CityToQuery">Select a city:</label>
-        <select class="form-control" id="CityToQueryDropdown" required disabled>
-        <option value="0">--- ---</option>
-        </select>
-        <div class="alert alert-danger fade in" id="MissingCityMessage" style="display:none;">
-            <strong>Opps!</strong> Please choose a city and state from the drop down boxes above.
-        </div>
-  <br>
-          <div>
-           <button type="submit" class="btn btn-default" id="JoinButton" onclick="handleJoin()" style="border:solid;" >Query 5 worst pizza restaurants</button>&nbsp;&nbsp; 
-           <img src="/images/white-loading.gif" id="loading_gif" style="display: none;width:40px;height:40px;" >
-           </div>
-           <div id="ShowDisplayQuery" style="display: none">
-           <p>Interested in knowing what the MongoDB query would be?   <button type="button" class="btn btn-link" id="JoinShowCodeButton" data-toggle="modal" data-target="#ShowQuery">Show Query</button><br>
-          </div>
-           <br>
-            <!--Show Query Dialog-->
-                <div class="modal fade" id="ShowQuery" role="dialog">
-                <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Show Query</h4>
-                    </div>
-                    <div class="modal-body">
-                    <div id="lblJoinSampleSource"></div>
-                    </div>
-                    <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    </div>
-                </div>
-                </div>
-                </div>    
-
-           <label id="lblTextResults"></label>
-
-            <div class="content-fluid">
-            <div class="panel-group" id="accordion">
-            <div class="panel panel-default">
-                <div style="height: 300px;overflow: auto" id="JoinResultsDIV">
-                </div>
-            </div>
-            </div>
-            </div>
-
-
-        </div>
-      </div> <!-- content -->
-      </div> <!-- col-sm-6 -->
-      </div> <!-- row -->
-      </div> <!-- container-->
-    
-  </body>
-</html>
+<% include ./partials/footer %>

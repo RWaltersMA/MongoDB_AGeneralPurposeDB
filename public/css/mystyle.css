@@ -142,3 +142,7 @@ pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
     overflow-y:scroll;
     width:100%;
     }
+#map {
+    height: 400px;
+    width: 100%;
+   }

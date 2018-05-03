@@ -1,100 +1,96 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    
-    <title><%= title %></title>
+<% include ./partials/header %>
 
-    <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-
-    <!-- Optional theme -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
-    <link rel="stylesheet" href="css/mystyle.css">
-  </head>
   <body>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-    <script src="scripts/util.js"></script>
-<script>
- $(document).ready(function() {
+    <script>
+      $(document).ready(function () {
 
-     var SampleDocument="{ \"_id\" : ObjectId(\"5859970cfc909a11977d3d74\"),~X~1\"business_id\" : \"5UmKMjUEUNdYWqANhGckJw\",~X~1\"full_address\" : \"4734 Lebanon Church Rd\nDravosburg, PA 15034\",~X" +
-	"~1\"hours\" : {~X~1~1\"Friday\" : {~X~1~1~1\"close\" : \"21:00\",~X~1~1~1\"open\" : \"11:00\"~X~1~1},~X" +
-    "~1~1\"Tuesday\" : {~X~1~1~1\"close\" : \"21:00\",~X~1~1~1\"open\" : \"11:00\"~X~1~1},~X~1~1\"Thursday\" : {~X~1~1\"close\" : \"21:00\",~X~1~1\"open\" : \"11:00\"~X" +
-    "~1~1},~X~1~1\"Wednesday\" : {~X~1~1\"close\" : \"21:00\",~X~1~1\"open\" : \"11:00\"~X~1~1},~X~1~1\"Monday\" : {~X~1~1\"close\" : \"21:00\",~X" +
-    "~1~1\"open\" : \"11:00\"~X~1~1}~X~1},~X~1\"open\" : true,~X~1\"categories\" : [~X~1~1\"Fast Food\",~X~1~1\"Restaurants\"~X],~X~1\"city\" : \"Dravosburg\",~X" +
-    "\"review_count\" : 7,~X~1\"name\" : \"Mr Hoagie\",\"neighborhoods\" : [ ],~X~1\"longitude\" : -79.9007057,~X~1\"state\" : \"PA\",~X~1\"stars\" : 3.5,~X~1" +
-    "\"latitude\" : 40.3543266,~X~1\"attributes\" : {~X~1\"Take-out\" : true,~X~1\"Drive-Thru\" : false,~X~1\"Good For\" : {~X~1~1\"dessert\" : false," +
-    "~X~1~1\"latenight\" : false,~X~1~1\"lunch\" : false,~X~1~1\"dinner\" : false,~X~1~1\"brunch\" : false,~X~1~1\"breakfast\" : false~X~1},~X" +
-    "~1\"Caters\" : false,~X~1\"Noise Level\" : \"average\",~X~1\"Takes Reservations\" : false,~X~1\"Delivery\" : false,~X~1~1\"Ambience\" : {~X~1~1\"romantic\" : false," +
-    "~X~1~1\"intimate\" : false,~X~1~1\"classy\" : false,~X~1~1\"hipster\" : false,~X~1~1\"divey\" : false,~X~1~1\"touristy\" : false,~X~1~1\"trendy\" : false,~X~1~1\"upscale\" : false,~X~1~1\"casual\" : false" +
-	"},~X~1\"Parking\" : {~X~1~1\"garage\" : false,~X~1~1\"street\" : false,~X~1~1\"validated\" : false,~X~1~1\"lot\" : false,~X~1~1\"valet\" : false~X~1}," +
-    "~1\"Has TV\" : false,~X~1\"Outdoor Seating\" : false,~X~1\"Attire\" : \"casual\",~X~1\"Alcohol\" : \"none\",~X~1\"Waiter Service\" : false,~X~1\"Accepts Credit Cards\" : true," +
-    "~X~1\"Good for Kids\" : true,~X~1\"Good For Groups\" : true,~X~1\"Price Range\" : 1~X~1},~X~1\"type\" : \"business\",~X~1\"location\" : {~X~1\"type\" : \"Point\",~X" +
-    "~1\"coordinates\" : [~X~1~1-79.9007057,~X~1~140.3543266~X~1~1]~X~1}";
+        var SampleDocument =
+          "{ \"_id\" : ObjectId(\"5859970cfc909a11977d3d74\"),~X~1\"business_id\" : \"5UmKMjUEUNdYWqANhGckJw\",~X~1\"full_address\" : \"4734 Lebanon Church Rd\nDravosburg, PA 15034\",~X" +
+          "~1\"hours\" : {~X~1~1\"Friday\" : {~X~1~1~1\"close\" : \"21:00\",~X~1~1~1\"open\" : \"11:00\"~X~1~1},~X" +
+          "~1~1\"Tuesday\" : {~X~1~1~1\"close\" : \"21:00\",~X~1~1~1\"open\" : \"11:00\"~X~1~1},~X~1~1\"Thursday\" : {~X~1~1\"close\" : \"21:00\",~X~1~1\"open\" : \"11:00\"~X" +
+          "~1~1},~X~1~1\"Wednesday\" : {~X~1~1\"close\" : \"21:00\",~X~1~1\"open\" : \"11:00\"~X~1~1},~X~1~1\"Monday\" : {~X~1~1\"close\" : \"21:00\",~X" +
+          "~1~1\"open\" : \"11:00\"~X~1~1}~X~1},~X~1\"open\" : true,~X~1\"categories\" : [~X~1~1\"Fast Food\",~X~1~1\"Restaurants\"~X],~X~1\"city\" : \"Dravosburg\",~X" +
+          "\"review_count\" : 7,~X~1\"name\" : \"Mr Hoagie\",\"neighborhoods\" : [ ],~X~1\"longitude\" : -79.9007057,~X~1\"state\" : \"PA\",~X~1\"stars\" : 3.5,~X~1" +
+          "\"latitude\" : 40.3543266,~X~1\"attributes\" : {~X~1\"Take-out\" : true,~X~1\"Drive-Thru\" : false,~X~1\"Good For\" : {~X~1~1\"dessert\" : false," +
+          "~X~1~1\"latenight\" : false,~X~1~1\"lunch\" : false,~X~1~1\"dinner\" : false,~X~1~1\"brunch\" : false,~X~1~1\"breakfast\" : false~X~1},~X" +
+          "~1\"Caters\" : false,~X~1\"Noise Level\" : \"average\",~X~1\"Takes Reservations\" : false,~X~1\"Delivery\" : false,~X~1~1\"Ambience\" : {~X~1~1\"romantic\" : false," +
+          "~X~1~1\"intimate\" : false,~X~1~1\"classy\" : false,~X~1~1\"hipster\" : false,~X~1~1\"divey\" : false,~X~1~1\"touristy\" : false,~X~1~1\"trendy\" : false,~X~1~1\"upscale\" : false,~X~1~1\"casual\" : false" +
+          "},~X~1\"Parking\" : {~X~1~1\"garage\" : false,~X~1~1\"street\" : false,~X~1~1\"validated\" : false,~X~1~1\"lot\" : false,~X~1~1\"valet\" : false~X~1}," +
+          "~1\"Has TV\" : false,~X~1\"Outdoor Seating\" : false,~X~1\"Attire\" : \"casual\",~X~1\"Alcohol\" : \"none\",~X~1\"Waiter Service\" : false,~X~1\"Accepts Credit Cards\" : true," +
+          "~X~1\"Good for Kids\" : true,~X~1\"Good For Groups\" : true,~X~1\"Price Range\" : 1~X~1},~X~1\"type\" : \"business\",~X~1\"location\" : {~X~1\"type\" : \"Point\",~X" +
+          "~1\"coordinates\" : [~X~1~1-79.9007057,~X~1~140.3543266~X~1~1]~X~1}";
 
-     $('#SampleBusinessDocument').append(syntaxHighlight(SampleDocument));
+        $('#SampleBusinessDocument').append(syntaxHighlight(SampleDocument));
 
-     var ViewCreationStatement="db.createView( \"ViewKidsRestaurants\", \"business\",~X~1~1[ { $match: { \"attributes.Good for Kids\" : true ,~X~1~1\"categories\": { \"$in\" : [\"Restaurants\"] }}},~X~1~1{ $project: { _id:0, name: 1, full_address:1, stars:1} } ])";
+        var ViewCreationStatement =
+          "db.createView( \"ViewKidsRestaurants\", \"business\",~X~1~1[ { $match: { \"attributes.Good for Kids\" : true ,~X~1~1\"categories\": { \"$in\" : [\"Restaurants\"] }}},~X~1~1{ $project: { _id:0, name: 1, full_address:1, stars:1} } ])";
 
-     $('#ViewCreationStatement').append(syntaxHighlight(ViewCreationStatement));
+        $('#ViewCreationStatement').append(syntaxHighlight(ViewCreationStatement));
 
-     var ViewQueryStatement = "db.ViewKidsRestaurants.find( { state: \"NC\", city: \"Charlotte\" })";
+        var ViewQueryStatement = "db.ViewKidsRestaurants.find( { state: \"NC\", city: \"Charlotte\" })";
 
-     $('#ViewQueryStatement').append(syntaxHighlight(ViewQueryStatement));
+        $('#ViewQueryStatement').append(syntaxHighlight(ViewQueryStatement));
 
- });
- 
-</script>
-<nav class="navbar navbar-inverse">
-  <div class="container">
-    <div class="navbar-header">
-        <a class="navbar-brand" href="#"><img class="MongoImage" src="images/mongodb_logo3.png"></a>
-    </div>
-  </div>
-</nav>
+      });
+    </script>
+<% include ./partials/navbar %>
 
-  <div class="container">  
-  <div class="row">
+    <div class="container">
+      <div class="row">
 
-    <% var active='views'; %>
-    <% include ./partials/sidebar %>
-      
-      <div class="col-sm-9 col-md-9 col-lg-9">
-      <div class="content">
-        <div class="hero-unit">
-            <h3>Read-only Views</h3>
-           <p>Read-only views (ROV) are a similar concept to table views found in relational databases. They enable administrators to define a query that is materialized at runtime. ROVs do not store data and are considered first class objects in MongoDB. Being first class objects allows administrators to define permissions on who can access the views. ROVs become a separation layer between the data itself and the user. This is one of the biggest benefits of the feature: <b>Users accessing the view do not need access to the underlying data the view is referencing.</b></p>
-            <p>Examine a typical document in a collection called <b>business</b>:</p>
-            <div class="content-fluid">
-             <div class="panel panel-default">
-              <div class="panel-body" style="height: 300px;overflow: auto">
-                  <div id="SampleBusinessDocument" class="well"></div>
+        <% var active='views'; %>
+          <% include ./partials/sidebar %>
+
+            <div class="col-sm-9 col-md-9 col-lg-9">
+              <div class="content">
+                <div class="hero-unit">
+                  <h3>Read-only Views</h3>
+                  <p>Read-only views (ROV) are a similar concept to table views found in relational databases. They enable administrators
+                    to define a query that is materialized at runtime. ROVs do not store data and are considered first class
+                    objects in MongoDB. Being first class objects allows administrators to define permissions on who can
+                    access the views. ROVs become a separation layer between the data itself and the user. This is one of
+                    the biggest benefits of the feature:
+                    <b>Users accessing the view do not need access to the underlying data the view is referencing.</b>
+                  </p>
+                  <p>Examine a typical document in a collection called
+                    <b>business</b>:</p>
+                  <div class="content-fluid">
+                    <div class="panel panel-default">
+                      <div class="panel-body" style="height: 300px;overflow: auto">
+                        <div id="SampleBusinessDocument" class="well"></div>
+                      </div>
+                    </div>
+                  </div>
+                  <h4>Scenario: Create a read-only view that retrieves kid friendly restaurants</h4>
+                  <p>To solve this business problem we could create a MongoDB user and grant access to the business collection.
+                    Although this would work we are giving this user account more access to data than they need.</p>
+                  <p>A Read-Only View from MongoDB allows an administrator to create a view that is based on a predefined query
+                    and grant read access to that view only. In the scenario defined above, here is the creation statement
+                    for the view to only query kid friendly restaurants:</p>
+
+                  <div id="ViewCreationStatement" class="well"></div>
+
+                  <p>Once this view is defined we can use it like a collection in a query as follows:</p>
+
+                  <div id="ViewQueryStatement" class="well"></div>
+
+                  <p>The query above will enumerate the results of the view and apply the additional search filter of "Charlotte"
+                    for the city and "NC" for the state.</p>
+
+                  <p>
+                    <a class="btn primary large" href="https://www.mongodb.com/blog/post/providing-least-privileged-data-access-in-mongodb"
+                      target="_">Learn more about providing least privileged access &raquo;</a>
+                  </p>
+
+                </div>
+                <!-- hero-->
               </div>
-             </div>
+              <!-- content -->
             </div>
-            <h4>Scenario: Create a read-only view that retrieves kid friendly restaurants</h4>
-            <p>To solve this business problem we could create a MongoDB user and grant access to the business collection.  Although this would work we are giving this user account more access to data than they need.</p>
-            <p>A Read-Only View from MongoDB allows an administrator to create a view that is based on a predefined query and grant read access to that view only.  In the scenario defined above, here is the creation statement for the view to only query kid friendly restaurants:</p>
+            <!-- col-sm-6 -->
+      </div>
+      <!-- row -->
+    </div>
+    <!-- container-->
 
-            <div id="ViewCreationStatement" class="well"></div>
-           
-           <p>Once this view is defined we can use it like a collection in a query as follows:</p>
-
-            <div id="ViewQueryStatement" class="well"></div>
-
-            <p>The query above will enumerate the results of the view and apply the additional search filter of "Charlotte" for the city and "NC" for the state.</p>
-        
-            <p><a class="btn primary large" href="https://www.mongodb.com/blog/post/providing-least-privileged-data-access-in-mongodb" target="_">Learn more about providing least privileged access &raquo;</a></p>
-            
-        </div> <!-- hero-->
-      </div> <!-- content -->
-      </div> <!-- col-sm-6 -->
-      </div> <!-- row -->
-      </div> <!-- container-->
-    
-  </body>
-</html>
+<% include ./partials/footer %>
