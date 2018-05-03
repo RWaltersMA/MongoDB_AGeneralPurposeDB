@@ -5,17 +5,7 @@ var settings=require('../config/config.js');
 var fs=require('fs');
 var router = express.Router();
 
-/*ar pool      =    mysql.createPool({
-    connectionLimit : 10, //important
-    host     : 'localhost',
-    port: 3307,
-    user: settings.user + '?source=admin',
-    password: settings.password,
-    database : 'yelp',
-    flags: 'PLUGIN_AUTH=mongosql_auth',
-    debug    :  false
-});*/
-var pool      =    mysql.createPool({ //createConnection({
+var pool      =    mysql.createPool({
     connectionLimit: 10,
     host     : settings.host,
     port: 3307,
@@ -39,7 +29,7 @@ var pool      =    mysql.createPool({ //createConnection({
 });
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
+router.get('/', function(req, res, next) { //  
          //If they jumped directly to a route and don't have a sessionID redirect them
     if (!req.session.sessionID) 
     {
@@ -66,7 +56,6 @@ if (~SQLQuery.toUpperCase().indexOf("LIMIT")) {
 } else  {
   SQLQuery+=" LIMIT 20";
 }
-//console.log(SQLQuery);
 
 audit.writeAudit("Executed SQL Query: " + SQLQuery.replace(/['"]+/g, ''),0);
 

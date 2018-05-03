@@ -1,0 +1,248 @@
+<% include ./partials/header %>
+<body>
+<script>
+
+var StagesList=[]; // Keeps track of the order of stages in the pipeline
+function stagecommand_changed(s) // This function is where we pre-populate the textareas depending on the user selection
+{
+var result='{\n\n}';
+  switch($('#stage-command' + s).val())
+  {
+    case 'unwind':
+      result="{\n\t\"path\": \"$<name of field>\"\n}";
+      break;
+    case 'match':
+        result="{\n\t\"<query to match>\"\n}";
+          break;
+      case 'group':
+        result="{\n\t\"_id\": expression,\n\t\"field\": {\n\t\t\"accumulator\": \"expr\"\n\t\t}\n}";
+          break;
+      case 'project':
+        result="{\n\t\"<name of field>\": 1 or 0,..\n}";
+  }
+	$('#stage' + s + 'query').text(result);
+}
+
+function deleteit (s) {
+       $('#stage' + s ).remove();
+       $('#stage' + s + 'detail').remove();
+
+        for (i = 0; i < StagesList.length; i++) { 
+           //fun.. delete will undefine and not remove from the array, maybe call a func to bubble sort after
+            if (typeof StagesList[i] != 'undefined')
+            {
+              if (StagesList[i].stagenum==s)
+              {
+                  delete StagesList[i];
+                  break;
+              }
+            }
+        }      
+    };
+
+function flipit (s) {
+       if ( $('#stage' + s + 'detail').css('display') == 'none' )
+       {
+			    $('#stage' + s + 'detail').show();
+          $('#icon' + s).html('&#xe114;');
+       }
+        else
+       {
+        	$('#stage' + s + 'detail').hide();
+          $('#icon' + s).html('&#xe113;');
+       }
+   };
+function generatequery(s,for_ui)
+{
+var query="";
+var isFirst=true;
+var newline="";
+var seperator="";
+
+if (for_ui==true)  // If this is for a UI presentation add \n
+{
+  newline="\n";
+  seperator=",";
+}
+else{
+  seperator="\0"; // When we pass this to the back end, JSON.parse expects a single document not one seperated by commas
+}
+
+ for (i = 0; i < StagesList.length; i++) 
+ 	{ 
+            if (typeof StagesList[i] != 'undefined')
+            {
+            	if (StagesList[i].stagenum > s) break;
+                
+            	if ($('#chkIgnore' + StagesList[i].stagenum).prop('checked')==false)
+                {
+              		if (isFirst==true)
+                    {
+                    	isFirst=false;
+                    }
+                    else
+                    {
+                      query=query+seperator + newline; //',' + newline;
+                    }
+                	//Handle the aggpipeline command
+                  //Chec the selected in the dropdown then decerate the query with the syntax
+                  //REMEMBER that the value of the selection is used here so name it correctly!
+                  query=query+"{ ";
+                  console.log('for_ui==' + for_ui);
+                  if (for_ui==true)
+                    {
+                      query=query+"\n\t";
+                    }
+
+                  query=query+stripnewline("\"$" + $('#stage-command' + StagesList[i].stagenum).val()) + "\" : " + stripnewline($('#stage' + StagesList[i].stagenum + 'query').val()) + newline + "}";
+                 }
+                
+            }
+    }
+    return query;
+}
+function stripnewline(s)
+{
+  s=s.replace(/\n/g, ' ');
+  s=s.replace(/\t/g, ' ');
+  return s;
+}
+function viewquery(s) {
+
+    $('#ViewQueryModalBody').html('<pre>db.business.aggregate( [<br>' + generatequery(s,true) + '<br>] )</pre>');
+    $('#ViewQueryModal').modal();
+}
+function runquery(s) {
+  var query=generatequery(s,false);
+  if (query.length < 5) return;
+  var q={ query };
+   $('#results' + s + 'query').empty();
+   $('#RunQuery ' + s).hide();
+   $('#loading_gif').show();
+    $.ajax({
+            url: "/AggFramework/Query",
+           // headers: headers,  use this for special header info like security auth
+            method: 'POST',
+            data:  JSON.stringify({ q}),
+            contentType: "application/json; charset=utf-8",
+            dataType: "html", //json
+            // This prevents JQuery from trying to append the form as a querystring
+            processData: true /// false
+        
+         }).done(function(data)
+            {
+                   //Get rid of spinning circle, show Run button
+                  $('#loading_gif').hide();
+                  $('#RunQuery ' + s).show();
+                  //Add the data to the results query panel
+                  $('#results' + s + 'query')
+                            .append(data);
+            }
+            ).fail(function(data)
+            {
+               $('#RunQuery ' + s).show();
+               $('#loading_gif').hide();
+               console.log('failed->' + JSON.stringify(data));
+               return;
+            }); 
+}
+window.onload = function () {
+  var stages=0;
+
+  $('.mygrid-wrapper-div').height(400);
+  $("#btnAddStage").on("click", function () {
+        stages=stages+1;
+         $("#aggbuilder").append(makestage(stages));
+          window.scrollBy(0, 100);
+        //most of this object is unsed only the stagenum is used could simply it in future
+        var o={ stagenum: stages} ; //, stageselection:"default", ignore: false, stagecommand: "" }
+        StagesList.push(o);
+    });
+    //This function will build out the sample agg query
+    $("#MakeSampleStages").on("click", function () {
+        $("#aggbuilder").empty();
+        stages=3;
+        StagesList=[];
+        StagesList.push({ stagenum: 1});
+        StagesList.push({ stagenum: 2});
+        StagesList.push({ stagenum: 3});
+             
+         $("#aggbuilder").append(makestage(1));
+         $('#stage-command1').val('match');
+         $('#stage1query').text('{\n\t\"state\":\"NV\"\n}');
+         $("#aggbuilder").append(makestage(2));
+         $('#stage-command2').val('group');
+         $('#stage2query').text('{\n\t\"_id\" : null,\n\t\"AverageStars\": { \"$avg\": \"$stars\" },\n\t\"TotalBusinessCount\": { \"$sum\": 1 }\n}');
+         $("#aggbuilder").append(makestage(3));
+         $('#stage-command3').val('project');
+         $('#stage3query').text('{\n\t\"_id\":0,\n\t\"AverageStars\" : 1,\n\t\"TotalBusinessCount\" : 1\n}');
+          window.scrollBy(0, 400);
+    });
+
+   function makestage(n)
+   {
+   	 return '<div id="stage' + n + '"><div class="panel panel-default"><div style="padding: 10px;height:50px;vertical-align:center;"><div class="col-sm-2"><button type="button" onclick="flipit(' + n + ')"> <span id="icon' + n + '" class="glyphicon">&#xe114;</span></button>&nbsp;Stage</div><div class="col-sm-4"><select id="stage-command' + n + '" onchange="stagecommand_changed(' + n + ')"><option value="default">Select...</option><option value="match">$match</option><option value="group">$group</option><option value="unwind">$unwind</option><option value="project">$project</option></select></div><div class="col-sm-4"><input type="checkbox" class="form-check-input" id="chkIgnore' + n + '" text="Ignore Stage"><label for="chkIgnore">Ignore Stage</label></div><div class="col-sm-2"><button type="button" class="close" aria-label="Close" onclick="deleteit(' + n + ')"><span aria-hidden="true">&times;</span></button></div></div></div></div><div id="stage' + n + 'detail"><div class="row"><div class="col-sm-4"><div class="panel panel-default agg-query"><div class="panel-body"><textarea rows="4" id="stage' + n + 'query" cols=30></textarea></div></div></div><div class="col-sm-3"><div class="panel panel-default agg-query"><div class="panel-body"><button type="button" id="RunQuery" + ' + n + '" class="btn btn-success" onclick="runquery(' + n + ')">Run Query</button><img src="/images/white-loading.gif" id="loading_gif" style="display: none;width:40px;height:40px;"><br><br><button type="button" class="btn btn-info" onclick="viewquery(' + n + ')">View Query</button></div></div></div><div class="col-sm-5"><div class="panel panel-default agg-results"><div class="panel-body agg-results"><div id="results' + n + 'query"></div></div></div></div></div></div>';
+   }
+}
+</script>
+<nav class="navbar navbar-inverse">
+  <div class="container">
+    <div class="navbar-header">
+        <a class="navbar-brand" href="#"><img class="MongoImage" src="images/mongodb_logo3.png"></a>
+    </div>
+  </div>
+</nav>
+
+  <div class="container">  
+  <div class="row">
+
+    <% var active='aggframework'; %>
+    <% include ./partials/sidebar %>
+
+      <div class="col-sm-9 col-md-9 col-lg-9">
+        <div class="content">
+        <div class="hero-group">
+            <h2>Aggregation Framework</h2>
+            <p>MongoDB provides the ability to easily process aggregation operations from multiple documents yielding a single result.  The Aggregation Pipeline is an implementation of this framework and its modeled on the concept of data processing pipelines. Documents enter a multi-stage pipeline that transforms the documents into an aggregated result.</p>
+            <p>Like stages of a pipeline data flows through from one stage to next transforming the data as directed by the query.</p>
+            <p>To see this in a real example, consider a single document from our business collection shown below:</p>
+                <div class="mygrid-wrapper-div">
+                <% include ./partials/sampledoc %>
+                </div>
+            <br>
+            <p>Structures within this document include simple name value pairs like "name" and "full_address".  Documents also allow for storing arrays as values as seen in the "categories" field.  In addition documents can be stored as values in this name/value pair.  These concepts of embedding arrays and subdocuments do not exist in traditional relational databases.</p>
+            <p>Click on <button id="MakeSampleStages" type="button" class="btn btn-info">Create Sample Stages</button> to fill the stages with a sample aggregation pipeline that queries for the average rating of all businesses in the state of Nevada <b>or start building out any aggregation pipeline using the + Add Stage button below</b>.</p>
+            <div class="row">
+            
+            <div id="aggbuilder"></div>
+            
+            <button id="btnAddStage" type="button" class="btn btn-success">+ Add Stage</button>
+            </div>
+                <!-- View Query Modal -->
+              <div class="modal fade" id="ViewQueryModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLongTitle">View Query</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body" id="ViewQueryModalBody">
+                      
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <br>
+
+        </div>
+
+        </div> <!--content-->
+      </div>
+      </div>
+</body>
+</html>
