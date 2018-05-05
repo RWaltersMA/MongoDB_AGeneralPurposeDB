@@ -109,6 +109,27 @@
 			padding: 1em;
 			margin: 0;
 }
+.mygrid-wrapper-div {
+    border: solid gray 1px;
+    background-color: lightgray;
+    overflow: scroll;
+    width: 80%;
+}
+.agg-query
+{
+white-space: nowrap;
+height: 120px; 
+overflow-x: hidden; 
+overflow-y: hidden;
+}
+.agg-results
+{
+white-space: nowrap;
+height: 120px; 
+overflow-x: scroll; 
+overflow-y: scroll;
+}
+
 pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
 .string { color: green; }
 .number { color: darkorange; }
@@ -116,6 +137,11 @@ pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
 .null { color: magenta; }
 .key { color: red; }
 
+.scrollable-panel{
+    height:300px;
+    overflow-y:scroll;
+    width:100%;
+    }
 #map {
     height: 400px;
     width: 100%;
