@@ -1,12 +1,7 @@
 var express = require('express');
 var router = express.Router();
-var mongodb = require('mongodb');
-var ObjectID=require('mongodb').ObjectID;
 var MongoClient = require('mongodb').MongoClient;
 var assert = require('assert');
-
-//MongoDB Connection information
-var url = require('url');
 
 var settings=require('../config/config.js');  //change monogodb server location here
 var db; 
