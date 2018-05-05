@@ -1,0 +1,92 @@
+<% include ./partials/header %>
+
+    <body>
+<script>
+    </script>
+
+        <% include ./partials/navbar %>
+
+
+
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-3">
+                        <% var active='ha'; %>
+                            <% include ./partials/sidebar %>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="row">
+                            <div class="col-md-12">
+                                    <h2>
+                                        High Availability
+                                    </h2>
+                                    <p>
+                                        Replica sets use elections to determine which set member will become primary. Replica sets can trigger an election in response
+                                        to a variety of events, such as:
+
+                                        <li>Adding a new node to the replica set
+                                            <li>initiating a replica set
+                                                <li>performing replica set maintenance using methods such as
+                                                    <code>rs.stepDown()</code> or
+                                                    <code>rs.reconfig()</code>
+                                                    <li>the secondary members losing connectivity to the primary for more than
+                                                        the configured timeout (10 seconds by default)
+                                    </p>
+                                    <p>
+                                        <a class="btn btn-primary btn-large" href="https://docs.mongodb.com/manual/core/replica-set-elections/" target="_">Learn more</a>
+                                    </p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <h2>
+                                    MongoDB:
+                                    <code>27000</code>
+                                </h2>
+                                <p id="node01">
+                                    Preferred Primary
+                                </p>
+                                <p>
+                                    <button type="button" class="btn btn-success btn-sm" onclick="mdbServiceControl('start','node01')">Start</button>
+                                    <button type="button" class="btn btn-warning btn-sm" onclick="mdbServiceControl('step','node01')">StepDown</button>
+                                    <button type="button" class="btn btn-danger btn-sm" onclick="mdbServiceControl('kill','node01')">Kill</button>
+
+                                </p>
+                            </div>
+                            <div class="col-md-4">
+                                <h2>
+                                    MongoDB:
+                                    <code>27001</code>
+                                </h2>
+                                <p id="node02">
+                                    Secondary
+                                </p>
+
+                                <p>
+                                     <button type="button" class="btn btn-success btn-sm" onclick="mdbServiceControl('start','node02')">Start</button>
+                                    <button type="button" class="btn btn-warning btn-sm" onclick="mdbServiceControl('step','node02')">StepDown</button>
+                                    <button type="button" class="btn btn-danger btn-sm" onclick="mdbServiceControl('kill','node02')">Kill</button>
+                                </p>
+                            </div>
+                            <div class="col-md-4">
+                                <h2>
+                                    MongoDB:
+                                    <code>27002</code>
+                                </h2>
+                                <p id="node03">
+                                    Preferred Secondary
+                                </p>
+
+                                <p>
+                                    <button type="button" class="btn btn-success btn-sm" onclick="mdbServiceControl('start','node03')">Start</button>
+                                    <button type="button" class="btn btn-warning btn-sm" onclick="mdbServiceControl('step','node03')">StepDown</button>
+                                    <button type="button" class="btn btn-danger btn-sm" onclick="mdbServiceControl('kill','node03')">Kill</button>
+
+                                </p>
+                            </div>
+                        </div>
+                        <!--row-->
+                    </div>
+                </div>
+            </div>
+            <% include ./partials/footer %>

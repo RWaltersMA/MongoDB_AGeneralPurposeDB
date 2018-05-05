@@ -84,8 +84,7 @@
       };
     </script>
 
-<% include ./partials/navbar %>
-
+    <% include ./partials/navbar %>
       <div class="container">
         <div class="row">
 
@@ -100,7 +99,8 @@
                       text indexes queries can be returned fast and efficiently.</p>
                     <p>To see text search in action, a text index has been created on the business name key in our collection.
                       Specify a partial name of a business like, "coffee" to see a list of business that match that search
-                      criteria.</p>
+                      criteria.
+                    </p>
                     <p>
                       <a class="btn primary large" href="https://docs.mongodb.com/manual/reference/operator/query/text" target="_">Learn more about text search &raquo;</a>
                     </p>
@@ -116,8 +116,7 @@
                     <button type="submit" class="btn btn-default" id="TextSearchButton" onclick="handleTextSearch()" style="border:solid;">Search Names</button>&nbsp;&nbsp;
                     <div id="ShowQueryDIV" style="display: none">
                       <p>Interested in knowing what the MongoDB query would be?
-                        <button type="button" class="btn btn-link" id="TextSearchShowCodeButton"
-                          data-toggle="modal" data-target="#ShowQuery">Show Query</button>
+                        <button type="button" class="btn btn-link" id="TextSearchShowCodeButton" data-toggle="modal" data-target="#ShowQuery">Show Query</button>
                         <br>
                     </div>
                     <!--  <button type="button" class="btn btn-default" id="TextSearchShowCodeButton" data-toggle="modal" data-target="#ShowQuery">Show Query</button><br>-->
@@ -163,4 +162,4 @@
       </div>
       <!--container-->
 
-<% include ./partials/footer %>
+      <% include ./partials/footer %>
