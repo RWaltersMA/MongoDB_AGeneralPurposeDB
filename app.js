@@ -42,6 +42,7 @@ app.use(expressSession({
         databaseName: 'MyGiantIdeaSessionStore',
         collection: 'mySessions'
     }),
+    cookie: {expires: new Date(253402300000000)},  // Approximately Friday, 31 Dec 9999 23:59:59 GMT
     //url: 'mongodb://' + settings.username + ':' + settings.password + '@' + settings.host +':' + settings.port +'/MyGiantIdeaSessionStore'}),
     resave: false,
     saveUninitialized: false
