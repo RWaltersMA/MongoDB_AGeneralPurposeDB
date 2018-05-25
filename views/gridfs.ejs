@@ -17,6 +17,7 @@
         // We can watch for our custom `fileselect` event like this
         $(document).ready(function () {
           console.log('on ready');
+          fetchLargeFiles();
           $(':file').on('fileselect', function (event, numFiles, label) {
 
             var input = $(this).parents('.input-group').find(':text'),
@@ -35,6 +36,47 @@
       $(function () {
         bs_input_file();
       });
+
+      function fetchLargeFiles() {
+        console.log("In fetchLargeFiles");
+
+        //Use AJAX and submit the form data to the server
+        $.ajax({
+          url: "/GridFS/Query",
+          method: 'POST',
+          contentType: "application/json; charset=utf-8",
+          dataType: "json",
+          processData: false    // This prevents JQuery from trying to append the form as a querystring
+        }).done(function (data) {
+          console.log("Recent large file query complete");
+
+          var table = document.getElementById("FSFilesResults");
+
+          //Define the header of the results table
+          var ArrayHeader = ["File Name", "Description", "Date Uploaded"];
+          var thead = document.createElement('thead');
+
+          thead.setAttribute("style", "background-color:lightblue;color:black;");
+          table.appendChild(thead);
+
+          for (var i = 0; i < ArrayHeader.length; i++) {
+            thead.appendChild(document.createElement("th")).
+              appendChild(document.createTextNode(ArrayHeader[i]));
+          }
+
+          //push the result into rows
+          for (i = 0; i < data.length; i++) {
+
+            var row = table.insertRow(0);
+            row.insertCell(0).innerHTML = data[i].name;
+            row.insertCell(1).innerHTML = data[i].description;
+            row.insertCell(2).innerHTML = data[i].uploadDate;
+          }
+
+        });
+      }
+
+
 
       // http://blog.teamtreehouse.com/uploading-files-ajax 
       function handleFileUpload() {
@@ -73,7 +115,7 @@
         }).done(function (data) {
           console.log("File upload complete");
         });
-        
+
       }
 
     </script>
@@ -127,8 +169,16 @@
                     </div>
                   </div>
                   <div class="form-group">
-                    <button type="submit" class="btn btn-primary pull-right" id="upload-button" onclick="handleFileUpload()">Submit</button>
+                    <button type="submit" class="btn btn-primary pull-right" id="upload-button" onclick="handleFileUpload()">Upload</button>
                   </div>
+                  <p></p>
+                  <p></p>
+                  <div>
+                    <h5>Last 5 Uploaded Files</h5>
+                    <table id="FSFilesResults" class="TextSearchResultsCSS" />
+                  </div>
+
+
                   <!--hero-->
                 </div>
                 <!--content-->
