@@ -20,6 +20,7 @@ var reporting = require('./routes/Reporting');
 var welcome=require('./routes/Welcome');
 var changestreams = require('./routes/changestreams');
 var aggframework = require('./routes/aggframework');
+var gridfs = require('./routes/gridfs');
 var sparkintegration=require('./routes/SparkIntegration');
 var ha=require('./routes/HighAvailability');
 var settings=require('./config/config');  //change monogodb server location here
@@ -61,6 +62,8 @@ app.use('/Reporting',reporting);
 app.use('/Welcome',welcome);
 app.use('/changestreams',changestreams);
 app.use('/aggframework',aggframework);
+app.use('/gridfs',gridfs);
+
 
 // Start the application after the database connection is ready
 app.listen(3000);
