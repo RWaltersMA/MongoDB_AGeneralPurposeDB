@@ -37,6 +37,9 @@
         bs_input_file();
       });
 
+      /*
+      * Display stored files
+      */
       function fetchLargeFiles() {
         console.log("In fetchLargeFiles");
 
@@ -87,8 +90,10 @@
         var fileSelect = document.getElementById('file-select');
         var uploadButton = document.getElementById('upload-button');
         var selectedFile = $('#selected-file');
+        var fileDescription = $('#file-description').val();
 
         console.log("Selected file = " + selectedFile.val());
+        console.log("File description = " + fileDescription);
 
         // Update button text.
         $('#upload-button').innerHTML = 'Uploading...';
@@ -100,22 +105,44 @@
         // Create new FormData object.
         var formData = new FormData();
         formData.append('file', file, file.name);
+        formData.append('description', fileDescription);
 
         //Use AJAX and submit the form data to the server
+        // http://api.jquery.com/jquery.ajax/
         $.ajax({
           url: "/GridFS",
           method: 'POST',
           data: formData,
           processData: false,
           contentType: false,
+
+          /*
+          xhr: function () {
+            console.log("In XHR");
+            var xhr = new XMLHttpRequest();
+
+            // Add progress event listener to the upload
+            xhr.addEventListener("progress", updateProgress);
+          },*/
           success: function (data) {
             console.log("Success");
           }
 
         }).done(function (data) {
           console.log("File upload complete");
+          fetchLargeFiles();
         });
 
+      }
+
+      function updateProgress(event) {
+        console.log(event.lengthComputable);
+        if (event.lengthComputable) {
+          var percentComplete = event.loaded / event.total;
+          console.log(percentComplete);
+        } else {
+          console.log("total size unknown");
+        }
       }
 
     </script>
@@ -167,17 +194,29 @@
                       </label>
                       <input type="text" id="selected-file" class="form-control" readonly>
                     </div>
+                    <!-- input-group -->
+                    </br>
+                    <label for="FileDescription">File description:</label>
+                    <div>
+                      <input type="text" id="file-description" class="form-control" name="FileDescription" placeholder="Describe your file ...">
+                    </div>
                   </div>
+                  <!-- form-group -->
                   <div class="form-group">
                     <button type="submit" class="btn btn-primary pull-right" id="upload-button" onclick="handleFileUpload()">Upload</button>
                   </div>
-                  <p></p>
-                  <p></p>
+                  </br>
+                  </br>
+                  <div class="progress">
+                    <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%;">
+                      60%
+                    </div>
+                  </div>
+                  </br>
                   <div>
                     <h5>Last 5 Uploaded Files</h5>
                     <table id="FSFilesResults" class="TextSearchResultsCSS" />
                   </div>
-
 
                   <!--hero-->
                 </div>

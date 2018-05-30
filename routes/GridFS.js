@@ -16,17 +16,24 @@ router.get('/', function (req, res, next) {
 
 });
 
+/*
+ * File Upload
+ */
 router.post('/', function (req, res, next) {
 
     console.log('Entering post');
-    //console.log(req);
 
     var form = new formidable.IncomingForm();
     form.parse(req, function (err, fields, files) {
-        //console.log(files);
+        console.log(fields);
         var fullFilePath = files.file.path;
         var fileName = files.file.name;
+        var fileSize = files.file.size;
+        var chunksToUpload = fileSize / 65536;
+        console.log("The file size is: " + fileSize);
+        console.log("Uplaod chunks: " + chunksToUpload);
         console.log("Full file path = " + fullFilePath);
+        console.log("File Description = " + fields.description);
 
 
         mongoClient.connect(settings.connectionString, function (err, client) {
@@ -43,27 +50,39 @@ router.post('/', function (req, res, next) {
             var writestream = gfs.createWriteStream({
                 filename: fileName,
                 metadata: {
-                    description: "Placeholder"
+                    description: fields.description
                 }
             });
 
-            fs.createReadStream(fullFilePath).pipe(writestream);
+            var readstream = fs.createReadStream(fullFilePath)
+            readstream.pipe(writestream);
             console.log('-> Opened read and write file streams');
+
+            readstream.on('data', function (chunk) {
+                console.log('-> reading %d bytes of data', chunk.length);
+            })
+
+            readstream.on('end', function() {
+                console.log('-> file read complete');
+            })
 
             writestream.on('close', function (file) {
                 console.log('-> ' + file.filename + ' written to MongoDB');
+                res.end();
+                client.close();
             });
-        });
+
+        }); // MongoClient
     });
 });
 
-
+/*
+ * File query
+ */
 router.post('/Query', function (req, res, next) {
     console.log("In server query");
 
     var ResultSet = [];
-
-    //var SearchCriteria=req.body.criteria;
 
     mongoClient.connect(settings.connectionString, function (err, client) {
 
@@ -74,7 +93,7 @@ router.post('/Query', function (req, res, next) {
 
         console.log('-> Connected successfully to server');
 
-        var Results = db.collection("fs.files").find({}).toArray().then(function (items) {
+        var Results = db.collection("fs.files").find({}).sort({uploadDate:1}).limit(9999).toArray().then(function (items) {
 
             items.forEach((item, idx, array) => {
                 //console.log(item);
