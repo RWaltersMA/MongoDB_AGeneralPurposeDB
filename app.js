@@ -21,6 +21,7 @@ var welcome=require('./routes/Welcome');
 var changestreams = require('./routes/changestreams');
 var aggframework = require('./routes/aggframework');
 var sparkintegration=require('./routes/SparkIntegration');
+var about=require('./routes/About');
 var ha=require('./routes/HighAvailability');
 var settings=require('./config/config');  //change monogodb server location here
 
@@ -56,6 +57,7 @@ app.use('/FacetSearch', facetsearch);
 app.use('/GeoSearch', geosearch);
 app.use('/Constraints', constraints);
 app.use('/SparkIntegration', sparkintegration);
+app.use('/About', about);
 app.use('/Views', views);
 app.use('/Joins', joins);
 app.use('/Reporting',reporting);

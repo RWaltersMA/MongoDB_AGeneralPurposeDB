@@ -1,0 +1,40 @@
+<% include ./partials/header %>
+
+  <% include ./partials/navbar %>
+
+    <div class="container">
+      <div class="row">
+
+        <% var active='none'; %>
+          <% include ./partials/sidebar %>
+
+            <div class="col-sm-9 col-md-9 col-lg-9">
+              <div class="content">
+                <div class="hero-group">
+                  <h2>About MyGiantIdea.com</h2>
+                  <p>MyGiantIdea was created as a resource to showcase the capabilities of MongoDB. MyGiantIdea is a Node.js
+                    <a href="https://expressjs.com/" target="_blank">Express</a> application, using
+                    <a href="http://ejs.co/" target="_blank">EJS</a> as its templating engine. </p>
+
+                  <div class="row">
+                    <div class="col-sm-12">
+                      <img src="images/architecture.png">
+                    </div>
+                  </div>
+                  <p></p>
+                  <p>The source code, along with instructions for getting MyGiantIdea up and running, can be found on
+                    <a href="https://github.com/RWaltersMA/MongoDB_AGeneralPurposeDB"
+                      target="_blank">GitHub</a>. If you're interested in contributing, please fork the repository, code your contribution
+                    and submit a pull request back to us.</p>
+                </div>
+                <!--hero-->
+              </div>
+              <!--content-->
+            </div>
+            <!-- col-sm -->
+      </div>
+      <!--row-->
+    </div>
+    <!--container-->
+
+    <% include ./partials/footer %>
