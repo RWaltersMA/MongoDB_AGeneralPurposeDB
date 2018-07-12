@@ -80,27 +80,6 @@ app.use('/changestreams', changestreams);
 app.use('/aggframework', aggframework);
 app.use('/gridfs', gridfs);
 
-// socket.io
-io.on('connection', function (socket) {
-    console.log('a user connected');
-    //socket.join('sessionId');
-    socket.emit('news', { hello: 'world'});
-    socket.on('event', function (data) { });
-    socket.on('chat message', function(msg) {
-        console.log('message: ' + msg);
-    })
-    socket.on('disconnect', function() {
-        console.log('user disconnected');
-    });
-
-    
-});
-
-function updateProgress() {
-    console.log("Updating progress");
-}
-
-
 // Start the application after the database connection is ready
 //app.listen(3000);
 httpServer.listen(3000, function() {
@@ -124,8 +103,6 @@ app.use(function (err, req, res, next) {
     res.status(err.status || 500);
     res.render('error');
 });
-
-
 
 module.exports = app;
 

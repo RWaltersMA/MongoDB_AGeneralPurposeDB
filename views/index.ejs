@@ -22,13 +22,6 @@
         $('#review_collection').append(syntaxHighlight(reviewmodel));
 
       }
-
-      var socket = io();
-      socket.emit('chat message', 'Hello from index.ejs');
-      socket.on('news', function (data) {
-        console.log("Receiving news from server");
-        console.log(data);
-      });
     </script>
     <% include ./partials/navbar %>
 

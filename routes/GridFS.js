@@ -37,17 +37,6 @@ router.post('/', function (req, res, next) {
         console.log("Full file path = " + fullFilePath);
         console.log("File Description = " + fields.description);
 
-        /*
-        // 1 MB
-        var maxFileSize = 1 * 1000 * 1000;
-
-        if (fileSize > maxFileSize) {
-            var message = "Aborting because the file size selected is too large";
-            console.log (message);
-            throw new Error(message);
-        }*/
-
-
         mongoClient.connect(settings.connectionString, function (err, client) {
 
             assert.equal(null, err);
@@ -98,7 +87,7 @@ router.post('/', function (req, res, next) {
 });
 
 /*
- * File query
+ * Get existing files...
  */
 router.post('/Query', function (req, res, next) {
     console.log("In server /Query");
@@ -143,7 +132,6 @@ router.post('/Query', function (req, res, next) {
  * A utility method to keep the number of files uploaded to our demo server under control. It will be called whenever a
  * new upload is initiated
  */
-
 function pruneFiles(db) {
 
     //TODO: Use a transaction when the database is upgraded to 4.0.
