@@ -53,7 +53,7 @@ app.use(expressSession({
 }));
 
 // A middleware function to add the socket to the request
-var forwardio = function (req, res, next) {
+var SocketIO = function (req, res, next) {
     console.log ('In socket middlware function');
     req.io = io;
     req.requestTime = Date.now();
@@ -61,7 +61,7 @@ var forwardio = function (req, res, next) {
 }
 
 // Make the socket available to the routes
-app.use(forwardio);
+app.use(SocketIO);
 
 //Routes 
 app.use('/', index);

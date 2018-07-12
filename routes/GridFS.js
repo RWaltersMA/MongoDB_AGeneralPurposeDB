@@ -13,10 +13,6 @@ var assert = require('assert');
 
 var router = express.Router();
 
-
-//var socket = require("/socket.io/socket.io.js");    // Socket.io
-
-
 router.get('/', function (req, res, next) {
     res.render('gridfs');
 
@@ -64,8 +60,14 @@ router.post('/', function (req, res, next) {
             readstream.pipe(writestream);
             console.log('-> Opened read and write file streams');
 
+            var totalRead = 0;
+
             readstream.on('data', function (chunk) {
                 console.log('-> reading %d bytes of data', chunk.length);
+                totalRead += chunk.length;
+                var percentComplete = Math.round(totalRead / fileSize * 100);
+                console.log('Percent complete', percentComplete);
+                req.io.emit('PercentComplete', percentComplete);
             })
 
             readstream.on('end', function () {
