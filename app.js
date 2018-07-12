@@ -1,8 +1,10 @@
 var d = require('dotenv').config();
 var express = require('express');
-//var http = require('http').Server(express);
+var http = require('http');
 var app = express();
-//var io = require('socket.io')(app);
+var httpServer = http.createServer(app);
+var io = require('socket.io')(httpServer);
+//app.set('socketio', io);
 
 var expressSession = require('express-session');
 var MongoDBStore = require('connect-mongodb-session')(expressSession);
@@ -22,7 +24,7 @@ var reporting = require('./routes/Reporting');
 var welcome = require('./routes/Welcome');
 var changestreams = require('./routes/changestreams');
 var aggframework = require('./routes/aggframework');
-var gridfs = require('./routes/gridfs');
+var gridfs = require('./routes/GridFS');
 var sparkintegration = require('./routes/SparkIntegration');
 var ha = require('./routes/HighAvailability');
 var settings = require('./config/config');  //change monogodb server location here
@@ -50,6 +52,18 @@ app.use(expressSession({
     saveUninitialized: false
 }));
 
+// A middleware function to add the socket to the request
+var forwardio = function (req, res, next) {
+    console.log ('In socket middlware function');
+    req.io = io;
+    req.requestTime = Date.now();
+    next();
+}
+
+// Make the socket available to the routes
+app.use(forwardio);
+
+//Routes 
 app.use('/', index);
 app.use('/HighAvailability', ha);
 app.use('/TextSearch', textsearch);
@@ -66,19 +80,32 @@ app.use('/changestreams', changestreams);
 app.use('/aggframework', aggframework);
 app.use('/gridfs', gridfs);
 
-
 // socket.io
-/*
-io.on('connection', function (client) {
+io.on('connection', function (socket) {
     console.log('a user connected');
-    client.on('event', function (data) { });
-    client.on('disconnect', function () { });
+    //socket.join('sessionId');
+    socket.emit('news', { hello: 'world'});
+    socket.on('event', function (data) { });
+    socket.on('chat message', function(msg) {
+        console.log('message: ' + msg);
+    })
+    socket.on('disconnect', function() {
+        console.log('user disconnected');
+    });
+
+    
 });
-*/
+
+function updateProgress() {
+    console.log("Updating progress");
+}
+
 
 // Start the application after the database connection is ready
-app.listen(3000);
-console.log('Listening on port 3000');
+//app.listen(3000);
+httpServer.listen(3000, function() {
+    console.log('Listening on port 3000'); 
+});
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -101,3 +128,4 @@ app.use(function (err, req, res, next) {
 
 
 module.exports = app;
+

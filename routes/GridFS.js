@@ -1,3 +1,4 @@
+var app = require('../app');
 var express = require('express');
 var mongo = require('mongodb');
 var mongoClient = require('mongodb').MongoClient;
@@ -11,6 +12,11 @@ var formidable = require('formidable'); // For dealing with the received file
 var assert = require('assert');
 
 var router = express.Router();
+
+
+//var socket = require("/socket.io/socket.io.js");    // Socket.io
+
+
 router.get('/', function (req, res, next) {
     res.render('gridfs');
 
@@ -62,7 +68,7 @@ router.post('/', function (req, res, next) {
                 console.log('-> reading %d bytes of data', chunk.length);
             })
 
-            readstream.on('end', function() {
+            readstream.on('end', function () {
                 console.log('-> file read complete');
             })
 
@@ -80,7 +86,9 @@ router.post('/', function (req, res, next) {
  * File query
  */
 router.post('/Query', function (req, res, next) {
-    console.log("In server query");
+    console.log("In server /Query");
+
+    req.io.emit('news', 'Hello from GridFS.js!!!');
 
     var ResultSet = [];
 
@@ -93,7 +101,7 @@ router.post('/Query', function (req, res, next) {
 
         console.log('-> Connected successfully to server');
 
-        var Results = db.collection("fs.files").find({}).sort({uploadDate:1}).limit(9999).toArray().then(function (items) {
+        var Results = db.collection("fs.files").find({}).sort({ uploadDate: 1 }).limit(9999).toArray().then(function (items) {
 
             items.forEach((item, idx, array) => {
                 //console.log(item);
@@ -107,7 +115,7 @@ router.post('/Query', function (req, res, next) {
             //console.log(ResultSet);
             res.send(ResultSet); // sendStatus(201);
             res.end();
-            client.close();            
+            client.close();
         })
             .catch(function (e) {
                 res.status(500).send(e);
@@ -116,4 +124,4 @@ router.post('/Query', function (req, res, next) {
     }); //MongoClient
 });
 
-    module.exports = router;
+module.exports = router;

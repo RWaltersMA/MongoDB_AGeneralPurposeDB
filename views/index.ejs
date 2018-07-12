@@ -22,60 +22,66 @@
         $('#review_collection').append(syntaxHighlight(reviewmodel));
 
       }
+
+      var socket = io();
+      socket.emit('chat message', 'Hello from index.ejs');
+      socket.on('news', function (data) {
+        console.log("Receiving news from server");
+        console.log(data);
+      });
     </script>
-<% include ./partials/navbar %>
+    <% include ./partials/navbar %>
 
-    <div class="container">
-      <div class="row">
+      <div class="container">
+        <div class="row">
 
-        <% var active='indexes'; %>
-          <% include ./partials/sidebar %>
+          <% var active='indexes'; %>
+            <% include ./partials/sidebar %>
 
-            <div class="col-sm-9 col-md-9 col-lg-9">
-              <div class="content">
-                <div class="hero-unit">
-                  <h3>MongoDB</h3>
-                  <h4>A general purpose database for modern applications</h4>
-                  <br>
-                  <p>Thank you for taking the time to check out some of the capabilities of MongoDB!</p>
-                  <br>
-                  <p>
-                    <b>Select a capability on the left menu to explore.</b>
-                  </p>
-                  <br>
-                  <p>If you are a propeller head and curious about the data set that is being used for this website:</p>
-                  <p>Yelp, Inc. has published over 4.1 Million reviews from 1M users as part of its
-                    <a href="https://www.yelp.com/dataset_challenge"
-                      target="_">Yelp Dataset Challenge</a>. If you are a student and want to win some cash the Yelp dataset is easily
-                    imported into MongoDB. Check out the contest website for rules. For the rest of us who are not students
-                    there is a lot of academic and learning value from these data. The features listed on the left side of
-                    this web page leverage the Yelp data that has been loaded into a MongoDB instance. This enables you to
-                    both explore this rich dataset and discover the native power of MongoDB.</p>
-                  <p class="text-warning">Note: This dataset is a subset of the entire Yelp data so if you query a particular city for example you
-                    may only see a cluster of reviews in a given area as opposed to the whole city itself.</p>
-                  <br>
-                  <p>These are the collections that represent the Yelp data in MongoDB:</p>
-                  <br>
-                  <div class="well">
+              <div class="col-sm-9 col-md-9 col-lg-9">
+                <div class="content">
+                  <div class="hero-unit">
+                    <h3>MongoDB</h3>
+                    <h4>A general purpose database for modern applications</h4>
+                    <br>
+                    <p>Thank you for taking the time to check out some of the capabilities of MongoDB!</p>
+                    <br>
+                    <p>
+                      <b>Select a capability on the left menu to explore.</b>
+                    </p>
+                    <br>
+                    <p>If you are a propeller head and curious about the data set that is being used for this website:</p>
+                    <p>Yelp, Inc. has published over 4.1 Million reviews from 1M users as part of its
+                      <a href="https://www.yelp.com/dataset_challenge" target="_">Yelp Dataset Challenge</a>. If you are a student and want to win some cash the Yelp dataset is easily
+                      imported into MongoDB. Check out the contest website for rules. For the rest of us who are not students
+                      there is a lot of academic and learning value from these data. The features listed on the left side
+                      of this web page leverage the Yelp data that has been loaded into a MongoDB instance. This enables
+                      you to both explore this rich dataset and discover the native power of MongoDB.</p>
+                    <p class="text-warning">Note: This dataset is a subset of the entire Yelp data so if you query a particular city for example
+                      you may only see a cluster of reviews in a given area as opposed to the whole city itself.</p>
+                    <br>
+                    <p>These are the collections that represent the Yelp data in MongoDB:</p>
+                    <br>
+                    <div class="well">
 
-                    <h4>business collection</h4>
-                    <div id="business_collection"></div>
-                    <h4>users collection</h4>
-                    <div id="users_collection"></div>
-                    <h4>reviews collection</h4>
-                    <div id="review_collection"></div>
+                      <h4>business collection</h4>
+                      <div id="business_collection"></div>
+                      <h4>users collection</h4>
+                      <div id="users_collection"></div>
+                      <h4>reviews collection</h4>
+                      <div id="review_collection"></div>
+                    </div>
+                    <p>
+                      <a class="btn primary large" href="https://www.mongodb.com/mongodb-3.4">Learn more about MongoDB &raquo;</a>
+                    </p>
                   </div>
-                  <p>
-                    <a class="btn primary large" href="https://www.mongodb.com/mongodb-3.4">Learn more about MongoDB &raquo;</a>
-                  </p>
                 </div>
+                <!-- content -->
               </div>
-              <!-- content -->
-            </div>
-            <!-- col-sm-6 -->
+              <!-- col-sm-6 -->
+        </div>
+        <!-- row -->
       </div>
-      <!-- row -->
-    </div>
-    <!-- container-->
+      <!-- container-->
 
-<% include ./partials/footer %>
+      <% include ./partials/footer %>

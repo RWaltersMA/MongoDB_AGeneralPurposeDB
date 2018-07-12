@@ -145,6 +145,13 @@
         }
       }
 
+      var socket = io();
+      socket.emit('chat message', 'Hello from index.ejs');
+      socket.on('news', function (data) {
+        console.log("Receiving news in gridfs.ejs from app.js server");
+        console.log(data);
+      });
+
     </script>
 
     <div class="container">
