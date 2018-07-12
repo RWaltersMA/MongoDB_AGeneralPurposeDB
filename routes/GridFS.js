@@ -33,9 +33,19 @@ router.post('/', function (req, res, next) {
         var fileSize = files.file.size;
         var chunksToUpload = fileSize / 65536;
         console.log("The file size is: " + fileSize);
-        console.log("Uplaod chunks: " + chunksToUpload);
+        console.log("Uploadd chunks: " + chunksToUpload);
         console.log("Full file path = " + fullFilePath);
         console.log("File Description = " + fields.description);
+
+        /*
+        // 1 MB
+        var maxFileSize = 1 * 1000 * 1000;
+
+        if (fileSize > maxFileSize) {
+            var message = "Aborting because the file size selected is too large";
+            console.log (message);
+            throw new Error(message);
+        }*/
 
 
         mongoClient.connect(settings.connectionString, function (err, client) {
@@ -44,6 +54,9 @@ router.post('/', function (req, res, next) {
             if (err) throw err;
 
             var db = client.db(settings.database);
+
+            //Delete previously uploaded files...
+            pruneFiles(db);
 
             // GridFS streaming utility
             var gfs = Grid(db, mongo);
@@ -125,5 +138,37 @@ router.post('/Query', function (req, res, next) {
             });
     }); //MongoClient
 });
+
+/*
+ * A utility method to keep the number of files uploaded to our demo server under control. It will be called whenever a
+ * new upload is initiated
+ */
+
+function pruneFiles(db) {
+
+    //TODO: Use a transaction when the database is upgraded to 4.0.
+
+    // 1 hour old
+    var ONE_HOUR = 60 * 60 * 1000; // ms
+    var currentTime = new Date();
+
+    var timestamp = new Date(currentTime - ONE_HOUR)// - 24*60*60 * 1000;
+    var queryString = { uploadDate: { $lt: timestamp } };
+
+    //TODO: Use a transaction when the database is upgraded to 4.0.
+    // Find and delete the chunks associated with the files
+    db.collection('fs.files').find(queryString).forEach(
+        function (file) {
+            console.log(file.filename, file.uploadDate);
+            db.collection('fs.chunks').deleteMany({ files_id: file._id });
+        },
+        function (err) {
+            console.log("Error", err);
+        }
+    );
+
+    // Delete the files 
+    db.collection('fs.files').deleteMany(queryString);
+}
 
 module.exports = router;

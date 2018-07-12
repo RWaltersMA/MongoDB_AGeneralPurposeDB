@@ -4,6 +4,9 @@
 
     <script>
 
+      /*
+       * Bootstrap File Input Control
+       */
       function bs_input_file() {
         // We can attach the `fileselect` event to all file inputs on the page
         $(document).on('change', ':file', function () {
@@ -20,6 +23,7 @@
           fetchLargeFiles();
           $(':file').on('fileselect', function (event, numFiles, label) {
 
+            console.log('on file select');
             var input = $(this).parents('.input-group').find(':text'),
               log = numFiles > 1 ? numFiles + ' files selected' : label;
 
@@ -55,6 +59,9 @@
 
           var table = document.getElementById("FSFilesResults");
 
+          // Reset the table (necessary after file upload)
+          table.innerHTML = "";
+
           //Define the header of the results table
           var ArrayHeader = ["File Name", "Description", "Date Uploaded"];
           var thead = document.createElement('thead');
@@ -75,10 +82,8 @@
             row.insertCell(1).innerHTML = data[i].description;
             row.insertCell(2).innerHTML = data[i].uploadDate;
           }
-
         });
       }
-
 
 
       // http://blog.teamtreehouse.com/uploading-files-ajax 
@@ -101,6 +106,19 @@
         // Get the selected files from the input.
         var file = fileSelect.files[0];
         console.log(file);
+        console.log("File size = ", file.size);
+
+        // TODO: Fix this variable so it only needs to be set once...
+        var maxFileSizeMB = 100;//<%= maxFileSizeMB %>;
+        var maxFileSizeBytes = maxFileSizeMB * 1000 * 1000; 
+        var selectedFileSizeMB = (file.size / 1000 / 1000).toFixed(1);
+        if (file.size > maxFileSizeBytes) {
+          var message = "The selected file is too large (" + selectedFileSizeMB + " MB) for this demo. Please select a file smaller than " + maxFileSizeMB + " MB." ;
+          console.log (message);
+          alert(message);
+          return;
+        }
+
 
         // Create new FormData object.
         var formData = new FormData();
@@ -116,14 +134,6 @@
           processData: false,
           contentType: false,
 
-          /*
-          xhr: function () {
-            console.log("In XHR");
-            var xhr = new XMLHttpRequest();
-
-            // Add progress event listener to the upload
-            xhr.addEventListener("progress", updateProgress);
-          },*/
           success: function (data) {
             console.log("Success");
           }
@@ -145,10 +155,7 @@
         }
       }
 
-
-
       var socket = io();
-      socket.emit('chat message', 'Hello from index.ejs');
 
       socket.on('PercentComplete', function(data) {
         console.log("Receiving % Complete data", data);
@@ -157,6 +164,8 @@
       })
 
     </script>
+
+    <% var maxFileSizeMB = 100; %>
 
     <div class="container">
       <div class="row">
@@ -195,6 +204,9 @@
 
                   <!-- https://www.abeautifulsite.net/whipping-file-inputs-into-shape-with-bootstrap-3 -->
                   <h4>Large File Upload Example</h4>
+                  Although there's no practical limit to the file size you can upload to MongoDB, for the purpose of this public demo 
+                  please select a file size < <%= maxFileSizeMB %> MB.</br></br>
+                  
                   <div class="form-group">
                     <div class="input-group">
                       <label class="input-group-btn">
@@ -225,7 +237,7 @@
                   </div>
                   </br>
                   <div>
-                    <h5>Last 5 Uploaded Files</h5>
+                    <h5>Files Uploaded in the Past Hour</h5>
                     <table id="FSFilesResults" class="TextSearchResultsCSS" />
                   </div>
 
