@@ -28,6 +28,7 @@ var gridfs = require('./routes/GridFS');
 var sparkintegration = require('./routes/SparkIntegration');
 var ha = require('./routes/HighAvailability');
 var settings = require('./config/config');  //change monogodb server location here
+var about = require('./routes/About');
 
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
@@ -47,6 +48,7 @@ app.use(expressSession({
         databaseName: 'MyGiantIdeaSessionStore',
         collection: 'mySessions'
     }),
+    cookie: { expires: new Date(253402300000000) },  // Approximately Friday, 31 Dec 9999 23:59:59 GMT
     //url: 'mongodb://' + settings.username + ':' + settings.password + '@' + settings.host +':' + settings.port +'/MyGiantIdeaSessionStore'}),
     resave: false,
     saveUninitialized: false
@@ -54,7 +56,7 @@ app.use(expressSession({
 
 // A middleware function to add the socket to the request
 var SocketIO = function (req, res, next) {
-    console.log ('In socket middlware function');
+    console.log('In socket middlware function');
     req.io = io;
     req.requestTime = Date.now();
     next();
@@ -72,6 +74,7 @@ app.use('/FacetSearch', facetsearch);
 app.use('/GeoSearch', geosearch);
 app.use('/Constraints', constraints);
 app.use('/SparkIntegration', sparkintegration);
+app.use('/About', about);
 app.use('/Views', views);
 app.use('/Joins', joins);
 app.use('/Reporting', reporting);
@@ -82,8 +85,8 @@ app.use('/gridfs', gridfs);
 
 // Start the application after the database connection is ready
 //app.listen(3000);
-httpServer.listen(3000, function() {
-    console.log('Listening on port 3000'); 
+httpServer.listen(3000, function () {
+    console.log('Listening on port 3000');
 });
 
 // catch 404 and forward to error handler
