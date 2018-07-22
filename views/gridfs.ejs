@@ -1,0 +1,254 @@
+<% include ./partials/header %>
+
+  <% include ./partials/navbar %>
+
+    <script>
+
+      /*
+       * Bootstrap File Input Control
+       */
+      function bs_input_file() {
+        // We can attach the `fileselect` event to all file inputs on the page
+        $(document).on('change', ':file', function () {
+          console.log('on change');
+          var input = $(this),
+            numFiles = input.get(0).files ? input.get(0).files.length : 1,
+            label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+          input.trigger('fileselect', [numFiles, label]);
+        });
+
+        // We can watch for our custom `fileselect` event like this
+        $(document).ready(function () {
+          console.log('on ready');
+          fetchLargeFiles();
+          $(':file').on('fileselect', function (event, numFiles, label) {
+
+            console.log('on file select');
+            var input = $(this).parents('.input-group').find(':text'),
+              log = numFiles > 1 ? numFiles + ' files selected' : label;
+
+            if (input.length) {
+              input.val(log);
+            } else {
+              if (log) alert(log);
+            }
+
+          });
+        });
+
+      }
+      $(function () {
+        bs_input_file();
+      });
+
+      /*
+      * Display stored files
+      */
+      function fetchLargeFiles() {
+        console.log("In fetchLargeFiles");
+
+        //Use AJAX and submit the form data to the server
+        $.ajax({
+          url: "/GridFS/Query",
+          method: 'POST',
+          contentType: "application/json; charset=utf-8",
+          dataType: "json",
+          processData: false    // This prevents JQuery from trying to append the form as a querystring
+        }).done(function (data) {
+          console.log("Recent large file query complete");
+
+          var table = document.getElementById("FSFilesResults");
+
+          // Reset the table (necessary after file upload)
+          table.innerHTML = "";
+
+          //Define the header of the results table
+          var ArrayHeader = ["File Name", "Description", "Date Uploaded"];
+          var thead = document.createElement('thead');
+
+          thead.setAttribute("style", "background-color:lightblue;color:black;");
+          table.appendChild(thead);
+
+          for (var i = 0; i < ArrayHeader.length; i++) {
+            thead.appendChild(document.createElement("th")).
+              appendChild(document.createTextNode(ArrayHeader[i]));
+          }
+
+          //push the result into rows
+          for (i = 0; i < data.length; i++) {
+
+            var row = table.insertRow(0);
+            row.insertCell(0).innerHTML = data[i].name;
+            row.insertCell(1).innerHTML = data[i].description;
+            row.insertCell(2).innerHTML = data[i].uploadDate;
+          }
+        });
+      }
+
+
+      // http://blog.teamtreehouse.com/uploading-files-ajax 
+      function handleFileUpload() {
+
+        //Prevent the form from trying to post itself again
+        event.preventDefault();
+
+        var fileSelect = document.getElementById('file-select');
+        var uploadButton = document.getElementById('upload-button');
+        var selectedFile = $('#selected-file');
+        var fileDescription = $('#file-description').val();
+
+        console.log("Selected file = " + selectedFile.val());
+        console.log("File description = " + fileDescription);
+
+        // Update button text.
+        $('#upload-button').innerHTML = 'Uploading...';
+
+        // Get the selected files from the input.
+        var file = fileSelect.files[0];
+        console.log(file);
+        console.log("File size = ", file.size);
+
+        // TODO: Fix this variable so it only needs to be set once...
+        var maxFileSizeMB = 100;//<%= maxFileSizeMB %>;
+        var maxFileSizeBytes = maxFileSizeMB * 1000 * 1000; 
+        var selectedFileSizeMB = (file.size / 1000 / 1000).toFixed(1);
+        if (file.size > maxFileSizeBytes) {
+          var message = "The selected file is too large (" + selectedFileSizeMB + " MB) for this demo. Please select a file smaller than " + maxFileSizeMB + " MB." ;
+          console.log (message);
+          alert(message);
+          return;
+        }
+
+        // Create new FormData object.
+        var formData = new FormData();
+        formData.append('file', file, file.name);
+        formData.append('description', fileDescription);
+
+        //Use AJAX and submit the form data to the server
+        // http://api.jquery.com/jquery.ajax/
+        $.ajax({
+          url: "/GridFS",
+          method: 'POST',
+          data: formData,
+          processData: false,
+          contentType: false,
+
+          success: function (data) {
+            console.log("Success");
+          }
+
+        }).done(function (data) {
+          console.log("File upload complete");
+          fetchLargeFiles();
+        });
+
+      }
+
+      function updateProgress(event) {
+        console.log(event.lengthComputable);
+        if (event.lengthComputable) {
+          var percentComplete = event.loaded / event.total;
+          console.log(percentComplete);
+        } else {
+          console.log("total size unknown");
+        }
+      }
+
+      var socket = io();
+
+      socket.on('PercentComplete', function(data) {
+        console.log("Receiving % Complete data", data);
+        console.log(data);
+        $('.progress-bar').css('width', data+'%').attr('aria-valuenow', data).text(data+'% Complete');  
+      })
+
+    </script>
+
+    <% var maxFileSizeMB = 100; %>
+
+    <div class="container">
+      <div class="row">
+
+        <% var active='gridfs'; %>
+          <% include ./partials/sidebar %>
+
+            <div class="col-sm-9 col-md-9 col-lg-9">
+              <div class="content">
+                <div class="hero-group">
+                  <h2>GridFS</h2>
+                  <p>The MongoDB database supports a maximum document size of 16 MB. However, many use cases exist where it's
+                    desirable to store files larger than 16 MB. For example,
+                    <a href="https://www.mongodb.com/customers/mcafee" target="_blank">McAfee stores its incremental security updates in MongoDB</a>.</p>
+                  <p>
+                    MongoDB solves this problem at the driver level, where the application driver breaks the large files into 16 MB chunks.
+                  </p>
+
+                  <div class="row">
+                    <div class="col-sm-12">
+                      <img style="width:60%" src="images/gridfs.png">
+                    </div>
+                  </div>
+                  <p></p>
+                  <p>The driver uses 2 collections to manage the large files:
+                    <code>fs.files</code> and
+                    <code>fs.chunks</code>. The
+                    <code>fs.files</code> collection contains the file meta data while
+                    <code>fs.chunks</code> collection contains the 16 MB file chunks. Here's an example representation:</p>
+                  <br>
+                  <div class="row">
+                    <div class="col-sm-12">
+                      <img style="width:100%" src="images/gridfs2.png">
+                    </div>
+                  </div>
+
+                  <!-- https://www.abeautifulsite.net/whipping-file-inputs-into-shape-with-bootstrap-3 -->
+                  <h4>Large File Upload Example</h4>
+                  Although there's no practical limit to the file size you can upload to MongoDB, for the purpose of this public demo 
+                  please select a file size < <%= maxFileSizeMB %> MB.</br></br>
+                  
+                  <div class="form-group">
+                    <div class="input-group">
+                      <label class="input-group-btn">
+                        <span class="btn btn-primary">
+                          Browse&hellip;
+                          <input type="file" id="file-select" style="display: none;" multiple>
+                        </span>
+                      </label>
+                      <input type="text" id="selected-file" class="form-control" readonly>
+                    </div>
+                    <!-- input-group -->
+                    </br>
+                    <label for="FileDescription">File description:</label>
+                    <div>
+                      <input type="text" id="file-description" class="form-control" name="FileDescription" placeholder="Describe your file ...">
+                    </div>
+                  </div>
+                  <!-- form-group -->
+                  <div class="form-group">
+                    <button type="submit" class="btn btn-primary pull-right" id="upload-button" onclick="handleFileUpload()">Upload</button>
+                  </div>
+                  </br>
+                  </br>
+                  <div class="progress">
+                    <div id="progress-bar" class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+                      <span id="current_progress"></span>
+                    </div>
+                  </div>
+                  </br>
+                  <div>
+                    <h5>Files Uploaded in the Past Hour</h5>
+                    <table id="FSFilesResults" class="TextSearchResultsCSS" />
+                  </div>
+
+                  <!--hero-->
+                </div>
+                <!--content-->
+              </div>
+              <!-- col-sm -->
+
+            </div>
+            <!--row-->
+      </div>
+      <!--container-->
+
+      <% include ./partials/footer %>
